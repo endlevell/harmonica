@@ -12,7 +12,16 @@ Singleton {
     // ---- schema ----
     property bool clock24h: true
     property bool showSeconds: false
-    readonly property int version: 1
+    property string recFilename: "harmonica"
+    property string recExt: "mp4"              // mp4 | mkv
+    property string recQuality: "medium"       // low | medium | high
+    property string recAudioSource: ""         // pipewire node name, "" = none
+    readonly property int version: 2
+
+    readonly property string recOutDir: {
+        const v = Quickshell.env("XDG_VIDEOS_DIR");
+        return (v && v.length > 0) ? v : Quickshell.env("HOME") + "/Videos/harmonica";
+    }
 
     readonly property string filePath: Paths.configDir + "/config.json"
 
@@ -25,6 +34,10 @@ Singleton {
             const o = JSON.parse(text);
             if (typeof o.clock24h === "bool") root.clock24h = o.clock24h;
             if (typeof o.showSeconds === "bool") root.showSeconds = o.showSeconds;
+            if (typeof o.recFilename === "string" && o.recFilename !== "") root.recFilename = o.recFilename;
+            if (o.recExt === "mp4" || o.recExt === "mkv") root.recExt = o.recExt;
+            if (o.recQuality === "low" || o.recQuality === "medium" || o.recQuality === "high") root.recQuality = o.recQuality;
+            if (typeof o.recAudioSource === "string") root.recAudioSource = o.recAudioSource;
             root._lastGoodJson = text;
             root._loaded = true;
         } catch (e) {
@@ -37,7 +50,11 @@ Singleton {
         const payload = JSON.stringify({
             version: root.version,
             clock24h: root.clock24h,
-            showSeconds: root.showSeconds
+            showSeconds: root.showSeconds,
+            recFilename: root.recFilename,
+            recExt: root.recExt,
+            recQuality: root.recQuality,
+            recAudioSource: root.recAudioSource
         }, null, 2);
         root._selfWrite = true;
         file.setText(payload);
@@ -87,4 +104,8 @@ Singleton {
 
     onClock24hChanged: scheduleSave()
     onShowSecondsChanged: scheduleSave()
+    onRecFilenameChanged: scheduleSave()
+    onRecExtChanged: scheduleSave()
+    onRecQualityChanged: scheduleSave()
+    onRecAudioSourceChanged: scheduleSave()
 }

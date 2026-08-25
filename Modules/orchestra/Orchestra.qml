@@ -21,11 +21,13 @@ PanelWindow {
     readonly property ShellScreen screenRef: modelData as ShellScreen
 
     // ---- phase machine -------------------------------------------------
-    readonly property string basePhase: Mpris.playing ? "music" : "idle"
+    readonly property string basePhase: Recorder.active ? "recording" : Mpris.playing ? "music" : "idle"
     property bool hoverOpen: false          // panel requested via hover/click
     property bool launcherOpen: false       // Super+S / IPC
+    property bool recordSettingsOpen: false
 
-    readonly property string targetView: launcherOpen ? "launcher"
+    readonly property string targetView: recordSettingsOpen ? "recordSettings"
+        : launcherOpen ? "launcher"
         : hoverOpen ? "panel" : basePhase
 
     // what is mounted / animating
@@ -97,7 +99,8 @@ PanelWindow {
 
     WlrLayershell.namespace: "harmonica:island"
     WlrLayershell.layer: WlrLayer.Top
-    WlrLayershell.keyboardFocus: launcherOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand
+    WlrLayershell.keyboardFocus: launcherOpen || recordSettingsOpen
+        ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand
 
     mask: Region { item: pill }
 
@@ -180,6 +183,24 @@ PanelWindow {
                 enabled: shownView === "launcher"
                 onClosed: win.closeLauncher()
             }
+
+            RecordingCluster {
+                anchors.fill: parent
+                opacity: shownView === "recording" ? enterOp : leavingView === "recording" ? leaveOp : 0
+                y: shownView === "recording" ? enterY : leavingView === "recording" ? leaveY : 0
+                visible: opacity > 0.001
+                enabled: shownView === "recording"
+            }
+
+            RecordSettings {
+                anchors.fill: parent
+                opacity: shownView === "recordSettings" ? enterOp : leavingView === "recordSettings" ? leaveOp : 0
+                y: shownView === "recordSettings" ? enterY : leavingView === "recordSettings" ? leaveY : 0
+                visible: opacity > 0.001
+                enabled: shownView === "recordSettings"
+                onBackRequested: win.recordSettingsOpen = false
+                Component.onCompleted: Recorder.refreshAudioSources()
+            }
         }
     }
 
@@ -187,6 +208,14 @@ PanelWindow {
     onTargetViewChanged: goTo(targetView)
     onLauncherOpenChanged: {
         if (launcherOpen) Qt.callLater(() => launcherView.grabFocus());
+    }
+    onRecordSettingsOpenChanged: {
+        if (recordSettingsOpen) Qt.callLater(() => launcherView.grabFocus()); // noop focus reset
+    }
+
+    function openRecordSettings(): void {
+        hoverOpen = false;
+        recordSettingsOpen = true;
     }
 
     // ---- input ----------------------------------------------------------
@@ -196,11 +225,11 @@ PanelWindow {
         anchors.fill: content
         hoverEnabled: true
         acceptedButtons: Qt.NoButton
-        cursorShape: hoverOpen || launcherOpen ? Qt.ArrowCursor : Qt.PointingHandCursor
+        cursorShape: hoverOpen || launcherOpen || recordSettingsOpen ? Qt.ArrowCursor : Qt.PointingHandCursor
         onContainsMouseChanged: {
             if (containsMouse) {
                 closeDelay.stop();
-                if (!launcherOpen) hoverOpen = true;
+                if (!launcherOpen && !recordSettingsOpen) hoverOpen = true;
             } else {
                 closeDelay.restart();
             }
@@ -210,7 +239,7 @@ PanelWindow {
     // click-to-open only while a pill phase shows; never steals page clicks
     MouseArea {
         anchors.fill: content
-        enabled: !hoverOpen && !launcherOpen
+        enabled: !hoverOpen && !launcherOpen && !recordSettingsOpen
         acceptedButtons: Qt.LeftButton
         onClicked: win.hoverOpen = true
     }
@@ -223,8 +252,12 @@ PanelWindow {
 
     Shortcut {
         sequence: "Escape"
-        enabled: hoverOpen || launcherOpen
-        onActivated: { if (launcherOpen) closeLauncher(); else hoverOpen = false; }
+        enabled: hoverOpen || launcherOpen || recordSettingsOpen
+        onActivated: {
+            if (recordSettingsOpen) recordSettingsOpen = false;
+            else if (launcherOpen) closeLauncher();
+            else hoverOpen = false;
+        }
     }
 
     // ---- api --------------------------------------------------------------

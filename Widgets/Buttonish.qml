@@ -1,0 +1,38 @@
+import QtQuick
+import qs.Common
+
+// Small labeled pill button.
+Rectangle {
+    id: b
+
+    signal clicked()
+
+    property string label: ""
+    property bool accent: false     // primary fill
+    property bool danger: false     // destructive fill
+
+    width: lbl.implicitWidth + Theme.spaceMd * 2
+    height: 24
+    radius: Theme.radiusFull
+    color: m.containsMouse ? Qt.darker(baseCol, 1.15) : baseCol
+    Behavior on color { ColorAnimation { duration: Theme.durFast } }
+
+    readonly property color baseCol: danger ? Theme.danger : accent ? Theme.primary : Theme.surfaceHover
+
+    Text {
+        id: lbl
+        anchors.centerIn: parent
+        text: b.label
+        color: b.danger || b.accent ? Theme.background : Theme.foreground
+        font.pixelSize: Theme.fontXs + 1
+        font.weight: Font.DemiBold
+    }
+
+    MouseArea {
+        id: m
+        anchors.fill: parent
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
+        onClicked: b.clicked()
+    }
+}

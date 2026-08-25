@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Modules.orchestra
+import qs.Services
 
 Scope {
     id: root
@@ -36,5 +37,15 @@ Scope {
         function toggle(): void { if (islandVariants.island) islandVariants.island.toggleLauncher(); }
         function isOpen(): bool { return islandVariants.island ? islandVariants.island.launcherOpen : false; }
         function results(): int { return islandVariants.island ? islandVariants.island.apiLauncherResults() : 0; }
+    }
+
+    IpcHandler {
+        target: "record"
+
+        function start(): void { if (islandVariants.island) Recorder.start(); }
+        function pause(): void { if (islandVariants.island) Recorder.pauseToggle(); }
+        function stop(): void { if (islandVariants.island) Recorder.stop(); }
+        function settings(): void { if (islandVariants.island) islandVariants.island.openRecordSettings(); }
+        function state(): string { return Recorder.state; }
     }
 }
