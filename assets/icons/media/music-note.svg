@@ -1,8 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-  <g fill-opacity="0.4">
-    <rect x="8.1" y="6.4" width="1.8" height="11" rx="0.9"/>
-    <rect x="16.6" y="4.6" width="1.8" height="11" rx="0.9"/>
-  </g>
+  <rect x="8.1" y="6.4" width="1.8" height="11" rx="0.9"/>
+  <rect x="16.6" y="4.6" width="1.8" height="11" rx="0.9"/>
   <circle cx="7.1" cy="17.4" r="2.5"/>
   <circle cx="17.6" cy="15.4" r="2.5"/>
   <path d="M8.39 7.68L19.49 5.78A1.15 1.15 0 0 0 19.11 3.52L8.01 4.27A1.15 1.15 0 0 0 8.39 7.68Z"/>

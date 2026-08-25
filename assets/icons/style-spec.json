@@ -1,17 +1,17 @@
 {
   "name": "harmonica-icons",
-  "style": "filled-duotone-rounded",
+  "style": "filled-rounded",
   "grid": 24,
   "padding": 2,
   "fill": "currentColor",
-  "duotoneSecondaryOpacity": 0.4,
+  "layers": 1,
   "cornerRadius": 3,
   "opticalBalance": true,
   "iconCount": 31,
   "notes": [
-    "Two layers per icon, both currentColor: primary fill-opacity absent (=1), secondary fill-opacity=\"0.4\".",
-    "Secondary never overlaps primary (same-color alpha stacking is invisible); it sits beside/under in negative space.",
-    "Boxes rx=3; line segments become filled capsules (rx=length/2); polygon vertices smoothed with quadratic cuts. Zero sharp 90-degree corners.",
+    "Single solid layer, currentColor only. NO duotone, NO opacity variants, NO background tiles/badges behind glyphs.",
+    "Interior details are punched holes via fill-rule=evenodd, never a second tone.",
+    "Boxes rx=3; line segments are filled capsules; polygon vertices smoothed with quadratic cuts. Zero sharp 90-degree corners.",
     "No strokes anywhere. No hex. No transforms."
   ],
   "categories": {

@@ -1,10 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-  <g fill-opacity="0.4">
-    <rect x="2.6" y="4.6" width="18.8" height="6.4" rx="3"/>
-    <rect x="2.6" y="13" width="18.8" height="6.4" rx="3"/>
-  </g>
-  <rect x="5.2" y="6.85" width="5.5" height="1.9" rx="0.95"/>
+  <path fill-rule="evenodd" d="M5.6 4.6H18.4Q21.4 4.6 21.4 7.6V8Q21.4 11 18.4 11H5.6Q2.6 11 2.6 8V7.6Q2.6 4.6 5.6 4.6ZM7.15 6.85Q5.2 6.85 5.2 7.8Q5.2 8.75 7.15 8.75H8.75Q10.7 8.75 10.7 7.8Q10.7 6.85 8.75 6.85Z"/>
   <circle cx="18.3" cy="7.8" r="1.15"/>
-  <rect x="5.2" y="15.25" width="5.5" height="1.9" rx="0.95"/>
+  <path fill-rule="evenodd" d="M5.6 13H18.4Q21.4 13 21.4 16V16.4Q21.4 19.4 18.4 19.4H5.6Q2.6 19.4 2.6 16.4V16Q2.6 13 5.6 13ZM7.15 15.25Q5.2 15.25 5.2 16.2Q5.2 17.15 7.15 17.15H8.75Q10.7 17.15 10.7 16.2Q10.7 15.25 8.75 15.25Z"/>
   <circle cx="18.3" cy="16.2" r="1.15"/>
 </svg>
