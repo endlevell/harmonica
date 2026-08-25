@@ -3,9 +3,13 @@ import qs.Common
 import qs.Services
 import qs.Widgets
 
-// IDLE row: network icon · clock · battery.
+// IDLE row: network icon · clock · battery. Width hugs its content.
 Item {
     id: bar
+
+    // exact pill width needed: side pads + icon + clock + battery + two gaps
+    readonly property int contentWidth: netIcon.width + clockLbl.width + battRow.width
+        + Theme.spaceMd * 2 + Theme.spaceLg * 2
 
     Timer {
         interval: 500
@@ -28,6 +32,7 @@ Item {
     }
 
     Text {
+        id: clockLbl
         text: Qt.formatDateTime(bar.now, SettingsData.showSeconds ? "HH:mm:ss" : "HH:mm")
         color: Theme.foreground
         font.pixelSize: Theme.fontSm
@@ -37,6 +42,7 @@ Item {
     }
 
     Row {
+        id: battRow
         spacing: Theme.spaceXs
         anchors.right: parent.right
         anchors.rightMargin: Theme.spaceMd

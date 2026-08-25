@@ -33,12 +33,17 @@ PanelWindow {
 
     mask: Region { item: pill }
 
-    // content column, centered horizontally
+    // content column, sized to the idle pill's natural width; expands to panel
     Item {
         id: content
         anchors.horizontalCenter: parent.horizontalCenter
-        width: Math.min(win.screen.width - Theme.spaceLg * 2, Theme.panelW)
+        width: win.expanded
+            ? Math.min(win.screen.width - Theme.spaceLg * 2, Theme.panelW)
+            : idleBar.contentWidth
         height: parent.height
+        Behavior on width {
+            NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline }
+        }
 
         // the island surface: pill when idle, rounded card when open — fully opaque
         Rectangle {
@@ -51,6 +56,7 @@ PanelWindow {
         }
 
         IdleBar {
+            id: idleBar
             anchors.fill: parent
             visible: !win.expanded
             opacity: win.expanded ? 0 : 1
