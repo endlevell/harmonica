@@ -15,6 +15,7 @@ PanelWindow {
     readonly property ShellScreen screenRef: modelData as ShellScreen
     readonly property bool expanded: phase === "panel"
     property string phase: "idle"
+    onPhaseChanged: islandBody.trigger(1)   // signature twitch on every phase change
 
     screen: screenRef
     anchors { top: true; left: true; right: true }
@@ -33,7 +34,8 @@ PanelWindow {
 
     mask: Region { item: pill }
 
-    // content column, sized to the idle pill's natural width; expands to panel
+    // content column, sized to the idle pill's natural width; expands to panel.
+    // Twitch wraps EVERYTHING visual — every state change wobbles through it.
     Item {
         id: content
         anchors.horizontalCenter: parent.horizontalCenter
@@ -45,30 +47,43 @@ PanelWindow {
             NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline }
         }
 
-        // the island surface: pill when idle, rounded card when open — fully opaque
-        Rectangle {
-            id: pill
+        Twitch {
+            id: islandBody
             anchors.fill: parent
-            radius: win.expanded ? Theme.radiusMd : height / 2
-            color: Theme.background
-            clip: true
-            Behavior on radius { NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline } }
-        }
 
-        IdleBar {
-            id: idleBar
-            anchors.fill: parent
-            visible: !win.expanded
-            opacity: win.expanded ? 0 : 1
-            enabled: !win.expanded
-            Behavior on opacity { NumberAnimation { duration: Theme.durFast } }
-        }
+            // the island surface: pill when idle, rounded card when open — fully opaque
+            Rectangle {
+                id: pill
+                anchors.fill: parent
+                radius: win.expanded ? Theme.radiusMd : height / 2
+                color: Theme.background
+                clip: true
+                Behavior on radius { NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline } }
+            }
 
-        PanelPages {
-            anchors.fill: parent
-            visible: win.expanded
-            opacity: win.expanded ? 1 : 0
-            enabled: win.expanded
+            IdleBar {
+                id: idleBar
+                anchors.fill: parent
+                visible: !win.expanded
+                opacity: win.expanded ? 0 : 1
+                enabled: !win.expanded
+                Behavior on opacity { NumberAnimation { duration: Theme.durFast } }
+            }
+
+            PanelPages {
+                id: panelPages
+                anchors.fill: parent
+                visible: win.expanded
+                opacity: win.expanded ? 1 : 0
+                enabled: win.expanded
+                onPageIndexChanged: islandBody.trigger(0.5)   // lighter twitch on page slide
+            }
+
+            PulseDot {
+                anchors.fill: parent
+                phase: win.phase
+                pageIndex: panelPages.pageIndex
+            }
         }
     }
 
