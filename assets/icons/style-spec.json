@@ -1,0 +1,21 @@
+{
+  "name": "harmonica-icons",
+  "preset": "clean",
+  "grid": 24,
+  "strokeWidth": 1.5,
+  "strokeLinecap": "round",
+  "strokeLinejoin": "round",
+  "cornerRadius": 2,
+  "padding": 2,
+  "opticalBalance": true,
+  "colorMode": "currentColor",
+  "iconCount": 31,
+  "categories": {
+    "status": ["wifi", "battery-low", "battery-mid", "battery-full", "battery-charging", "bluetooth", "airplane"],
+    "system": ["cpu", "ram", "disk", "temperature", "gear"],
+    "media": ["play", "pause", "stop", "next", "prev", "shuffle", "repeat", "music-note"],
+    "actions": ["search", "close", "minimize", "arrow-left", "arrow-right", "refresh"],
+    "record": ["record-circle", "pause-circle", "stop-circle", "screenshot", "scissors"]
+  },
+  "generated": "2026-08-25"
+}
