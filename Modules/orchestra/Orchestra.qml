@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import qs.Common
+import qs.Services
 import qs.Widgets
 
 // The island. One PanelWindow living in discrete phases:
@@ -13,8 +14,11 @@ PanelWindow {
 
     required property var modelData
     readonly property ShellScreen screenRef: modelData as ShellScreen
-    readonly property bool expanded: phase === "panel"
-    property string phase: "idle"
+    readonly property bool expanded: hoverOpen
+    property bool hoverOpen: false
+    readonly property string basePhase: Mpris.playing ? "music" : "idle"
+    readonly property bool musicVisible: basePhase === "music"
+    readonly property string phase: hoverOpen ? "panel" : basePhase
     onPhaseChanged: islandBody.trigger(1)   // signature twitch on every phase change
 
     screen: screenRef
@@ -34,14 +38,12 @@ PanelWindow {
 
     mask: Region { item: pill }
 
-    // content column, sized to the idle pill's natural width; expands to panel.
-    // Twitch wraps EVERYTHING visual — every state change wobbles through it.
+    // content column: idle pill hugs content · music strip hugs content · panel fixed.
     Item {
         id: content
         anchors.horizontalCenter: parent.horizontalCenter
-        width: win.expanded
-            ? Math.min(win.screen.width - Theme.spaceLg * 2, Theme.panelW)
-            : idleBar.contentWidth
+        width: win.expanded ? Math.min(win.screen.width - Theme.spaceLg * 2, Theme.panelW)
+             : win.basePhase === "music" ? musicStrip.contentWidth : idleBar.contentWidth
         height: parent.height
         Behavior on width {
             NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline }
@@ -61,13 +63,24 @@ PanelWindow {
                 Behavior on radius { NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline } }
             }
 
+            // IDLE row slides DOWN out of view when music starts (spec §1.3);
+            // music strip takes its place from above. Reverts on stop.
             IdleBar {
                 id: idleBar
                 anchors.fill: parent
-                visible: !win.expanded
-                opacity: win.expanded ? 0 : 1
-                enabled: !win.expanded
-                Behavior on opacity { NumberAnimation { duration: Theme.durFast } }
+                visible: !win.expanded && y < Theme.barH
+                enabled: !win.expanded && !win.musicVisible
+                y: win.expanded || !win.musicVisible ? 0 : height + Theme.spaceXs
+                Behavior on y { NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline } }
+            }
+
+            MusicStrip {
+                id: musicStrip
+                anchors.fill: parent
+                visible: !win.expanded && win.musicVisible
+                enabled: !win.expanded && win.musicVisible
+                y: win.expanded || win.musicVisible ? 0 : -(height + Theme.spaceXs)
+                Behavior on y { NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline } }
             }
 
             PanelPages {
@@ -87,32 +100,48 @@ PanelWindow {
         }
     }
 
+    function apiIsOpen(): bool { return win.hoverOpen }
+    function apiPhase(): string { return win.phase }
+    function apiPage(): int { return panelPages.pageIndex }
+    function apiNextPage(): void { if (win.expanded) panelPages.pageIndex = (panelPages.pageIndex + 1) % panelPages.pageCount }
+    function apiPrevPage(): void { if (win.expanded) panelPages.pageIndex = (panelPages.pageIndex + panelPages.pageCount - 1) % panelPages.pageCount }
+    function apiOpen(): void { win.hoverOpen = true }
+    function apiClose(): void { win.hoverOpen = false }
+
+    // pure hover tracker — NoButton so clicks/wheel pass through to content below
     MouseArea {
-        id: interaction
+        id: hoverTrack
         anchors.fill: content
         hoverEnabled: true
-        acceptedButtons: Qt.LeftButton
+        acceptedButtons: Qt.NoButton
         cursorShape: win.expanded ? Qt.ArrowCursor : Qt.PointingHandCursor
-        onClicked: if (!win.expanded) win.phase = "panel"
         onContainsMouseChanged: {
             if (containsMouse) {
                 closeDelay.stop();
-                if (!win.expanded) win.phase = "panel";
+                win.hoverOpen = true;
             } else {
                 closeDelay.restart();
             }
         }
     }
 
+    // click-to-open only while idle/music — never steals page or player clicks
+    MouseArea {
+        anchors.fill: content
+        enabled: !win.expanded
+        acceptedButtons: Qt.LeftButton
+        onClicked: win.hoverOpen = true
+    }
+
     Timer {
         id: closeDelay
         interval: 450
-        onTriggered: if (!interaction.containsMouse) win.phase = "idle"
+        onTriggered: if (!hoverTrack.containsMouse) win.hoverOpen = false
     }
 
     Shortcut {
         sequence: "Escape"
         enabled: win.expanded
-        onActivated: win.phase = "idle"
+        onActivated: win.hoverOpen = false
     }
 }

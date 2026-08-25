@@ -61,6 +61,7 @@ Singleton {
     readonly property int spaceXl: 24
 
     // ---- radii ----
+    readonly property real radiusXs: 5
     readonly property real radiusSm: 8
     readonly property real radiusMd: 14
     readonly property real radiusLg: 22
