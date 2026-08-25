@@ -45,8 +45,6 @@ Singleton {
     readonly property color surface:         Qt.lighter(background, 1.16)
     readonly property color surfaceHover:    Qt.lighter(background, 1.30)
     readonly property color dimText:         Qt.darker(foreground, 1.55)
-    // translucent island glass
-    readonly property color scrim:           Qt.rgba(background.r, background.g, background.b, 0.92)
 
     // ---- type scale ----
     readonly property int fontXs: 11
@@ -68,11 +66,11 @@ Singleton {
     readonly property real radiusLg: 22
     readonly property real radiusFull: 9999
 
-    // ---- island geometry ----
-    readonly property int barH: 56
-    readonly property int idleW: 380
-    readonly property int panelW: 780
-    readonly property int panelH: 300
+    // ---- island geometry (compact, dynamic-island proportions) ----
+    readonly property int barH: 38
+    readonly property int idleW: 280
+    readonly property int panelW: 460
+    readonly property int panelH: 220
 
     // ---- motion ----
     readonly property int durFast: 150

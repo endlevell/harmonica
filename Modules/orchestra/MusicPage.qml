@@ -23,7 +23,7 @@ Item {
         visible: !Mpris.hasPlayer
         spacing: Theme.spaceSm
 
-        Icon { category: "media"; name: "music-note"; size: 36; color: Theme.outline; anchors.horizontalCenter: parent.horizontalCenter }
+        Icon { category: "media"; name: "music-note"; size: 26; color: Theme.outline; anchors.horizontalCenter: parent.horizontalCenter }
         Text {
             text: "Nothing playing"
             color: Theme.dimText
@@ -35,18 +35,18 @@ Item {
     // player -----------------------------------------------------------
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Theme.spaceLg
+        anchors.margins: Theme.spaceMd
         visible: Mpris.hasPlayer
-        spacing: Theme.spaceMd
+        spacing: Theme.spaceSm
 
         Row {
             spacing: Theme.spaceLg
             Layout.fillWidth: true
 
             Rectangle {
-                width: 92
-                height: 92
-                radius: Theme.radiusMd
+                width: 64
+                height: 64
+                radius: Theme.radiusSm
                 color: Theme.surface
                 clip: true
                 anchors.verticalCenter: parent.verticalCenter
@@ -63,7 +63,7 @@ Item {
                     visible: Mpris.artUrl === ""
                     category: "media"
                     name: "music-note"
-                    size: 32
+                    size: 20
                     color: Theme.outline
                 }
             }
@@ -71,13 +71,13 @@ Item {
             Column {
                 spacing: Theme.spaceXs
                 anchors.verticalCenter: parent.verticalCenter
-                width: parent.width - 92 - Theme.spaceLg
+                width: parent.width - 64 - Theme.spaceLg
 
                 Text {
                     width: parent.width
                     text: Mpris.title || "—"
                     color: Theme.foreground
-                    font.pixelSize: Theme.fontMd
+                    font.pixelSize: Theme.fontSm
                     font.weight: Font.DemiBold
                     elide: Text.ElideRight
                 }
@@ -98,7 +98,7 @@ Item {
 
             Rectangle {
                 width: parent.width
-                height: 4
+                height: 3
                 radius: Theme.radiusFull
                 color: Theme.surfaceHover
 
@@ -114,9 +114,9 @@ Item {
             RowLayout {
                 width: parent.width
 
-                Text { text: fmtTime(Mpris.positionSecs); color: Theme.dimText; font.pixelSize: Theme.fontXs }
+                Text { text: fmtTime(Mpris.positionSecs); color: Theme.dimText; font.pixelSize: 10 }
                 Item { Layout.fillWidth: true; height: 1 }
-                Text { text: fmtTime(Mpris.lengthSecs); color: Theme.dimText; font.pixelSize: Theme.fontXs }
+                Text { text: fmtTime(Mpris.lengthSecs); color: Theme.dimText; font.pixelSize: 10 }
             }
         }
 
@@ -128,7 +128,7 @@ Item {
             IconButton {
                 category: "media"
                 iconName: "prev"
-                iconSize: 22
+                iconSize: 17
                 enabled: Mpris.canGoPrevious
                 onClicked: Mpris.previous()
                 Layout.alignment: Qt.AlignVCenter
@@ -136,8 +136,8 @@ Item {
             IconButton {
                 category: "media"
                 iconName: Mpris.playing ? "pause" : "play"
-                iconSize: 26
-                pad: Theme.spaceMd
+                iconSize: 20
+                pad: Theme.spaceSm
                 accent: true
                 enabled: Mpris.canPlay
                 onClicked: Mpris.togglePlaying()
@@ -145,7 +145,7 @@ Item {
             IconButton {
                 category: "media"
                 iconName: "next"
-                iconSize: 22
+                iconSize: 17
                 enabled: Mpris.canGoNext
                 onClicked: Mpris.next()
                 Layout.alignment: Qt.AlignVCenter

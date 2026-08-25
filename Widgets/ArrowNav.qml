@@ -18,11 +18,12 @@ Item {
         visible: nav.showLeft
         category: "actions"
         iconName: "arrow-left"
-        iconSize: 18
-        opacity: 0.7
+        iconSize: 14
+        pad: 5
+        opacity: 0.8
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        anchors.leftMargin: Theme.spaceXs
+        anchors.leftMargin: Theme.spaceXs + 2
         onClicked: nav.prevPage()
     }
 
@@ -31,11 +32,12 @@ Item {
         visible: nav.showRight
         category: "actions"
         iconName: "arrow-right"
-        iconSize: 18
-        opacity: 0.7
+        iconSize: 14
+        pad: 5
+        opacity: 0.8
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.rightMargin: Theme.spaceXs
+        anchors.rightMargin: Theme.spaceXs + 2
         onClicked: nav.nextPage()
     }
 }

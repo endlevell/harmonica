@@ -41,7 +41,8 @@ Canvas {
             ctx.lineTo(width, height);
             ctx.lineTo(0, height);
             ctx.closePath();
-            ctx.fillStyle = Qt.rgba(lineColor.r, lineColor.g, lineColor.b, 0.22);
+            // opaque blend — no alpha anywhere (user rule); sits on background card
+            ctx.fillStyle = String(Theme.surface);
             ctx.fill();
             ctx.restore();
             // re-trace stroke path (closePath mutated it)

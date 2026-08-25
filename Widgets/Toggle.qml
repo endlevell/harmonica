@@ -9,19 +9,16 @@ Rectangle {
 
     property bool checked: false
 
-    implicitWidth: 40
-    implicitHeight: 22
+    implicitWidth: 34
+    implicitHeight: 18
     radius: Theme.radiusFull
     color: checked ? Theme.primary : Theme.surfaceHover
-    border.color: checked ? Theme.primary : Theme.outline
-    border.width: 1
     Behavior on color { ColorAnimation { duration: Theme.durFast } }
-    Behavior on border.color { ColorAnimation { duration: Theme.durFast } }
 
     Rectangle {
         id: handle
-        width: 16
-        height: 16
+        width: 12
+        height: 12
         radius: Theme.radiusFull
         color: t.checked ? Theme.background : Theme.foreground
         y: (parent.height - height) / 2

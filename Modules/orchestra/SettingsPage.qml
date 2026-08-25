@@ -10,7 +10,7 @@ Item {
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: Theme.spaceLg
-        spacing: Theme.spaceMd
+        spacing: Theme.spaceSm
 
         Text {
             text: "Settings"

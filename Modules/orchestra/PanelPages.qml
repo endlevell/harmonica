@@ -45,18 +45,18 @@ Item {
     // page dots — the PulseDot will ride these in Phase 2
     Row {
         id: dots
-        spacing: Theme.spaceXs
+        spacing: 4
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Theme.spaceSm
+        anchors.bottomMargin: 5
 
         Repeater {
             model: pages.pageCount
 
             Rectangle {
                 required property int index
-                width: 6
-                height: 6
+                width: 5
+                height: 5
                 radius: Theme.radiusFull
                 color: pages.pageIndex === index ? Theme.primary : Theme.outline
                 Behavior on color { ColorAnimation { duration: Theme.durFast } }

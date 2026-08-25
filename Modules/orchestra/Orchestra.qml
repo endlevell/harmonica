@@ -18,10 +18,10 @@ PanelWindow {
 
     screen: screenRef
     anchors { top: true; left: true; right: true }
-    margins { top: Theme.spaceSm }
+    margins { top: Theme.spaceXs }
     color: "transparent"
     implicitHeight: expanded ? Theme.panelH : Theme.barH
-    exclusiveZone: Theme.barH + Theme.spaceSm * 2
+    exclusiveZone: Theme.barH + Theme.spaceXs * 2
 
     Behavior on implicitHeight {
         NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline }
@@ -40,14 +40,12 @@ PanelWindow {
         width: Math.min(win.screen.width - Theme.spaceLg * 2, Theme.panelW)
         height: parent.height
 
-        // the island surface: pill when idle, rounded card when open
+        // the island surface: pill when idle, rounded card when open — fully opaque
         Rectangle {
             id: pill
             anchors.fill: parent
-            radius: win.expanded ? Theme.radiusLg : height / 2
-            color: Theme.scrim
-            border.width: 1
-            border.color: Qt.rgba(Theme.outline.r, Theme.outline.g, Theme.outline.b, 0.5)
+            radius: win.expanded ? Theme.radiusMd : height / 2
+            color: Theme.background
             clip: true
             Behavior on radius { NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline } }
         }

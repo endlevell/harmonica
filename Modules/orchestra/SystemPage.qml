@@ -20,10 +20,10 @@ Item {
 
     Grid {
         anchors.fill: parent
-        anchors.margins: Theme.spaceLg
+        anchors.margins: Theme.spaceMd
         columns: 2
-        columnSpacing: Theme.spaceXl
-        rowSpacing: Theme.spaceMd
+        columnSpacing: Theme.spaceLg
+        rowSpacing: Theme.spaceSm
 
         // CPU ----------------------------------------------------------
         Column {
@@ -36,7 +36,7 @@ Item {
                 Text { text: "CPU"; color: Theme.dimText; font.pixelSize: Theme.fontSm; anchors.verticalCenter: parent.verticalCenter }
                 Text { text: Math.round(CpuRam.cpuPct * 100) + "%"; color: Theme.foreground; font.pixelSize: Theme.fontSm; font.weight: Font.DemiBold; anchors.verticalCenter: parent.verticalCenter }
             }
-            LineGraph { width: parent.width; height: 44; values: CpuRam.cpuHistory; lineColor: Theme.primary }
+            LineGraph { width: parent.width; height: 30; values: CpuRam.cpuHistory; lineColor: Theme.primary }
         }
 
         // RAM ----------------------------------------------------------
@@ -56,7 +56,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
-            LineGraph { width: parent.width; height: 44; values: CpuRam.memHistory; lineColor: Theme.warn; normalizeMax: 1 }
+            LineGraph { width: parent.width; height: 30; values: CpuRam.memHistory; lineColor: Theme.warn; normalizeMax: 1 }
         }
 
         // NET ----------------------------------------------------------
