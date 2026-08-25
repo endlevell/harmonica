@@ -6,18 +6,54 @@
   "licenseFile": "LICENSE",
   "grid": "0 -960 960 960",
   "renderedSize": 24,
-  "iconCount": 31,
+  "iconCount": 33,
   "notes": [
     "Vendored Material Symbols (Rounded, fill weight 1). Files normalized: width/height 24, fill currentColor on every path.",
     "OUR filenames and category folders are canonical — Icon.qml resolves category/name below; materialName records upstream origin.",
     "Do not hand-edit path data; re-fetch from upstream instead."
   ],
   "categories": {
-    "status": ["wifi", "battery-low", "battery-mid", "battery-full", "battery-charging", "bluetooth", "airplane"],
-    "system": ["cpu", "ram", "disk", "temperature", "gear"],
-    "media": ["play", "pause", "stop", "next", "prev", "shuffle", "repeat", "music-note"],
-    "actions": ["search", "close", "minimize", "arrow-left", "arrow-right", "refresh"],
-    "record": ["record-circle", "pause-circle", "stop-circle", "screenshot", "scissors"]
+    "status": [
+      "wifi",
+      "battery-low",
+      "battery-mid",
+      "battery-full",
+      "battery-charging",
+      "bluetooth",
+      "airplane"
+    ],
+    "system": [
+      "cpu",
+      "ram",
+      "disk",
+      "temperature",
+      "gear"
+    ],
+    "media": [
+      "play",
+      "pause",
+      "stop",
+      "next",
+      "prev",
+      "shuffle",
+      "repeat",
+      "music-note"
+    ],
+    "actions": [
+      "search",
+      "close",
+      "minimize",
+      "arrow-left",
+      "arrow-right",
+      "refresh"
+    ],
+    "record": [
+      "record-circle",
+      "pause-circle",
+      "stop-circle",
+      "screenshot",
+      "scissors"
+    ]
   },
   "materialNames": {
     "status/wifi": "wifi",
@@ -50,7 +86,9 @@
     "record/pause-circle": "pause_circle",
     "record/stop-circle": "stop_circle",
     "record/screenshot": "screenshot",
-    "record/scissors": "content_cut"
+    "record/scissors": "content_cut",
+    "status/wifi-off": "wifi_off",
+    "status/ethernet": "lan"
   },
   "generated": "2026-08-25"
 }
