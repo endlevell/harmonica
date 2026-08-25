@@ -10,11 +10,13 @@ Rectangle {
     property string label: ""
     property bool accent: false     // primary fill
     property bool danger: false     // destructive fill
+    property bool enabled_: true
 
     width: lbl.implicitWidth + Theme.spaceMd * 2
     height: 24
     radius: Theme.radiusFull
-    color: m.containsMouse ? Qt.darker(baseCol, 1.15) : baseCol
+    opacity: enabled_ ? 1 : 0.4
+    color: m.containsMouse && enabled_ ? Qt.darker(baseCol, 1.15) : baseCol
     Behavior on color { ColorAnimation { duration: Theme.durFast } }
 
     readonly property color baseCol: danger ? Theme.danger : accent ? Theme.primary : Theme.surfaceHover
@@ -32,7 +34,8 @@ Rectangle {
         id: m
         anchors.fill: parent
         hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: b.clicked()
+        enabled: b.enabled_
+        cursorShape: b.enabled_ ? Qt.PointingHandCursor : Qt.ArrowCursor
+        onClicked: if (b.enabled_) b.clicked()
     }
 }

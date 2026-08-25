@@ -72,8 +72,10 @@ Singleton {
     readonly property int panelW: 460
     readonly property int panelH: 220
     readonly property int launcherH: 330
+    readonly property int annotateW: 680
+    readonly property int annotateH: 430
     // window itself NEVER resizes (ActivSpot lesson); only inner items animate
-    readonly property int islandWinH: Math.max(panelH, launcherH) + spaceXs * 2
+    readonly property int islandWinH: Math.max(Math.max(panelH, launcherH), annotateH) + spaceXs * 2
 
     // ---- morph choreography ----
     readonly property int morphDurExpand: 420      // container grow (slight back)

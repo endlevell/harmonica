@@ -25,8 +25,11 @@ PanelWindow {
     property bool hoverOpen: false          // panel requested via hover/click
     property bool launcherOpen: false       // Super+S / IPC
     property bool recordSettingsOpen: false
+    property bool annotateOpen: false
+    property string annotatePath: ""        // frozen shot feeding the annotator
 
-    readonly property string targetView: recordSettingsOpen ? "recordSettings"
+    readonly property string targetView: annotateOpen ? "annotate"
+        : recordSettingsOpen ? "recordSettings"
         : launcherOpen ? "launcher"
         : hoverOpen ? "panel" : basePhase
 
@@ -99,7 +102,7 @@ PanelWindow {
 
     WlrLayershell.namespace: "harmonica:island"
     WlrLayershell.layer: WlrLayer.Top
-    WlrLayershell.keyboardFocus: launcherOpen || recordSettingsOpen
+    WlrLayershell.keyboardFocus: launcherOpen || recordSettingsOpen || annotateOpen
         ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand
 
     mask: Region { item: pill }
@@ -201,6 +204,17 @@ PanelWindow {
                 onBackRequested: win.recordSettingsOpen = false
                 Component.onCompleted: Recorder.refreshAudioSources()
             }
+
+            AnnotateView {
+                id: annotateView
+                anchors.fill: parent
+                imagePath: win.annotatePath
+                opacity: shownView === "annotate" ? enterOp : leavingView === "annotate" ? leaveOp : 0
+                y: shownView === "annotate" ? enterY : leavingView === "annotate" ? leaveY : 0
+                visible: opacity > 0.001
+                enabled: shownView === "annotate"
+                onClosed: win.annotateOpen = false
+            }
         }
     }
 
@@ -218,6 +232,15 @@ PanelWindow {
         recordSettingsOpen = true;
     }
 
+    function openAnnotate(path: string): void {
+        hoverOpen = false;
+        recordSettingsOpen = false;
+        launcherOpen = false;
+        annotatePath = path;
+        annotateOpen = true;
+    }
+    function apiSaveAnnotate(): string { annotateView.doSave(); return Screenshot.lastShot; }
+
     // ---- input ----------------------------------------------------------
     // pure hover tracker (NoButton → never blocks clicks/wheel on content)
     MouseArea {
@@ -225,7 +248,7 @@ PanelWindow {
         anchors.fill: content
         hoverEnabled: true
         acceptedButtons: Qt.NoButton
-        cursorShape: hoverOpen || launcherOpen || recordSettingsOpen ? Qt.ArrowCursor : Qt.PointingHandCursor
+        cursorShape: hoverOpen || launcherOpen || recordSettingsOpen || annotateOpen ? Qt.ArrowCursor : Qt.PointingHandCursor
         onContainsMouseChanged: {
             if (containsMouse) {
                 closeDelay.stop();
@@ -239,7 +262,7 @@ PanelWindow {
     // click-to-open only while a pill phase shows; never steals page clicks
     MouseArea {
         anchors.fill: content
-        enabled: !hoverOpen && !launcherOpen && !recordSettingsOpen
+        enabled: !hoverOpen && !launcherOpen && !recordSettingsOpen && !annotateOpen
         acceptedButtons: Qt.LeftButton
         onClicked: win.hoverOpen = true
     }
@@ -252,9 +275,10 @@ PanelWindow {
 
     Shortcut {
         sequence: "Escape"
-        enabled: hoverOpen || launcherOpen || recordSettingsOpen
+        enabled: hoverOpen || launcherOpen || recordSettingsOpen || annotateOpen
         onActivated: {
-            if (recordSettingsOpen) recordSettingsOpen = false;
+            if (annotateOpen) annotateOpen = false;
+            else if (recordSettingsOpen) recordSettingsOpen = false;
             else if (launcherOpen) closeLauncher();
             else hoverOpen = false;
         }

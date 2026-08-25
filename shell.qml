@@ -1,8 +1,11 @@
 // Harmonica — composition root. Instantiates surfaces per screen; nothing else.
+// The ONLY non-island surface is RegionSelect — the approved fullscreen
+// exception for screenshot capture.
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Modules.orchestra
+import qs.Modules.screenshot
 import qs.Services
 
 Scope {
@@ -15,6 +18,28 @@ Scope {
         Orchestra {}
 
         readonly property var island: instances[0] ?? null
+    }
+
+    RegionSelect {
+        id: regionSelect
+
+        onRegionAccepted: (x, y, w, h) => {
+            pendingAnnotate = true;
+            Screenshot.captureRegionToFile(x, y, w, h, "/tmp/harmonica-annot-" + Screenshot.stamp() + ".png");
+        }
+        onCancelled: pendingAnnotate = false
+    }
+
+    property bool pendingAnnotate: false
+
+    Connections {
+        target: Screenshot
+        function onCaptured(path: string) {
+            if (root.pendingAnnotate && islandVariants.island && path !== "") {
+                root.pendingAnnotate = false;
+                islandVariants.island.openAnnotate(path);
+            }
+        }
     }
 
     IpcHandler {
@@ -47,5 +72,27 @@ Scope {
         function stop(): void { if (islandVariants.island) Recorder.stop(); }
         function settings(): void { if (islandVariants.island) islandVariants.island.openRecordSettings(); }
         function state(): string { return Recorder.state; }
+    }
+
+    IpcHandler {
+        target: "screenshot"
+
+        function region(): void { regionSelect.open("snip"); }
+        function window(): void { regionSelect.open("window"); }
+        function fullscreen(): void {
+            root.pendingAnnotate = true;
+            Screenshot.captureFull();
+        }
+        function annotate(path: string): void {
+            if (islandVariants.island) islandVariants.island.openAnnotate(path);
+        }
+        function save(): string {
+            return islandVariants.island ? islandVariants.island.apiSaveAnnotate() : "";
+        }
+        function full(): string {
+            Screenshot.captureFull();
+            return Screenshot.lastShot;
+        }
+        function copyLast(): void { Screenshot.copyLast(); }
     }
 }
