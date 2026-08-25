@@ -1,15 +1,19 @@
 {
   "name": "harmonica-icons",
-  "preset": "clean",
+  "style": "filled-duotone-rounded",
   "grid": 24,
-  "strokeWidth": 1.5,
-  "strokeLinecap": "round",
-  "strokeLinejoin": "round",
-  "cornerRadius": 2,
   "padding": 2,
+  "fill": "currentColor",
+  "duotoneSecondaryOpacity": 0.4,
+  "cornerRadius": 3,
   "opticalBalance": true,
-  "colorMode": "currentColor",
   "iconCount": 31,
+  "notes": [
+    "Two layers per icon, both currentColor: primary fill-opacity absent (=1), secondary fill-opacity=\"0.4\".",
+    "Secondary never overlaps primary (same-color alpha stacking is invisible); it sits beside/under in negative space.",
+    "Boxes rx=3; line segments become filled capsules (rx=length/2); polygon vertices smoothed with quadratic cuts. Zero sharp 90-degree corners.",
+    "No strokes anywhere. No hex. No transforms."
+  ],
   "categories": {
     "status": ["wifi", "battery-low", "battery-mid", "battery-full", "battery-charging", "bluetooth", "airplane"],
     "system": ["cpu", "ram", "disk", "temperature", "gear"],

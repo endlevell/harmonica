@@ -1,7 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-  <polyline points="15.5 3.75 20.25 3.75 20.25 8.5"/>
-  <path d="M3.75 20.25L20.25 3.75"/>
-  <polyline points="20.25 15.5 20.25 20.25 15.5 20.25"/>
-  <path d="M14.25 14.25L20.25 20.25"/>
-  <path d="M3.75 3.75L9 9"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+  <g fill-opacity="0.4">
+    <path d="M3.63 5.97L12.23 14.57A0.95 0.95 0 0 0 13.57 13.23L4.97 4.63A0.95 0.95 0 0 0 3.63 5.97Z"/>
+    <path d="M14.6 16.29Q15.3 16.3 15.07 15.64L14.68 14.51Q14.45 13.85 13.96 14.34L12.54 15.75Q12.05 16.25 12.75 16.26Z"/>
+  </g>
+  <path d="M4.94 19.41L18.74 7.01A0.95 0.95 0 0 0 17.47 5.59L3.67 17.99A0.95 0.95 0 0 0 4.94 19.41Z"/>
+  <path d="M19.92 4.08Q20.6 3.9 20.42 4.58L19.83 6.79Q19.65 7.47 19.16 6.98L17.53 5.35Q17.03 4.85 17.71 4.67Z"/>
 </svg>

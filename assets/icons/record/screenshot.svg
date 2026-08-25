@@ -1,7 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M8 3.5H6A2.5 2.5 0 003.5 6v2"/>
-  <path d="M16 3.5h2A2.5 2.5 0 0120.5 6v2"/>
-  <path d="M8 20.5H6A2.5 2.5 0 013.5 18v-2"/>
-  <path d="M16 20.5h2a2.5 2.5 0 002.5-2.5v-2"/>
-  <circle cx="12" cy="12" r="2.25" fill="currentColor" stroke="none"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+  <circle cx="12" cy="12" r="8.4" fill-opacity="0.4"/>
+  <circle cx="12" cy="12" r="2.2"/>
+  <rect x="11.05" y="4.9" width="1.9" height="3" rx="0.95"/>
+  <rect x="11.05" y="16.1" width="1.9" height="3" rx="0.95"/>
+  <rect x="4.9" y="11.05" width="3" height="1.9" rx="0.95"/>
+  <rect x="16.1" y="11.05" width="3" height="1.9" rx="0.95"/>
 </svg>
