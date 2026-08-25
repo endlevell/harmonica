@@ -5,124 +5,212 @@ import qs.Common
 import qs.Services
 import qs.Widgets
 
-// The island. One PanelWindow living in discrete phases:
-//   idle (bar) ⇄ panel (3 pages). Music/record morphs arrive in later phases.
-// Full-width window; only the pill accepts input (mask). Expansion overlays —
-// exclusive zone stays fixed so windows below never jump.
+// The Orchestra — the SINGLE surface of Harmonica.
+// One PanelWindow whose size NEVER changes (islandWinH, transparent, masked);
+// an inner shape Item morphs between phase views:
+//   idle · music · panel(3 pages) · launcher
+//
+// Morph choreography (per STUDY-NOTES.md):
+//   twitch (70ms lead) → container sizes animate (expand: slight-back /
+//   retract: out-cubic) WHILE old view fades+slides out → new view fades+
+//   slides in as the container settles. Window geometry itself is constant.
 PanelWindow {
     id: win
 
     required property var modelData
     readonly property ShellScreen screenRef: modelData as ShellScreen
-    readonly property bool expanded: hoverOpen
-    property bool hoverOpen: false
-    readonly property string basePhase: Mpris.playing ? "music" : "idle"
-    readonly property bool musicVisible: basePhase === "music"
-    readonly property string phase: hoverOpen ? "panel" : basePhase
-    onPhaseChanged: islandBody.trigger(1)   // signature twitch on every phase change
 
+    // ---- phase machine -------------------------------------------------
+    readonly property string basePhase: Mpris.playing ? "music" : "idle"
+    property bool hoverOpen: false          // panel requested via hover/click
+    property bool launcherOpen: false       // Super+S / IPC
+
+    readonly property string targetView: launcherOpen ? "launcher"
+        : hoverOpen ? "panel" : basePhase
+
+    // what is mounted / animating
+    property string shownView: "idle"       // settled view
+    property string leavingView: ""         // view fading out during a morph
+    property string pendingView: ""         // destination of an in-flight morph
+    property bool sizeBig: false            // container target: card vs pill
+    property string sizeView: "idle"        // which small/huge height applies
+
+    function _isBig(v: string): bool { return v === "panel" || v === "launcher"; }
+
+    function goTo(view: string): void {
+        if (view === pendingView && commitDelay.running) return;
+        if (view === shownView && !commitDelay.running) return;
+        pendingView = view;
+        islandBody.trigger(1);              // twitch ALWAYS leads the morph
+        commitDelay.restart();
+    }
+
+    Timer {
+        id: commitDelay
+        interval: Theme.morphTwitchLead
+        onTriggered: {
+            if (pendingView === shownView) return;
+            leavingView = shownView;
+            sizeBig = win._isBig(pendingView);
+            sizeView = pendingView;
+            leaveOp = 1; leaveY = 0;
+            enterOp = 0; enterY = -10;
+            swapSeq.restart();
+        }
+    }
+
+    SequentialAnimation {
+        id: swapSeq
+
+        // old content exits first (~40% of morph)
+        ParallelAnimation {
+            NumberAnimation { target: win; property: "leaveOp"; to: 0; duration: Theme.morphOutMs; easing.type: Easing.InOutCubic }
+            NumberAnimation { target: win; property: "leaveY"; to: 12; duration: Theme.morphOutMs; easing.type: Easing.InCubic }
+        }
+        ScriptAction {
+            script: {
+                win.shownView = win.pendingView;
+                win.leavingView = "";
+                win.enterOp = 0;
+                win.enterY = -10;
+            }
+        }
+        // new content enters while container settles
+        ParallelAnimation {
+            NumberAnimation { target: win; property: "enterOp"; to: 1; duration: Theme.morphInMs; easing.type: Easing.OutCubic }
+            NumberAnimation { target: win; property: "enterY"; to: 0; duration: Theme.morphInMs + 60; easing.bezierCurve: Theme.easeDecel; easing.type: Easing.BezierSpline }
+        }
+    }
+
+    property real leaveOp: 0
+    property real leaveY: 0
+    property real enterOp: 1
+    property real enterY: 0
+
+    // ---- window: fixed size, transparent, input masked to the shape -----
     screen: screenRef
     anchors { top: true; left: true; right: true }
     margins { top: Theme.spaceXs }
     color: "transparent"
-    implicitHeight: expanded ? Theme.panelH : Theme.barH
-    exclusiveZone: Theme.barH + Theme.spaceXs * 2
-
-    Behavior on implicitHeight {
-        NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline }
-    }
+    implicitHeight: Theme.islandWinH                 // CONSTANT — never animated
+    exclusiveZone: Theme.barH + Theme.spaceXs * 2    // windows below keep their strip
 
     WlrLayershell.namespace: "harmonica:island"
     WlrLayershell.layer: WlrLayer.Top
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+    WlrLayershell.keyboardFocus: launcherOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand
 
     mask: Region { item: pill }
 
-    // content column: idle pill hugs content · music strip hugs content · panel fixed.
+    // ---- the morphing shape --------------------------------------------
     Item {
         id: content
         anchors.horizontalCenter: parent.horizontalCenter
-        width: win.expanded ? Math.min(win.screen.width - Theme.spaceLg * 2, Theme.panelW)
-             : win.basePhase === "music" ? musicStrip.contentWidth : idleBar.contentWidth
-        height: parent.height
+        width: sizeBig ? Math.min(win.screen.width - Theme.spaceLg * 2, Theme.panelW)
+             : sizeView === "music" ? musicStrip.contentWidth : idleBar.contentWidth
+        height: sizeBig ? (sizeView === "launcher" ? Theme.launcherH : Theme.panelH)
+                        : Theme.barH
         Behavior on width {
-            NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline }
+            NumberAnimation {
+                duration: sizeBig ? Theme.morphDurExpand : Theme.morphDurRetract
+                easing.type: sizeBig ? Easing.BezierSpline : Easing.OutCubic
+                easing.bezierCurve: sizeBig ? Theme.easeMorphExpand : []
+            }
+        }
+        Behavior on height {
+            NumberAnimation {
+                duration: sizeBig ? Theme.morphDurExpand : Theme.morphDurRetract
+                easing.type: sizeBig ? Easing.BezierSpline : Easing.OutCubic
+                easing.bezierCurve: sizeBig ? Theme.easeMorphExpand : []
+            }
         }
 
         Twitch {
             id: islandBody
             anchors.fill: parent
 
-            // the island surface: pill when idle, rounded card when open — fully opaque
             Rectangle {
                 id: pill
                 anchors.fill: parent
-                radius: win.expanded ? Theme.radiusMd : height / 2
+                radius: sizeBig ? Theme.radiusMd : height / 2
                 color: Theme.background
                 clip: true
-                Behavior on radius { NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline } }
+                Behavior on radius {
+                    NumberAnimation {
+                        duration: sizeBig ? Theme.morphDurExpand : Theme.morphDurRetract
+                        easing.type: Easing.OutCubic
+                    }
+                }
             }
 
-            // IDLE row slides DOWN out of view when music starts (spec §1.3);
-            // music strip takes its place from above. Reverts on stop.
+            // ---- phase views (sequenced by the controller) ----------------
             IdleBar {
                 id: idleBar
                 anchors.fill: parent
-                visible: !win.expanded && y < Theme.barH
-                enabled: !win.expanded && !win.musicVisible
-                y: win.expanded || !win.musicVisible ? 0 : height + Theme.spaceXs
-                Behavior on y { NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline } }
+                opacity: shownView === "idle" ? enterOp : leavingView === "idle" ? leaveOp : 0
+                y: shownView === "idle" ? enterY : leavingView === "idle" ? leaveY : 0
+                visible: opacity > 0.001
+                enabled: shownView === "idle"
             }
 
             MusicStrip {
                 id: musicStrip
                 anchors.fill: parent
-                visible: !win.expanded && win.musicVisible
-                enabled: !win.expanded && win.musicVisible
-                y: win.expanded || win.musicVisible ? 0 : -(height + Theme.spaceXs)
-                Behavior on y { NumberAnimation { duration: Theme.durNormal; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline } }
+                opacity: shownView === "music" ? enterOp : leavingView === "music" ? leaveOp : 0
+                y: shownView === "music" ? enterY : leavingView === "music" ? leaveY : 0
+                visible: opacity > 0.001
+                enabled: shownView === "music"
             }
 
             PanelPages {
                 id: panelPages
                 anchors.fill: parent
-                visible: win.expanded
-                opacity: win.expanded ? 1 : 0
-                enabled: win.expanded
-                onPageIndexChanged: islandBody.trigger(0.5)   // lighter twitch on page slide
+                opacity: shownView === "panel" ? enterOp : leavingView === "panel" ? leaveOp : 0
+                y: shownView === "panel" ? enterY : leavingView === "panel" ? leaveY : 0
+                visible: opacity > 0.001
+                enabled: shownView === "panel"
+                onPageIndexChanged: islandBody.trigger(0.5)
+            }
+
+            LauncherView {
+                id: launcherView
+                anchors.fill: parent
+                opacity: shownView === "launcher" ? enterOp : leavingView === "launcher" ? leaveOp : 0
+                y: shownView === "launcher" ? enterY : leavingView === "launcher" ? leaveY : 0
+                visible: opacity > 0.001
+                enabled: shownView === "launcher"
+                onClosed: win.closeLauncher()
             }
         }
     }
 
-    function apiIsOpen(): bool { return win.hoverOpen }
-    function apiPhase(): string { return win.phase }
-    function apiPage(): int { return panelPages.pageIndex }
-    function apiNextPage(): void { if (win.expanded) panelPages.pageIndex = (panelPages.pageIndex + 1) % panelPages.pageCount }
-    function apiPrevPage(): void { if (win.expanded) panelPages.pageIndex = (panelPages.pageIndex + panelPages.pageCount - 1) % panelPages.pageCount }
-    function apiOpen(): void { win.hoverOpen = true }
-    function apiClose(): void { win.hoverOpen = false }
+    // ---- reactive side effects ------------------------------------------
+    onTargetViewChanged: goTo(targetView)
+    onLauncherOpenChanged: {
+        if (launcherOpen) Qt.callLater(() => launcherView.grabFocus());
+    }
 
-    // pure hover tracker — NoButton so clicks/wheel pass through to content below
+    // ---- input ----------------------------------------------------------
+    // pure hover tracker (NoButton → never blocks clicks/wheel on content)
     MouseArea {
         id: hoverTrack
         anchors.fill: content
         hoverEnabled: true
         acceptedButtons: Qt.NoButton
-        cursorShape: win.expanded ? Qt.ArrowCursor : Qt.PointingHandCursor
+        cursorShape: hoverOpen || launcherOpen ? Qt.ArrowCursor : Qt.PointingHandCursor
         onContainsMouseChanged: {
             if (containsMouse) {
                 closeDelay.stop();
-                win.hoverOpen = true;
+                if (!launcherOpen) hoverOpen = true;
             } else {
                 closeDelay.restart();
             }
         }
     }
 
-    // click-to-open only while idle/music — never steals page or player clicks
+    // click-to-open only while a pill phase shows; never steals page clicks
     MouseArea {
         anchors.fill: content
-        enabled: !win.expanded
+        enabled: !hoverOpen && !launcherOpen
         acceptedButtons: Qt.LeftButton
         onClicked: win.hoverOpen = true
     }
@@ -135,7 +223,20 @@ PanelWindow {
 
     Shortcut {
         sequence: "Escape"
-        enabled: win.expanded
-        onActivated: win.hoverOpen = false
+        enabled: hoverOpen || launcherOpen
+        onActivated: { if (launcherOpen) closeLauncher(); else hoverOpen = false; }
     }
+
+    // ---- api --------------------------------------------------------------
+    function openLauncher(): void { hoverOpen = false; launcherOpen = true; }
+    function closeLauncher(): void { launcherOpen = false; }
+    function toggleLauncher(): void { launcherOpen ? closeLauncher() : openLauncher(); }
+    function apiIsOpen(): bool { return hoverOpen; }
+    function apiPhase(): string { return shownView; }
+    function apiPage(): int { return panelPages.pageIndex; }
+    function apiNextPage(): void { if (shownView === "panel") panelPages.pageIndex = (panelPages.pageIndex + 1) % panelPages.pageCount }
+    function apiPrevPage(): void { if (shownView === "panel") panelPages.pageIndex = (panelPages.pageIndex + panelPages.pageCount - 1) % panelPages.pageCount }
+    function apiOpen(): void { hoverOpen = true; }
+    function apiClose(): void { hoverOpen = false; }
+    function apiLauncherResults(): int { return launcherView.resultCount; }
 }

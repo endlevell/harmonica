@@ -69,9 +69,19 @@ Singleton {
 
     // ---- island geometry (compact, dynamic-island proportions) ----
     readonly property int barH: 38
-    readonly property int idleW: 280
     readonly property int panelW: 460
     readonly property int panelH: 220
+    readonly property int launcherH: 330
+    // window itself NEVER resizes (ActivSpot lesson); only inner items animate
+    readonly property int islandWinH: Math.max(panelH, launcherH) + spaceXs * 2
+
+    // ---- morph choreography ----
+    readonly property int morphDurExpand: 420      // container grow (slight back)
+    readonly property int morphDurRetract: 340     // container shrink (out-cubic)
+    readonly property int morphOutMs: 150          // old content exit
+    readonly property int morphInMs: 240           // new content enter
+    readonly property int morphTwitchLead: 70      // twitch plays before morph starts
+    readonly property var easeMorphExpand: [0.22, 1.14, 0.36, 1, 1, 1]
 
     // ---- motion ----
     readonly property int durFast: 150

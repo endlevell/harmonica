@@ -2,7 +2,6 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import qs.Modules.launcher
 import qs.Modules.orchestra
 
 Scope {
@@ -15,10 +14,6 @@ Scope {
         Orchestra {}
 
         readonly property var island: instances[0] ?? null
-    }
-
-    Launcher {
-        id: launcher
     }
 
     IpcHandler {
@@ -36,10 +31,10 @@ Scope {
     IpcHandler {
         target: "launcher"
 
-        function open(): void { launcher.open(); }
-        function close(): void { launcher.close(); }
-        function toggle(): void { launcher.toggle(); }
-        function isOpen(): bool { return launcher.shown; }
-        function results(): int { return launcher.resultCount; }
+        function open(): void { if (islandVariants.island) islandVariants.island.openLauncher(); }
+        function close(): void { if (islandVariants.island) islandVariants.island.closeLauncher(); }
+        function toggle(): void { if (islandVariants.island) islandVariants.island.toggleLauncher(); }
+        function isOpen(): bool { return islandVariants.island ? islandVariants.island.launcherOpen : false; }
+        function results(): int { return islandVariants.island ? islandVariants.island.apiLauncherResults() : 0; }
     }
 }
