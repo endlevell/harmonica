@@ -91,12 +91,6 @@ PanelWindow {
                 enabled: win.expanded
                 onPageIndexChanged: islandBody.trigger(0.5)   // lighter twitch on page slide
             }
-
-            PulseDot {
-                anchors.fill: parent
-                phase: win.phase
-                pageIndex: panelPages.pageIndex
-            }
         }
     }
 

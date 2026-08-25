@@ -62,16 +62,11 @@ annotation canvas over frozen frame: pen, highlighter, shapes (rect/ellipse/arro
 text, undo/redo stacks, Theme-colored swatches, stroke width. Save to file / copy /
 close. Esc backs out one level.
 
-## Signature details (identity — non-negotiable)
+## Signature details (identity)
 
 1. **TWITCH** — every phase/state change starts with a tiny elastic wobble of the whole
-   island (~120–180 ms, scale x/y counter-phase, OutBack-family bezier), then settles.
+   island (~190 ms, scale x/y counter-phase, OutBack settle, top edge pinned).
    Implemented once in `Modules/orchestra/Twitch.qml`; every transition routes through it.
-2. **PULSE DOT** — single small dot riding the island. Each phase defines an anchor pos
-   (idle=left near wifi, music=center, record=left red, panel=under active page index).
-   On change it glides along a quadratic-bezier arc (control point lifted perpendicular
-   to travel) leaving a short fading trail (last N positions painted at decaying opacity).
-   Tokens in Theme: `pulseDotSize`, `pulseArcLift`, `pulseDur`, trail length.
 
 ## Motion tokens
 
@@ -84,7 +79,7 @@ custom bezier ~OutBack(1.7). Never animate: input masks, layer changes, mount/un
 
 pywal writes `~/.cache/wal/colors.json` → `Common/Theme.qml` FileView(watchChanges) parses
 → palette object updates reactively → ColorAnimation Behaviors smooth token changes.
-Theme also owns type scale, 4px spacing grid, radii, durations, curves, pulse params.
+Theme also owns type scale, 4px spacing grid, radii, durations and curves.
 Zero hardcoded hex outside Theme — including SVGs (currentColor).
 
 ## Icon system

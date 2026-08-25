@@ -82,11 +82,5 @@ Singleton {
     readonly property var easeDecel: [0.05, 0.7, 0.1, 1, 1, 1]        // entrances
     readonly property var easeAccel: [0.3, 0, 0.8, 0.15, 1, 1]        // exits
     readonly property var easeSpatial: [0.34, 1.36, 0.64, 1, 1, 1]    // overshoot moves
-    readonly property var easeTwitch: [0.34, 1.86, 0.5, 1, 1, 1]      // elastic twitch (P2)
-
-    // ---- pulse dot params (consumed in Phase 2) ----
-    readonly property int pulseDotSize: 5
-    readonly property int pulseArcLift: 16
-    readonly property int pulseDur: 650
-    readonly property int pulseTrail: 5
+    readonly property var easeTwitch: [0.34, 1.86, 0.5, 1, 1, 1]      // elastic twitch
 }

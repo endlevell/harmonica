@@ -42,7 +42,7 @@ Item {
         }
     }
 
-    // page dots — the PulseDot will ride these in Phase 2
+    // page dots — active page indicator
     Row {
         id: dots
         spacing: 4
