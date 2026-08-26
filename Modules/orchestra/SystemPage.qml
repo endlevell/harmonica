@@ -5,9 +5,9 @@ import qs.Common
 import qs.Services
 import qs.Widgets
 
-// CENTER page (default) — Immersive system metrics with radial gauges and fluid motion.
-// Bold, data-dense, visually striking. Circular gauges for CPU/RAM/Battery, network stats,
-// animated indicators for active states.
+// CENTER page (default) — Immersive system metrics.
+// Three interactive gauge cards (CPU/RAM/Battery) up top, a live network card
+// with throughput, and a memory history strip. Centered, hover-reactive, animated.
 Item {
     id: page
 
@@ -23,158 +23,148 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.leftMargin: Theme.spaceXl
-        anchors.rightMargin: Theme.spaceXl
+        anchors.leftMargin: Theme.spaceLg
+        anchors.rightMargin: Theme.spaceLg
         anchors.topMargin: Theme.spaceMd
-        anchors.bottomMargin: Theme.spaceLg
+        anchors.bottomMargin: Theme.spaceMd
         spacing: Theme.spaceMd
 
-        // Top Row: Circular Gauges for CPU, RAM, Battery -----------------------
+        // ---- Gauge cards: CPU · RAM · Battery ----------------------------
         RowLayout {
             Layout.fillWidth: true
+            Layout.preferredHeight: 128
             spacing: Theme.spaceSm
 
-            // CPU Gauge
-            CircularGauge {
-                Layout.alignment: Qt.AlignCenter
-                width: 82
-                height: 82
+            component GaugeCard: Rectangle {
+                id: card
+                property real value: 0
+                property color accent: Theme.primary
+                property string cardLabel: ""
+                property string cardValue: ""
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                radius: Theme.radiusMd
+                color: hov.hovered ? Theme.surfaceHover : Theme.surface
+
+                Behavior on color { ColorAnimation { duration: Theme.durFast } }
+
+                // hover glow ring
+                Rectangle {
+                    anchors.fill: parent
+                    radius: parent.radius
+                    color: "transparent"
+                    border.width: 1
+                    border.color: hov.hovered
+                        ? Qt.rgba(card.accent.r, card.accent.g, card.accent.b, 0.45)
+                        : Qt.rgba(card.accent.r, card.accent.g, card.accent.b, 0.0)
+                    Behavior on border.color { ColorAnimation { duration: Theme.durFast } }
+                }
+
+                HoverHandler { id: hov }
+
+                CircularGauge {
+                    anchors.centerIn: parent
+                    width: 92
+                    height: 92
+                    value: card.value
+                    gaugeColor: card.accent
+                    trackColor: Qt.rgba(card.accent.r, card.accent.g, card.accent.b, 0.15)
+                    label: card.cardLabel
+                    valueText: card.cardValue
+                    lineWidth: 8
+                    scale: hov.hovered ? 1.05 : 1.0
+                    Behavior on scale { NumberAnimation { duration: Theme.durFast; easing.type: Easing.OutCubic } }
+                }
+            }
+
+            GaugeCard {
                 value: CpuRam.cpuPct
-                gaugeColor: Theme.primary
-                label: "CPU"
-                valueText: Math.round(CpuRam.cpuPct * 100) + "%"
-                lineWidth: 7
+                accent: Theme.primary
+                cardLabel: "CPU"
+                cardValue: Math.round(CpuRam.cpuPct * 100) + "%"
             }
-
-            // RAM Gauge
-            CircularGauge {
-                Layout.alignment: Qt.AlignCenter
-                width: 82
-                height: 82
+            GaugeCard {
                 value: CpuRam.memPct
-                gaugeColor: Theme.warn
-                label: "RAM"
-                valueText: Math.round(CpuRam.memPct * 100) + "%"
-                lineWidth: 7
+                accent: Theme.warn
+                cardLabel: "RAM"
+                cardValue: Math.round(CpuRam.memPct * 100) + "%"
             }
-
-            // Battery Gauge
-            CircularGauge {
-                Layout.alignment: Qt.AlignCenter
-                width: 82
-                height: 82
-                value: Battery.present ? Battery.percentage / 100 : 0
-                gaugeColor: Battery.percentage > 60 ? Theme.colorOk : (Battery.percentage > 30 ? Theme.warn : Theme.danger)
-                label: Battery.present ? "BAT" : "AC"
-                valueText: Battery.present ? Battery.percentage + "%" : "∞"
-                lineWidth: 7
+            GaugeCard {
+                value: Battery.present ? Battery.percentage / 100 : 1
+                accent: Battery.present
+                    ? (Battery.percentage > 60 ? Theme.colorOk : (Battery.percentage > 30 ? Theme.warn : Theme.danger))
+                    : Theme.colorOk
+                cardLabel: Battery.present ? (Battery.charging ? "CHARGING" : "BATTERY") : "POWER"
+                cardValue: Battery.present ? Battery.percentage + "%" : "AC"
             }
         }
 
-        // Separator
+        // ---- Network card -----------------------------------------------
         Rectangle {
             Layout.fillWidth: true
-            height: 1
-            color: Theme.outline
-            opacity: 0.3
-        }
+            Layout.preferredHeight: 78
+            radius: Theme.radiusMd
+            color: netHov.hovered ? Theme.surfaceHover : Theme.surface
+            Behavior on color { ColorAnimation { duration: Theme.durFast } }
 
-        // Network Section with live indicators ---------------------------------
-        ColumnLayout {
-            Layout.fillWidth: true
-            spacing: Theme.spaceXs
+            HoverHandler { id: netHov }
 
-            // Network Header
             RowLayout {
-                Layout.fillWidth: true
+                anchors.fill: parent
+                anchors.leftMargin: Theme.spaceMd
+                anchors.rightMargin: Theme.spaceMd
+                spacing: Theme.spaceMd
 
-                Icon {
-                    category: "status"
-                    name: Network.state === "wifi" ? "wifi" : "wifi-off"
-                    size: 18
-                    color: Network.state === "wifi" ? Theme.colorNet : Theme.outline
+                // status icon in a tinted disc
+                Rectangle {
+                    Layout.preferredWidth: 44
+                    Layout.preferredHeight: 44
+                    radius: Theme.radiusFull
+                    color: Network.state === "disconnected"
+                        ? Qt.rgba(Theme.outline.r, Theme.outline.g, Theme.outline.b, 0.2)
+                        : Qt.rgba(Theme.colorNet.r, Theme.colorNet.g, Theme.colorNet.b, 0.2)
+                    Behavior on color { ColorAnimation { duration: Theme.durNormal } }
+
+                    Icon {
+                        anchors.centerIn: parent
+                        category: "status"
+                        name: Network.state === "ethernet" ? "ethernet"
+                            : Network.state === "wifi" ? "wifi" : "wifi-off"
+                        size: 22
+                        color: Network.state === "disconnected" ? Theme.outline : Theme.colorNet
+                    }
                 }
-
-                Text {
-                    text: "NETWORK"
-                    color: Theme.dimText
-                    font.pixelSize: Theme.fontXs
-                    font.weight: Font.Bold
-                    font.letterSpacing: 1.5
-                }
-
-                Item { Layout.fillWidth: true }
-
-                PulseRing {
-                    width: 10
-                    height: 10
-                    ringColor: Theme.colorNet
-                    active: Network.state === "wifi"
-                }
-            }
-
-            // Network Details Card
-            Rectangle {
-                Layout.fillWidth: true
-                height: 70
-                radius: Theme.radiusSm
-                color: Theme.surface
 
                 ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: Theme.spaceSm
-                    spacing: Theme.spaceXs
+                    Layout.fillWidth: true
+                    spacing: 3
 
-                    // SSID / Status
-                    Text {
-                        visible: Network.state === "wifi"
-                        text: Network.ssid || "Connected"
-                        color: Theme.foreground
-                        font.pixelSize: Theme.fontMd
-                        font.weight: Font.DemiBold
+                    RowLayout {
                         Layout.fillWidth: true
-                        elide: Text.ElideRight
-                    }
+                        spacing: Theme.spaceXs
 
-                    Text {
-                        visible: Network.state !== "wifi"
-                        text: "Disconnected"
-                        color: Theme.dimText
-                        font.pixelSize: Theme.fontMd
-                        Layout.fillWidth: true
-                    }
-
-                    // Speed indicators
-                    Row {
-                        visible: Network.state === "wifi"
-                        spacing: Theme.spaceMd
-
-                        Row {
-                            spacing: Theme.spaceXs
-                            Icon { category: "arrows"; name: "arrow-down"; size: 12; color: Theme.colorOk; anchors.verticalCenter: parent.verticalCenter }
-                            Text {
-                                text: fmtKbs(Network.downKbs)
-                                color: Theme.foreground
-                                font.pixelSize: Theme.fontXs
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
+                        Text {
+                            text: Network.state === "ethernet" ? "Ethernet"
+                                : Network.state === "wifi" ? (Network.ssid || "Wi-Fi")
+                                : "Disconnected"
+                            color: Theme.foreground
+                            font.pixelSize: Theme.fontMd
+                            font.weight: Font.DemiBold
+                            elide: Text.ElideRight
+                            Layout.fillWidth: true
                         }
 
-                        Row {
-                            spacing: Theme.spaceXs
-                            Icon { category: "arrows"; name: "arrow-up"; size: 12; color: Theme.warn; anchors.verticalCenter: parent.verticalCenter }
-                            Text {
-                                text: fmtKbs(Network.upKbs)
-                                color: Theme.foreground
-                                font.pixelSize: Theme.fontXs
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
+                        PulseRing {
+                            Layout.preferredWidth: 9
+                            Layout.preferredHeight: 9
+                            ringColor: Theme.colorNet
+                            active: Network.state !== "disconnected"
                         }
                     }
 
-                    // IP Address
                     Text {
-                        visible: Network.state === "wifi" && Network.ip !== ""
+                        visible: Network.ip !== ""
                         text: Network.ip
                         color: Theme.dimText
                         font.pixelSize: Theme.fontXs
@@ -183,29 +173,68 @@ Item {
                         elide: Text.ElideRight
                     }
                 }
+
+                // throughput
+                ColumnLayout {
+                    visible: Network.state !== "disconnected"
+                    spacing: 3
+
+                    Text {
+                        text: "↓ " + page.fmtKbs(Network.downKBs)
+                        color: Theme.colorOk
+                        font.pixelSize: Theme.fontXs
+                        font.weight: Font.Medium
+                        Layout.alignment: Qt.AlignRight
+                    }
+                    Text {
+                        text: "↑ " + page.fmtKbs(Network.upKBs)
+                        color: Theme.warn
+                        font.pixelSize: Theme.fontXs
+                        font.weight: Font.Medium
+                        Layout.alignment: Qt.AlignRight
+                    }
+                }
             }
         }
 
-        Item { Layout.fillHeight: true }
-
-        // Bottom: Memory Details Mini-Graph ------------------------------------
-        ColumnLayout {
+        // ---- Memory history strip ---------------------------------------
+        Rectangle {
             Layout.fillWidth: true
-            spacing: Theme.spaceXs
+            Layout.fillHeight: true
+            radius: Theme.radiusMd
+            color: Theme.surface
 
-            Text {
-                text: "MEMORY USAGE · " + fmtGb(CpuRam.memTotalKb - CpuRam.memAvailKb) + " / " + fmtGb(CpuRam.memTotalKb)
-                color: Theme.dimText
-                font.pixelSize: Theme.fontXs
-                font.weight: Font.Medium
-                font.letterSpacing: 1
-            }
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: Theme.spaceMd
+                spacing: Theme.spaceXs
 
-            LineGraph {
-                Layout.fillWidth: true
-                height: 24
-                values: CpuRam.memHistory
-                lineColor: Theme.warn
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    Text {
+                        text: "MEMORY"
+                        color: Theme.dimText
+                        font.pixelSize: Theme.fontXs
+                        font.weight: Font.Bold
+                        font.letterSpacing: 1.5
+                    }
+                    Item { Layout.fillWidth: true }
+                    Text {
+                        text: page.fmtGb(CpuRam.memTotalKb - CpuRam.memAvailKb) + " / " + page.fmtGb(CpuRam.memTotalKb)
+                        color: Theme.foreground
+                        font.pixelSize: Theme.fontXs
+                        font.weight: Font.DemiBold
+                    }
+                }
+
+                LineGraph {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    values: CpuRam.memHistory
+                    lineColor: Theme.warn
+                    normalizeMax: 1
+                }
             }
         }
     }

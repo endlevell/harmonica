@@ -16,6 +16,7 @@ Canvas {
     onValuesChanged: requestPaint()
     onLineColorChanged: requestPaint()
     onWidthChanged: requestPaint()
+    onHeightChanged: requestPaint()
     Component.onCompleted: requestPaint()
 
     onPaint: {
