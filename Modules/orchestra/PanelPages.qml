@@ -34,7 +34,7 @@ Item {
                 width: pages.pageW
                 height: pages.height
                 clip: true
-                SettingsPage { anchors.fill: parent }
+                ControlCenterPage { anchors.fill: parent }
             }
 
             Item {

@@ -1,10 +1,13 @@
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import qs.Common
 import qs.Services
 import qs.Widgets
 
-// CENTER page (default) — live CPU / RAM graphs, network, battery.
+// CENTER page (default) — Immersive system metrics with radial gauges and fluid motion.
+// Bold, data-dense, visually striking. Circular gauges for CPU/RAM/Battery, network stats,
+// animated indicators for active states.
 Item {
     id: page
 
@@ -18,120 +21,191 @@ Item {
         return (kb / 1048576).toFixed(1) + " GB";
     }
 
-    Grid {
+    ColumnLayout {
         anchors.fill: parent
-        anchors.leftMargin: Theme.spaceXl + 4
-        anchors.rightMargin: Theme.spaceXl + 4
+        anchors.leftMargin: Theme.spaceXl
+        anchors.rightMargin: Theme.spaceXl
         anchors.topMargin: Theme.spaceMd
         anchors.bottomMargin: Theme.spaceLg
-        columns: 2
-        columnSpacing: Theme.spaceLg
-        rowSpacing: Theme.spaceSm
+        spacing: Theme.spaceMd
 
-        // CPU ----------------------------------------------------------
-        Column {
-            width: (parent.width - parent.columnSpacing) / 2
-            spacing: Theme.spaceXs
-
-            Row {
-                spacing: Theme.spaceSm
-                Icon { category: "system"; name: "cpu"; size: 16; color: Theme.primary; anchors.verticalCenter: parent.verticalCenter }
-                Text { text: "CPU"; color: Theme.dimText; font.pixelSize: Theme.fontSm; anchors.verticalCenter: parent.verticalCenter }
-                Text { text: Math.round(CpuRam.cpuPct * 100) + "%"; color: Theme.foreground; font.pixelSize: Theme.fontSm; font.weight: Font.DemiBold; anchors.verticalCenter: parent.verticalCenter }
-            }
-            LineGraph { width: parent.width; height: 30; values: CpuRam.cpuHistory; lineColor: Theme.primary }
-        }
-
-        // RAM ----------------------------------------------------------
-        Column {
-            width: (parent.width - parent.columnSpacing) / 2
-            spacing: Theme.spaceXs
-
-            Row {
-                spacing: Theme.spaceSm
-                Icon { category: "system"; name: "ram"; size: 16; color: Theme.warn; anchors.verticalCenter: parent.verticalCenter }
-                Text { text: "RAM"; color: Theme.dimText; font.pixelSize: Theme.fontSm; anchors.verticalCenter: parent.verticalCenter }
-                Text {
-                    text: fmtGb(CpuRam.memTotalKb - CpuRam.memAvailKb) + " / " + fmtGb(CpuRam.memTotalKb)
-                    color: Theme.foreground
-                    font.pixelSize: Theme.fontSm
-                    font.weight: Font.DemiBold
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-            }
-            LineGraph { width: parent.width; height: 30; values: CpuRam.memHistory; lineColor: Theme.warn; normalizeMax: 1 }
-        }
-
-        // NET ----------------------------------------------------------
-        Row {
-            width: (parent.width - parent.columnSpacing) / 2
+        // Top Row: Circular Gauges for CPU, RAM, Battery -----------------------
+        RowLayout {
+            Layout.fillWidth: true
             spacing: Theme.spaceSm
 
-            Icon {
-                category: "status"
-                name: Network.state === "ethernet" ? "ethernet" : Network.state === "wifi" ? "wifi" : "wifi-off"
-                size: 18
-                color: Network.state === "disconnected" ? Theme.dimText : Theme.colorOk
-                anchors.verticalCenter: parent.verticalCenter
+            // CPU Gauge
+            CircularGauge {
+                Layout.alignment: Qt.AlignCenter
+                width: 82
+                height: 82
+                value: CpuRam.cpuPct
+                gaugeColor: Theme.primary
+                label: "CPU"
+                valueText: Math.round(CpuRam.cpuPct * 100) + "%"
+                lineWidth: 7
             }
 
-            Column {
-                spacing: 2
-                anchors.verticalCenter: parent.verticalCenter
+            // RAM Gauge
+            CircularGauge {
+                Layout.alignment: Qt.AlignCenter
+                width: 82
+                height: 82
+                value: CpuRam.memPct
+                gaugeColor: Theme.warn
+                label: "RAM"
+                valueText: Math.round(CpuRam.memPct * 100) + "%"
+                lineWidth: 7
+            }
+
+            // Battery Gauge
+            CircularGauge {
+                Layout.alignment: Qt.AlignCenter
+                width: 82
+                height: 82
+                value: Battery.present ? Battery.percentage / 100 : 0
+                gaugeColor: Battery.percentage > 60 ? Theme.colorOk : (Battery.percentage > 30 ? Theme.warn : Theme.danger)
+                label: Battery.present ? "BAT" : "AC"
+                valueText: Battery.present ? Battery.percentage + "%" : "∞"
+                lineWidth: 7
+            }
+        }
+
+        // Separator
+        Rectangle {
+            Layout.fillWidth: true
+            height: 1
+            color: Theme.outline
+            opacity: 0.3
+        }
+
+        // Network Section with live indicators ---------------------------------
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: Theme.spaceXs
+
+            // Network Header
+            RowLayout {
+                Layout.fillWidth: true
+
+                Icon {
+                    category: "status"
+                    name: Network.state === "wifi" ? "wifi" : "wifi-off"
+                    size: 18
+                    color: Network.state === "wifi" ? Theme.colorNet : Theme.outline
+                }
 
                 Text {
-                    text: Network.state === "ethernet" ? "Ethernet" : Network.state === "wifi" ? (Network.ssid || "Wi-Fi") : "Disconnected"
-                    color: Theme.foreground
-                    font.pixelSize: Theme.fontSm
-                    font.weight: Font.DemiBold
-                    elide: Text.ElideRight
-                    width: Math.min(implicitWidth, parent.parent.width - 40)
-                }
-                Text {
-                    visible: Network.ip !== ""
-                    text: Network.ip + "  ·  ↓" + fmtKbs(Network.downKBs) + " ↑" + fmtKbs(Network.upKBs)
+                    text: "NETWORK"
                     color: Theme.dimText
                     font.pixelSize: Theme.fontXs
+                    font.weight: Font.Bold
+                    font.letterSpacing: 1.5
+                }
+
+                Item { Layout.fillWidth: true }
+
+                PulseRing {
+                    width: 10
+                    height: 10
+                    ringColor: Theme.colorNet
+                    active: Network.state === "wifi"
+                }
+            }
+
+            // Network Details Card
+            Rectangle {
+                Layout.fillWidth: true
+                height: 70
+                radius: Theme.radiusSm
+                color: Theme.surface
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: Theme.spaceSm
+                    spacing: Theme.spaceXs
+
+                    // SSID / Status
+                    Text {
+                        visible: Network.state === "wifi"
+                        text: Network.ssid || "Connected"
+                        color: Theme.foreground
+                        font.pixelSize: Theme.fontMd
+                        font.weight: Font.DemiBold
+                        Layout.fillWidth: true
+                        elide: Text.ElideRight
+                    }
+
+                    Text {
+                        visible: Network.state !== "wifi"
+                        text: "Disconnected"
+                        color: Theme.dimText
+                        font.pixelSize: Theme.fontMd
+                        Layout.fillWidth: true
+                    }
+
+                    // Speed indicators
+                    Row {
+                        visible: Network.state === "wifi"
+                        spacing: Theme.spaceMd
+
+                        Row {
+                            spacing: Theme.spaceXs
+                            Icon { category: "arrows"; name: "arrow-down"; size: 12; color: Theme.colorOk; anchors.verticalCenter: parent.verticalCenter }
+                            Text {
+                                text: fmtKbs(Network.downKbs)
+                                color: Theme.foreground
+                                font.pixelSize: Theme.fontXs
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                        }
+
+                        Row {
+                            spacing: Theme.spaceXs
+                            Icon { category: "arrows"; name: "arrow-up"; size: 12; color: Theme.warn; anchors.verticalCenter: parent.verticalCenter }
+                            Text {
+                                text: fmtKbs(Network.upKbs)
+                                color: Theme.foreground
+                                font.pixelSize: Theme.fontXs
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                        }
+                    }
+
+                    // IP Address
+                    Text {
+                        visible: Network.state === "wifi" && Network.ip !== ""
+                        text: Network.ip
+                        color: Theme.dimText
+                        font.pixelSize: Theme.fontXs
+                        font.family: "monospace"
+                        Layout.fillWidth: true
+                        elide: Text.ElideRight
+                    }
                 }
             }
         }
 
-        // BATTERY ------------------------------------------------------
-        Row {
-            width: (parent.width - parent.columnSpacing) / 2
-            spacing: Theme.spaceSm
+        Item { Layout.fillHeight: true }
 
-            Icon {
-                category: "status"
-                name: Battery.iconName
-                size: 18
-                color: Battery.charging ? Theme.primary : Theme.foreground
-                anchors.verticalCenter: parent.verticalCenter
+        // Bottom: Memory Details Mini-Graph ------------------------------------
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: Theme.spaceXs
+
+            Text {
+                text: "MEMORY USAGE · " + fmtGb(CpuRam.memTotalKb - CpuRam.memAvailKb) + " / " + fmtGb(CpuRam.memTotalKb)
+                color: Theme.dimText
+                font.pixelSize: Theme.fontXs
+                font.weight: Font.Medium
+                font.letterSpacing: 1
             }
 
-            Column {
-                spacing: 2
-                anchors.verticalCenter: parent.verticalCenter
-
-                Text {
-                    visible: Battery.present
-                    text: Battery.percentage + "%" + (Battery.charging ? " · charging" : "")
-                    color: Theme.foreground
-                    font.pixelSize: Theme.fontSm
-                    font.weight: Font.DemiBold
-                }
-                Text {
-                    visible: !Battery.present
-                    text: "No battery"
-                    color: Theme.dimText
-                    font.pixelSize: Theme.fontSm
-                }
-                Text {
-                    visible: Battery.present && Battery.full
-                    text: "Full"
-                    color: Theme.colorOk
-                    font.pixelSize: Theme.fontXs
-                }
+            LineGraph {
+                Layout.fillWidth: true
+                height: 24
+                values: CpuRam.memHistory
+                lineColor: Theme.warn
             }
         }
     }
