@@ -113,7 +113,9 @@ PanelWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         width: sizeBig ? Math.min(win.screen.width - Theme.spaceLg * 2, Theme.panelW)
              : sizeView === "music" ? musicStrip.contentWidth : idleBar.contentWidth
-        height: sizeBig ? (sizeView === "launcher" ? Theme.launcherH : Theme.panelH)
+        height: sizeBig ? (sizeView === "launcher" ? launcherView.contentH
+                         : sizeView === "recordSettings" ? Theme.recordSettingsH
+                         : Theme.panelH)
                         : Theme.barH
         Behavior on width {
             NumberAnimation {
@@ -131,6 +133,7 @@ PanelWindow {
         }
 
         Twitch {
+            // TEMP-DBG
             id: islandBody
             anchors.fill: parent
 

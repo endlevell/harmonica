@@ -13,6 +13,10 @@ Item {
     readonly property int resultCount: list.count
     readonly property int rowH: 30
     readonly property var results: Applications.search(input.text)
+    // card height hugs content: pads + search row + up-to-2 rows (or "no matches")
+    readonly property int contentH: Theme.spaceSm * 2 + 34
+        + (resultCount > 0 ? Math.min(resultCount, 2) * (rowH + 2)
+           : input.text !== "" ? 26 : 0)
 
     function grabFocus(): void {
         input.text = "";
