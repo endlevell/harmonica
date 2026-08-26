@@ -3,16 +3,19 @@ import qs.Common
 import qs.Services
 import qs.Widgets
 
-// IDLE row — three discrete zones laid out in a single Row:
-//   [left pad] wifi [spacer] clock [spacer] battery [right pad]
-// Layout guarantees the three zones NEVER collide, regardless of text width.
+// IDLE row — mathematically centered clock, distinct left/right zones:
+//   wifi (left) · clock (exact center) · battery (right)
 Item {
     id: bar
 
+    readonly property int leftW: netIcon.width
+    readonly property int rightW: battRow.implicitWidth
     readonly property int sidePad: Theme.spaceMd + 2
-    readonly property int zoneGap: Theme.spaceXl + 4
-    readonly property int contentWidth: sidePad * 2
-        + netIcon.width + zoneGap + clockLbl.implicitWidth + zoneGap + battRow.implicitWidth
+    readonly property int maxSideW: Math.max(leftW, rightW)
+    readonly property int zoneGap: Theme.spaceLg + 2
+
+    // Symmetrical pill width so clockLbl is at the dead center of the capsule
+    readonly property int contentWidth: (maxSideW + zoneGap + sidePad) * 2 + clockLbl.implicitWidth
 
     // charging battery pulses between two pywal colors (gold ↔ foreground)
     property real chargeBlend: 0
@@ -39,59 +42,54 @@ Item {
         NumberAnimation { to: 0; duration: 800; easing.type: Easing.InOutSine }
     }
 
-    Row {
+    // LEFT — network -------------------------------------------------------
+    Icon {
+        id: netIcon
+        category: "status"
+        name: Network.state === "ethernet" ? "ethernet" : Network.state === "wifi" ? "wifi" : "wifi-off"
+        size: 15
+        color: Network.state === "disconnected" ? Theme.dimText : Theme.colorNet
+        anchors.left: parent.left
+        anchors.leftMargin: bar.sidePad
+        anchors.verticalCenter: parent.verticalCenter
+    }
+
+    // CENTER — clock (exact center of the pill) ------------------------------
+    Text {
+        id: clockLbl
+        text: Qt.formatDateTime(bar.now, SettingsData.showSeconds ? "HH:mm:ss" : "HH:mm")
+        color: Theme.foreground
+        font.pixelSize: Theme.fontSm + 1
+        font.weight: Font.DemiBold
+        font.family: "monospace"
         anchors.centerIn: parent
-        spacing: 0
+    }
 
-        // LEFT — network (pywal cyan/bright accent) ------------------------
-        Icon {
-            id: netIcon
-            category: "status"
-            name: Network.state === "ethernet" ? "ethernet" : Network.state === "wifi" ? "wifi" : "wifi-off"
-            size: 16
-            color: Network.state === "disconnected" ? Theme.dimText : Theme.colorNet
-            anchors.verticalCenter: parent.verticalCenter
-        }
+    // RIGHT — battery --------------------------------------------------------
+    Row {
+        id: battRow
+        spacing: 3
+        anchors.right: parent.right
+        anchors.rightMargin: bar.sidePad
+        anchors.verticalCenter: parent.verticalCenter
 
-        Item { width: bar.zoneGap; height: 1 }
-
-        // CENTER — clock (fontLg semibold) -----------------------------------
         Text {
-            id: clockLbl
-            text: Qt.formatDateTime(bar.now, SettingsData.showSeconds ? "HH:mm:ss" : "HH:mm")
-            color: Theme.foreground
-            font.pixelSize: Theme.fontLg - 3
-            font.weight: Font.DemiBold
-            font.family: "monospace"
+            visible: Battery.present
+            text: Battery.percentage + "%"
+            color: Theme.dimText
+            font.pixelSize: Theme.fontXs - 1
+            font.weight: Font.Normal
             anchors.verticalCenter: parent.verticalCenter
         }
 
-        Item { width: bar.zoneGap; height: 1 }
-
-        // RIGHT — battery % (fontSm dim) + icon (state-tinted) ---------------
-        Row {
-            id: battRow
-            spacing: Theme.spaceXs + 2
+        Icon {
+            category: "status"
+            name: Battery.iconName
+            size: 15
+            color: bar.battTint
             anchors.verticalCenter: parent.verticalCenter
 
-            Text {
-                visible: Battery.present
-                text: Battery.percentage + "%"
-                color: Theme.dimText
-                font.pixelSize: Theme.fontXs + 1
-                font.weight: Font.Normal
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            Icon {
-                category: "status"
-                name: Battery.iconName
-                size: 16
-                color: bar.battTint
-                anchors.verticalCenter: parent.verticalCenter
-
-                Behavior on color { ColorAnimation { duration: Theme.durNormal } }
-            }
+            Behavior on color { ColorAnimation { duration: Theme.durNormal } }
         }
     }
 }

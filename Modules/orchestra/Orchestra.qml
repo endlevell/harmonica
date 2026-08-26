@@ -43,25 +43,15 @@ PanelWindow {
     function _isBig(v: string): bool { return v === "panel" || v === "launcher"; }
 
     function goTo(view: string): void {
-        if (view === pendingView && commitDelay.running) return;
-        if (view === shownView && !commitDelay.running) return;
+        if (view === shownView && !swapSeq.running) return;
+        if (view === pendingView && swapSeq.running) return;
         pendingView = view;
-        islandBody.trigger(1);              // twitch ALWAYS leads the morph
-        commitDelay.restart();
-    }
-
-    Timer {
-        id: commitDelay
-        interval: Theme.morphTwitchLead
-        onTriggered: {
-            if (pendingView === shownView) return;
-            leavingView = shownView;
-            sizeBig = win._isBig(pendingView);
-            sizeView = pendingView;
-            leaveOp = 1; leaveY = 0;
-            enterOp = 0; enterY = -10;
-            swapSeq.restart();
-        }
+        leavingView = shownView;
+        sizeBig = win._isBig(pendingView);
+        sizeView = pendingView;
+        leaveOp = 1; leaveY = 0;
+        enterOp = 0; enterY = -6;
+        swapSeq.restart();
     }
 
     SequentialAnimation {

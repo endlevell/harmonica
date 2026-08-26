@@ -8,21 +8,49 @@ Item {
 
     readonly property int pageCount: 3
     property int pageIndex: 1   // center = default
-    readonly property real pageW: width
+    readonly property real pageW: Theme.panelW
 
     clip: true
 
-    Row {
-        id: strip
-        spacing: 0
-        x: -pages.pageIndex * pages.pageW
-        Behavior on x {
-            NumberAnimation { duration: Theme.durSlow; easing.bezierCurve: Theme.easeSpatial; easing.type: Easing.BezierSpline }
-        }
+    Item {
+        id: viewport
+        anchors.fill: parent
+        clip: true
 
-        SettingsPage { width: pages.pageW; height: pages.height }
-        SystemPage   { width: pages.pageW; height: pages.height }
-        MusicPage    { width: pages.pageW; height: pages.height }
+        Row {
+            id: strip
+            spacing: 0
+            x: -pages.pageIndex * pages.pageW
+
+            Behavior on x {
+                enabled: pages.visible && pages.opacity > 0.8
+                NumberAnimation {
+                    duration: Theme.durNormal
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            Item {
+                width: pages.pageW
+                height: pages.height
+                clip: true
+                SettingsPage { anchors.fill: parent }
+            }
+
+            Item {
+                width: pages.pageW
+                height: pages.height
+                clip: true
+                SystemPage { anchors.fill: parent }
+            }
+
+            Item {
+                width: pages.pageW
+                height: pages.height
+                clip: true
+                MusicPage { anchors.fill: parent }
+            }
+        }
     }
 
     ArrowNav {
@@ -48,7 +76,7 @@ Item {
         spacing: 4
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 5
+        anchors.bottomMargin: 6
 
         Repeater {
             model: pages.pageCount
@@ -58,7 +86,7 @@ Item {
                 width: 5
                 height: 5
                 radius: Theme.radiusFull
-                color: pages.pageIndex === index ? Theme.primary : Theme.outline
+                color: pages.pageIndex === index ? Theme.primary : Theme.surfaceHover
                 Behavior on color { ColorAnimation { duration: Theme.durFast } }
             }
         }

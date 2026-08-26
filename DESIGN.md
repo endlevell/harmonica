@@ -64,9 +64,7 @@ close. Esc backs out one level.
 
 ## Signature details (identity)
 
-1. **TWITCH** — every phase/state change starts with a tiny elastic wobble of the whole
-   island (~190 ms, scale x/y counter-phase, OutBack settle, top edge pinned).
-   Implemented once in `Modules/orchestra/Twitch.qml`; every transition routes through it.
+Smooth fluid phase morphing (single window container, eased container growth with sequenced view transitions). Zero borders, zero shadows, flat solid surfaces with subtle palette hierarchy.
 
 ## Motion tokens
 

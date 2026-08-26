@@ -1,5 +1,9 @@
 {
-  "version": 1,
+  "version": 2,
   "clock24h": true,
-  "showSeconds": false
+  "showSeconds": false,
+  "recFilename": "harmonica",
+  "recExt": "mp4",
+  "recQuality": "medium",
+  "recAudioSource": ""
 }
