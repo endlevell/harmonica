@@ -57,6 +57,9 @@ Item {
 
                     Loader {
                         anchors.fill: parent
+                        // only instantiate while the panel is shown → pollers
+                        // (CPU/RAM/network) idle when the island is collapsed
+                        active: pages.visible
                         sourceComponent: pageSlot.index === 0 ? cControl
                             : pageSlot.index === 1 ? cSystem : cMusic
                     }

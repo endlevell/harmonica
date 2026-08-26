@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Shapes
 import qs.Common
 
 // Animated pulsing ring indicator for active states.

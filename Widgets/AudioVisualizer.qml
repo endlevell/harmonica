@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Shapes
 import qs.Common
 
 // Audio visualizer bars that react to music playback.
