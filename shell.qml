@@ -79,6 +79,7 @@ Scope {
 
         function region(): void { regionSelect.open("snip"); }
         function window(): void { regionSelect.open("window"); }
+        function cancel(): void { regionSelect.close(); root.pendingAnnotate = false; }
         function fullscreen(): void {
             root.pendingAnnotate = true;
             Screenshot.captureFull();

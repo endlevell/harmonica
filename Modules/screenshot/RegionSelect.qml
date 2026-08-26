@@ -39,12 +39,11 @@ PanelWindow {
         dragging = false;
     }
 
-    onShownChanged: visible = shown
-
     screen: Quickshell.screens[0] ?? null
     anchors { top: true; left: true; right: true; bottom: true }
     exclusionMode: ExclusionMode.Ignore
     color: "transparent"
+    visible: shown
 
     WlrLayershell.namespace: "harmonica:regionselect"
     WlrLayershell.layer: WlrLayer.Overlay
@@ -88,7 +87,6 @@ PanelWindow {
         y: rs.hoverIdx >= 0 ? rs.clients[rs.hoverIdx].y : 0
         width: rs.hoverIdx >= 0 ? rs.clients[rs.hoverIdx].w : 0
         height: rs.hoverIdx >= 0 ? rs.clients[rs.hoverIdx].h : 0
-        color: "transparent"
         border.width: 2
         border.color: Theme.primary
         Behavior on x { NumberAnimation { duration: 60 } }
@@ -127,16 +125,30 @@ PanelWindow {
         }
     }
 
+    // discoverability hint — Esc is unreliable under compositor-wide binds
+    Text {
+        visible: rs.shown
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 24
+        text: rs.mode === "snip"
+            ? "drag to capture · right-click or Esc to cancel"
+            : "click a window to capture · right-click or Esc to cancel"
+        color: Qt.rgba(Theme.foreground.r, Theme.foreground.g, Theme.foreground.b, 0.85)
+        font.pixelSize: Theme.fontSm
+        horizontalAlignment: Text.AlignHCenter
+    }
+
     MouseArea {
         id: area
         anchors.fill: parent
         cursorShape: Qt.CrossCursor
         enabled: rs.shown
         hoverEnabled: true
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
 
         onPressed: m => {
-            if (m.button === Qt.RightButton) { rs.cancelled(); rs.close(); return; }
+            if (m.button !== Qt.LeftButton) { rs.cancelled(); rs.close(); return; }   // right/middle = cancel
             if (rs.mode === "snip") { rs.dragStart = Qt.point(mouseX, mouseY); rs.dragging = true; }
             else {
                 if (rs.hoverIdx >= 0) {
