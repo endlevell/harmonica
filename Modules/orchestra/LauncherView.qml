@@ -74,7 +74,7 @@ Item {
         ListView {
             id: list
             width: parent.width
-            height: count > 0 ? Math.min(count, 9) * (lv.rowH + 2) : 0
+            height: count > 0 ? Math.min(count, 2) * (lv.rowH + 2) : 0
             spacing: 2
             interactive: false
             currentIndex: 0

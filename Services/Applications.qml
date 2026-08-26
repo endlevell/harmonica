@@ -101,13 +101,13 @@ Singleton {
     }
 
     function search(query: string): var {
-        if (!query || query.length === 0) return apps.slice(0, 9);
+        if (!query || query.length === 0) return apps.slice(0, 2);
         const scored = [];
         for (const a of apps) {
             const sc = fuzzy(query, a.name);
             if (sc >= 0) scored.push({ app: a, sc: sc });
         }
         scored.sort((x, y) => y.sc - x.sc);
-        return scored.slice(0, 9).map(x => x.app);
+        return scored.slice(0, 2).map(x => x.app);
     }
 }
