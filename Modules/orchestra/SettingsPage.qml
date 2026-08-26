@@ -9,7 +9,10 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Theme.spaceLg
+        anchors.leftMargin: Theme.spaceXl + 4
+        anchors.rightMargin: Theme.spaceXl + 4
+        anchors.topMargin: Theme.spaceMd
+        anchors.bottomMargin: Theme.spaceLg
         spacing: Theme.spaceSm
 
         Text {

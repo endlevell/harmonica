@@ -141,12 +141,30 @@ PanelWindow {
                 id: pill
                 anchors.fill: parent
                 radius: sizeBig ? Theme.radiusMd : height / 2
-                color: Theme.background
                 clip: true
                 Behavior on radius {
                     NumberAnimation {
                         duration: sizeBig ? Theme.morphDurExpand : Theme.morphDurRetract
                         easing.type: Easing.OutCubic
+                    }
+                }
+                // flat solid neutral, barely-perceptible vertical gradient
+                // (surface → 4% darker); brightens slightly on collapsed hover
+                gradient: Gradient {
+                    GradientStop {
+                        id: gsTop
+                        position: 0.0
+                        color: hoverTrack.containsMouse && !sizeBig
+                            ? Qt.lighter(Theme.background, 1.14) : Theme.background
+                        Behavior on color { ColorAnimation { duration: Theme.durFast } }
+                    }
+                    GradientStop {
+                        id: gsBottom
+                        position: 1.0
+                        color: hoverTrack.containsMouse && !sizeBig
+                            ? Qt.darker(Qt.lighter(Theme.background, 1.14), 1.04)
+                            : Qt.darker(Theme.background, 1.04)
+                        Behavior on color { ColorAnimation { duration: Theme.durFast } }
                     }
                 }
             }

@@ -55,14 +55,14 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
 
         IconButton {
-            category: "record"
+            category: "media"
             iconName: Recorder.state === "paused" ? "play" : "pause"
             iconSize: 13
             pad: 4
             onClicked: Recorder.pauseToggle()
         }
         IconButton {
-            category: "record"
+            category: "media"
             iconName: "stop"
             iconSize: 13
             pad: 4

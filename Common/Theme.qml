@@ -35,16 +35,23 @@ Singleton {
     // ---- palette ----
     readonly property color background:      pick(_wal?.special?.background, "#1e1e2e")
     readonly property color foreground:      pick(_wal?.special?.foreground, "#cdd6f4")
-    // pywal 16-color slots (color0..15); pick roles that survive most rices
-    readonly property color primary:         pick(_wal?.colors?.color4, "#89b4fa")
-    readonly property color danger:          pick(_wal?.colors?.color1, "#f38ba8")
-    readonly property color success:         pick(_wal?.colors?.color2, "#a6e3a1")
-    readonly property color warn:            pick(_wal?.colors?.color3, "#f9e2af")
+    // pywal 16-color slots mapped semantically — variety without new hexes:
+    readonly property color primary:         pick(_wal?.colors?.color4, "#b49043")   // gold/bright accent
+    readonly property color colorNet:        pick(_wal?.colors?.color6, "#b5a489")   // bright cyan/sand: network
+    readonly property color colorOk:         pick(_wal?.colors?.color2, "#a6e3a1")   // green family: battery full / success
+    readonly property color warn:            pick(_wal?.colors?.color3, "#f9e2af")   // yellow family: battery mid
+    readonly property color danger:          pick(_wal?.colors?.color1, "#f38ba8")   // red family: low / destructive
     readonly property color outline:         pick(_wal?.colors?.color8, "#585b70")
     // derived surfaces from background — no hardcoded hexes here either
-    readonly property color surface:         Qt.lighter(background, 1.16)
-    readonly property color surfaceHover:    Qt.lighter(background, 1.30)
-    readonly property color dimText:         Qt.darker(foreground, 1.55)
+    readonly property color surface:         Qt.lighter(background, 1.25)
+    readonly property color surfaceHover:    Qt.lighter(background, 1.45)
+    readonly property color dimText:         Qt.darker(foreground, 1.35)
+
+    function mix(a: color, b: color, t: real): color {
+        return Qt.rgba(a.r + (b.r - a.r) * t,
+                       a.g + (b.g - a.g) * t,
+                       a.b + (b.b - a.b) * t, 1);
+    }
 
     // ---- type scale ----
     readonly property int fontXs: 11

@@ -3,13 +3,25 @@ import qs.Common
 import qs.Services
 import qs.Widgets
 
-// IDLE row: network icon · clock · battery. Width hugs its content.
+// IDLE row — three discrete zones laid out in a single Row:
+//   [left pad] wifi [spacer] clock [spacer] battery [right pad]
+// Layout guarantees the three zones NEVER collide, regardless of text width.
 Item {
     id: bar
 
-    // exact pill width needed: side pads + icon + clock + battery + two gaps
-    readonly property int contentWidth: netIcon.width + clockLbl.width + battRow.width
-        + Theme.spaceMd * 2 + Theme.spaceLg * 2
+    readonly property int sidePad: Theme.spaceMd + 2
+    readonly property int zoneGap: Theme.spaceXl + 4
+    readonly property int contentWidth: sidePad * 2
+        + netIcon.width + zoneGap + clockLbl.implicitWidth + zoneGap + battRow.implicitWidth
+
+    // charging battery pulses between two pywal colors (gold ↔ foreground)
+    property real chargeBlend: 0
+    readonly property color battTint: Battery.charging
+        ? Theme.mix(Theme.primary, Theme.foreground, chargeBlend)
+        : !Battery.present ? Theme.dimText
+        : Battery.percentage <= 25 ? Theme.danger
+        : Battery.percentage <= 75 ? Theme.warn
+        : Theme.colorOk
 
     Timer {
         interval: 500
@@ -20,48 +32,66 @@ Item {
     }
     property date now: new Date()
 
-    Icon {
-        id: netIcon
-        category: "status"
-        name: Network.state === "ethernet" ? "ethernet" : Network.state === "wifi" ? "wifi" : "wifi-off"
-        size: 15
-        color: Network.state === "disconnected" ? Theme.dimText : Theme.foreground
-        anchors.left: parent.left
-        anchors.leftMargin: Theme.spaceMd
-        anchors.verticalCenter: parent.verticalCenter
-    }
-
-    Text {
-        id: clockLbl
-        text: Qt.formatDateTime(bar.now, SettingsData.showSeconds ? "HH:mm:ss" : "HH:mm")
-        color: Theme.foreground
-        font.pixelSize: Theme.fontSm
-        font.weight: Font.DemiBold
-        font.family: "monospace"
-        anchors.centerIn: parent
+    SequentialAnimation on chargeBlend {
+        running: Battery.charging && bar.visible
+        loops: Animation.Infinite
+        NumberAnimation { to: 1; duration: 800; easing.type: Easing.InOutSine }
+        NumberAnimation { to: 0; duration: 800; easing.type: Easing.InOutSine }
     }
 
     Row {
-        id: battRow
-        spacing: Theme.spaceXs
-        anchors.right: parent.right
-        anchors.rightMargin: Theme.spaceMd
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.centerIn: parent
+        spacing: 0
 
-        Text {
-            visible: Battery.present
-            text: Battery.percentage + "%"
-            color: Battery.charging ? Theme.primary : (Battery.percentage <= 20 ? Theme.danger : Theme.dimText)
-            font.pixelSize: Theme.fontXs
+        // LEFT — network (pywal cyan/bright accent) ------------------------
+        Icon {
+            id: netIcon
+            category: "status"
+            name: Network.state === "ethernet" ? "ethernet" : Network.state === "wifi" ? "wifi" : "wifi-off"
+            size: 16
+            color: Network.state === "disconnected" ? Theme.dimText : Theme.colorNet
             anchors.verticalCenter: parent.verticalCenter
         }
 
-        Icon {
-            category: "status"
-            name: Battery.iconName
-            size: 15
-            color: Battery.charging ? Theme.primary : (Battery.present && Battery.percentage <= 20 ? Theme.danger : Theme.foreground)
+        Item { width: bar.zoneGap; height: 1 }
+
+        // CENTER — clock (fontLg semibold) -----------------------------------
+        Text {
+            id: clockLbl
+            text: Qt.formatDateTime(bar.now, SettingsData.showSeconds ? "HH:mm:ss" : "HH:mm")
+            color: Theme.foreground
+            font.pixelSize: Theme.fontLg - 3
+            font.weight: Font.DemiBold
+            font.family: "monospace"
             anchors.verticalCenter: parent.verticalCenter
+        }
+
+        Item { width: bar.zoneGap; height: 1 }
+
+        // RIGHT — battery % (fontSm dim) + icon (state-tinted) ---------------
+        Row {
+            id: battRow
+            spacing: Theme.spaceXs + 2
+            anchors.verticalCenter: parent.verticalCenter
+
+            Text {
+                visible: Battery.present
+                text: Battery.percentage + "%"
+                color: Theme.dimText
+                font.pixelSize: Theme.fontXs + 1
+                font.weight: Font.Normal
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            Icon {
+                category: "status"
+                name: Battery.iconName
+                size: 16
+                color: bar.battTint
+                anchors.verticalCenter: parent.verticalCenter
+
+                Behavior on color { ColorAnimation { duration: Theme.durNormal } }
+            }
         }
     }
 }

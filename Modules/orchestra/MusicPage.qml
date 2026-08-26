@@ -35,7 +35,10 @@ Item {
     // player -----------------------------------------------------------
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Theme.spaceMd
+        anchors.leftMargin: Theme.spaceXl + 4
+        anchors.rightMargin: Theme.spaceXl + 4
+        anchors.topMargin: Theme.spaceMd
+        anchors.bottomMargin: Theme.spaceLg
         visible: Mpris.hasPlayer
         spacing: Theme.spaceSm
 

@@ -162,7 +162,7 @@ Item {
                         width: aTxt.implicitWidth + Theme.spaceMd * 2
                         height: 20
                         radius: Theme.radiusFull
-                        color: on ? Theme.success : Theme.surface
+                        color: on ? Theme.colorOk : Theme.surface
                         Text {
                             id: aTxt
                             anchors.centerIn: parent

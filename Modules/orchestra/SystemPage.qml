@@ -20,7 +20,10 @@ Item {
 
     Grid {
         anchors.fill: parent
-        anchors.margins: Theme.spaceMd
+        anchors.leftMargin: Theme.spaceXl + 4
+        anchors.rightMargin: Theme.spaceXl + 4
+        anchors.topMargin: Theme.spaceMd
+        anchors.bottomMargin: Theme.spaceLg
         columns: 2
         columnSpacing: Theme.spaceLg
         rowSpacing: Theme.spaceSm
@@ -68,7 +71,7 @@ Item {
                 category: "status"
                 name: Network.state === "ethernet" ? "ethernet" : Network.state === "wifi" ? "wifi" : "wifi-off"
                 size: 18
-                color: Network.state === "disconnected" ? Theme.dimText : Theme.success
+                color: Network.state === "disconnected" ? Theme.dimText : Theme.colorOk
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -126,7 +129,7 @@ Item {
                 Text {
                     visible: Battery.present && Battery.full
                     text: "Full"
-                    color: Theme.success
+                    color: Theme.colorOk
                     font.pixelSize: Theme.fontXs
                 }
             }

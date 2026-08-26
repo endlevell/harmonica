@@ -6,12 +6,9 @@ import Quickshell
 Singleton {
     id: root
 
-    // Directory containing shell.qml (works for `qs -p <dir>` and installed copies).
-    readonly property string shellDir: {
-        const u = Qt.resolvedUrl("../shell.qml").toString();
-        const p = u.startsWith("file://") ? u.substring(7) : u;
-        return decodeURIComponent(p);
-    }
+    // Directory containing shell.qml — provided natively by quickshell
+    // (resolves correctly for -p, installed copies AND the qs:// scheme).
+    readonly property string shellDir: Quickshell.shellDir
 
     readonly property string configDir: {
         const xdg = Quickshell.env("XDG_CONFIG_HOME");

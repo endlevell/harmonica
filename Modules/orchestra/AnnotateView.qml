@@ -24,7 +24,7 @@ Item {
     property bool imgReady: false
 
     readonly property var tools: ["pen", "hl", "rect", "ellipse", "arrow", "text"]
-    readonly property var swatches: [Theme.foreground, Theme.danger, Theme.primary, Theme.success, Theme.warn]
+    readonly property var swatches: [Theme.foreground, Theme.danger, Theme.primary, Theme.colorOk, Theme.warn]
 
     // native image dims (from Image.status/sourceSize once loaded)
     property int natW: 1

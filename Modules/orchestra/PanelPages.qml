@@ -8,7 +8,7 @@ Item {
 
     readonly property int pageCount: 3
     property int pageIndex: 1   // center = default
-    readonly property real pageW: width / pageCount
+    readonly property real pageW: width
 
     clip: true
 
