@@ -33,10 +33,20 @@ PanelWindow {
         dragging = false;
         hoverIdx = -1;
         _showing = true;
+        watchdog.restart();
     }
     function close(): void {
+        watchdog.stop();
         _showing = false;
         dragging = false;
+    }
+
+    // 30s watchdog — if the user walks away, cancel cleanly
+    Timer {
+        id: watchdog
+        interval: 30000
+        repeat: false
+        onTriggered: { rs.cancelled(); rs.close(); }
     }
 
     screen: Quickshell.screens[0] ?? null
@@ -142,7 +152,7 @@ PanelWindow {
     MouseArea {
         id: area
         anchors.fill: parent
-        cursorShape: Qt.CrossCursor
+        cursorShape: rs.shown ? Qt.CrossCursor : Qt.ArrowCursor
         enabled: rs.shown
         hoverEnabled: true
         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton

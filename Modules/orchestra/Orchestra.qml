@@ -236,7 +236,7 @@ PanelWindow {
         if (launcherOpen) Qt.callLater(() => launcherView.grabFocus());
     }
     onRecordSettingsOpenChanged: {
-        if (recordSettingsOpen) Qt.callLater(() => launcherView.grabFocus()); // noop focus reset
+        if (recordSettingsOpen) Qt.callLater(() => recordSettings.grabFocus());
     }
 
     function openRecordSettings(): void {
