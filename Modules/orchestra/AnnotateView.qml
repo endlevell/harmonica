@@ -229,31 +229,6 @@ Item {
                 }
             }
 
-            Item { width: Theme.spaceMd; height: 1 }
-
-            Buttonish { label: "Undo"; enabled_: av.strokes.length > 0; onClicked: av.undo() }
-            Buttonish { label: "Redo"; enabled_: av.redoStack.length > 0; onClicked: av.redo() }
-            Item { width: Theme.spaceMd; height: 1 }
-            Buttonish {
-                label: "Save"
-                accent: true
-                enabled_: av.imgReady
-                onClicked: stage.grabToImage(res => {
-                    const p = String(res.url).replace("file://", "");
-                    const f = Screenshot.saveAs(p);
-                    av.saved(f);
-                    av.closed();
-                })
-            }
-            Buttonish {
-                label: "Copy"
-                enabled_: av.imgReady
-                onClicked: stage.grabToImage(res => {
-                    Screenshot.copyToClipboard(String(res.url).replace("file://", ""));
-                    av.closed();
-                })
-            }
-            Buttonish { label: "✕"; onClicked: av.closed() }
         }
 
         // canvas area --------------------------------------------------------

@@ -26,6 +26,11 @@ Item {
         : Battery.percentage <= 75 ? Theme.warn
         : Theme.colorOk
 
+    // Idle bar permanently shows network state — register as a consumer
+    // so the service polls from boot, not just when SystemPage mounts.
+    Component.onCompleted: Network.acquire()
+    Component.onDestruction: Network.release()
+
     Timer {
         interval: 500
         running: true

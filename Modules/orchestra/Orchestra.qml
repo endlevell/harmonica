@@ -40,7 +40,7 @@ PanelWindow {
     property bool sizeBig: false            // container target: card vs pill
     property string sizeView: "idle"        // which small/huge height applies
 
-    function _isBig(v: string): bool { return v === "panel" || v === "launcher"; }
+    function _isBig(v: string): bool { return v === "panel" || v === "launcher" || v === "annotate"; }
 
     function goTo(view: string): void {
         if (view === shownView && !swapSeq.running) return;
@@ -102,10 +102,12 @@ PanelWindow {
         id: content
         anchors.horizontalCenter: parent.horizontalCenter
         width: sizeBig ? (sizeView === "launcher" ? Theme.launcherW
+                         : sizeView === "annotate" ? Theme.annotateW
                          : Math.min(win.screen.width - Theme.spaceLg * 2, Theme.panelW))
              : sizeView === "music" ? musicStrip.contentWidth : idleBar.contentWidth
         height: sizeBig ? (sizeView === "launcher" ? launcherView.contentH
                          : sizeView === "recordSettings" ? Theme.recordSettingsH
+                         : sizeView === "annotate" ? Theme.annotateH
                          : Theme.panelH)
                         : Theme.barH
         Behavior on width {
