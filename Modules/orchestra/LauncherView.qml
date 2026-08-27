@@ -14,7 +14,7 @@ Item {
     readonly property int resultCount: list.count
     readonly property int rowH: 34
     readonly property int rowSpacing: 2
-    readonly property int visibleRows: 6
+    readonly property int visibleRows: 2
     readonly property var results: Applications.search(input.text)
     readonly property int rowsShown: Math.min(resultCount, visibleRows)
     // honest list height: N rows + N-1 gaps
@@ -79,8 +79,6 @@ Item {
 
                     Keys.onDownPressed: lv.move(1)
                     Keys.onUpPressed: lv.move(-1)
-                    Keys.onHomePressed: lv.move(-list.currentIndex)
-                    Keys.onEndPressed: lv.move(list.count - 1 - list.currentIndex)
                     Keys.onReturnPressed: lv.launchCurrent()
                     Keys.onEnterPressed: lv.launchCurrent()
                     Keys.onEscapePressed: lv.closed()
