@@ -4,24 +4,36 @@ import qs.Services
 import qs.Widgets
 
 // LAUNCHER phase view — lives INSIDE the island (single-surface rule).
-// Search bar + fuzzy app list. Esc / row click hand control back to Orchestra.
+// Search bar + fuzzy app list. Arrow keys / wheel / click navigate.
+// Esc / row click hand control back to Orchestra.
 Item {
     id: lv
 
     signal closed()
 
     readonly property int resultCount: list.count
-    readonly property int rowH: 30
+    readonly property int rowH: 34
+    readonly property int rowSpacing: 2
+    readonly property int visibleRows: 6
     readonly property var results: Applications.search(input.text)
-    // card height hugs content: pads + search row + up-to-2 rows (or "no matches")
+    readonly property int rowsShown: Math.min(resultCount, visibleRows)
+    // honest list height: N rows + N-1 gaps
+    readonly property int listH: rowsShown > 0 ? rowsShown * rowH + (rowsShown - 1) * rowSpacing : 0
+    // card height hugs content: pads + search row + list (or "no matches")
     readonly property int contentH: Theme.spaceSm * 2 + 34
-        + (resultCount > 0 ? Math.min(resultCount, 2) * (rowH + 2)
-           : input.text !== "" ? 26 : 0)
+        + (resultCount > 0 ? listH : input.text !== "" ? 26 : 0)
 
     function grabFocus(): void {
         input.text = "";
         list.currentIndex = 0;
         Qt.callLater(() => input.forceActiveFocus());
+    }
+
+    function move(delta: int): void {
+        if (list.count === 0) return;
+        const next = Math.min(Math.max(list.currentIndex + delta, 0), list.count - 1);
+        list.currentIndex = next;
+        list.positionViewAtIndex(next, ListView.Contain);
     }
 
     Column {
@@ -63,10 +75,12 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
-                    onTextChanged: list.currentIndex = 0
+                    onTextChanged: { list.currentIndex = 0; list.positionViewAtIndex(0, ListView.Beginning) }
 
-                    Keys.onDownPressed: list.currentIndex = Math.min(list.currentIndex + 1, list.count - 1)
-                    Keys.onUpPressed: list.currentIndex = Math.max(list.currentIndex - 1, 0)
+                    Keys.onDownPressed: lv.move(1)
+                    Keys.onUpPressed: lv.move(-1)
+                    Keys.onHomePressed: lv.move(-list.currentIndex)
+                    Keys.onEndPressed: lv.move(list.count - 1 - list.currentIndex)
                     Keys.onReturnPressed: lv.launchCurrent()
                     Keys.onEnterPressed: lv.launchCurrent()
                     Keys.onEscapePressed: lv.closed()
@@ -78,9 +92,11 @@ Item {
         ListView {
             id: list
             width: parent.width
-            height: count > 0 ? Math.min(count, 2) * (lv.rowH + 2) : 0
-            spacing: 2
-            interactive: false
+            height: lv.listH
+            spacing: lv.rowSpacing
+            clip: true
+            interactive: true                      // mouse-wheel scroll
+            boundsBehavior: Flickable.StopAtBounds
             currentIndex: 0
             model: lv.results
 
@@ -91,6 +107,7 @@ Item {
                 width: ListView.view.width
                 height: lv.rowH
 
+                // row backdrop: hover + selection highlight
                 Rectangle {
                     anchors.fill: parent
                     radius: Theme.radiusXs
@@ -99,15 +116,67 @@ Item {
                     Behavior on color { ColorAnimation { duration: Theme.durFast } }
                 }
 
-                Text {
+                // selection accent bar (left)
+                Rectangle {
+                    visible: index === list.currentIndex
+                    width: 3
+                    height: lv.rowH - Theme.spaceSm * 2
+                    radius: 2
+                    color: Theme.primary
                     anchors.left: parent.left
-                    anchors.leftMargin: Theme.spaceSm
+                    anchors.leftMargin: Theme.spaceXs
                     anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - Theme.spaceSm * 2
-                    text: modelData.name
-                    color: index === list.currentIndex ? Theme.foreground : Theme.dimText
-                    font.pixelSize: Theme.fontXs + 1
-                    elide: Text.ElideRight
+                }
+
+                Row {
+                    anchors.left: parent.left
+                    anchors.leftMargin: Theme.spaceSm + 5
+                    anchors.right: parent.right
+                    anchors.rightMargin: Theme.spaceSm
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: Theme.spaceSm
+
+                    // app icon, or first-letter chip when none resolves
+                    Item {
+                        width: 20
+                        height: 20
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        Image {
+                            id: appIcon
+                            anchors.fill: parent
+                            source: modelData.icon !== "" ? modelData.icon : ""
+                            sourceSize.width: 40
+                            sourceSize.height: 40
+                            fillMode: Image.PreserveAspectFit
+                            smooth: true
+                            visible: source !== "" && status !== Image.Error
+                        }
+
+                        Rectangle {
+                            id: iconFallback
+                            anchors.fill: parent
+                            radius: Theme.radiusXs
+                            color: Theme.surface
+                            visible: modelData.icon === "" || appIcon.status === Image.Error
+                            Text {
+                                anchors.centerIn: parent
+                                text: modelData.name.length > 0 ? modelData.name.charAt(0).toUpperCase() : "?"
+                                color: Theme.primary
+                                font.pixelSize: Theme.fontSm - 1
+                                font.weight: Font.DemiBold
+                            }
+                        }
+                    }
+
+                    Text {
+                        width: parent.width - 20 - Theme.spaceSm
+                        text: modelData.name
+                        color: index === list.currentIndex ? Theme.foreground : Theme.dimText
+                        font.pixelSize: Theme.fontSm
+                        elide: Text.ElideRight
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
 
                 HoverHandler { id: hover; cursorShape: Qt.PointingHandCursor }

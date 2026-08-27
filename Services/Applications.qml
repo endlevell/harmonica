@@ -26,8 +26,23 @@ Singleton {
     function scanScript(): string {
         // NOTE: written as plain lines — no ${} anywhere so this stays a dumb string
         const lines = [
-            'LOCAL="${XDG_DATA_HOME:-$HOME/.local/share}/applications"',
+            'LOCAL="${XDG_DATA_HOME:-$HOME/.local/share}"',
             'DIRS="$LOCAL /run/current-system/sw/share /etc/profiles/per-user/$USER/share $HOME/.nix-profile/share ${XDG_DATA_DIRS:-}"',
+            'ICONROOTS="/run/current-system/sw/share/icons /etc/profiles/per-user/$USER/share/icons $HOME/.nix-profile/share/icons ${XDG_DATA_HOME:-$HOME/.local/share}/icons"',
+            'resolve() {',
+            '  i="$1"; [ -z "$i" ] && { printf ""; return; }',
+            '  case "$i" in /*) printf "%s" "$i"; return ;; esac',
+            '  case "$i" in *.svg|*.SVG|*.png|*.PNG) i="${i%.*}" ;; esac',
+            '  for r in $ICONROOTS; do',
+            '    for s in scalable 512x512 256x256 128x128 96x96 64x64 48x48 32x32 24x24; do',
+            '      for e in svg png; do',
+            '        f="$r/hicolor/$s/apps/$i.$e"',
+            '        [ -f "$f" ] && { printf "%s" "$f"; return; }',
+            '      done',
+            '    done',
+            '  done',
+            '  printf ""',
+            '}',
             'seen=""',
             'for d in $DIRS; do',
             '  [ -d "$d/applications" ] || continue',
@@ -42,11 +57,14 @@ Singleton {
             '      e && /^Type=/      {t=substr($0,6)}',
             '      e && /^Name=/      {n=substr($0,6)}',
             '      e && /^Exec=/      {x=substr($0,6)}',
+            '      e && /^Icon=/      {i=substr($0,6)}',
             '      e && /^NoDisplay=/ {nd=substr($0,11)}',
             '      e && /^Hidden=/    {hd=substr($0,8)}',
             '      END { if (t=="Application" && n!="" && x!="" && nd!="true" && hd!="true")',
-            '              printf "%s\\037%s\\037%s\\n", n, x, "" }',
-            '    \' "$f"',
+            '              printf "%s\\037%s\\037%s\\n", n, x, i }',
+            '    \' "$f" | while IFS="$(printf \'\\037\')" read -r n x i; do',
+            '      printf "%s\\037%s\\037%s\\n" "$n" "$x" "$(resolve "$i")"',
+            '    done',
             '  done',
             'done'
         ];
@@ -63,7 +81,7 @@ Singleton {
                     if (!line) continue;
                     const p = line.split("\x1f");       // 0x1f === awk \037
                     if (p.length < 2 || !p[0] || !p[1]) continue;
-                    list.push({ name: p[0], exec: p[1] });
+                    list.push({ name: p[0], exec: p[1], icon: p[2] || "" });
                 }
                 const byKey = {};
                 for (const a of list) byKey[a.name.toLowerCase()] = a;
@@ -101,13 +119,13 @@ Singleton {
     }
 
     function search(query: string): var {
-        if (!query || query.length === 0) return apps.slice(0, 2);
+        if (!query || query.length === 0) return apps.slice(0, 12);
         const scored = [];
         for (const a of apps) {
             const sc = fuzzy(query, a.name);
             if (sc >= 0) scored.push({ app: a, sc: sc });
         }
         scored.sort((x, y) => y.sc - x.sc);
-        return scored.slice(0, 2).map(x => x.app);
+        return scored.slice(0, 12).map(x => x.app);
     }
 }

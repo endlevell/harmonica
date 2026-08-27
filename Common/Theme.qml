@@ -77,6 +77,7 @@ Singleton {
     // ---- island geometry (compact, dynamic-island proportions) ----
     readonly property int barH: 38
     readonly property int panelW: 460
+    readonly property int launcherW: 280
     readonly property int panelH: 300
     readonly property int launcherH: 330
     readonly property int annotateW: 680

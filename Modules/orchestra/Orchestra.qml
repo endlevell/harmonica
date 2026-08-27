@@ -101,7 +101,8 @@ PanelWindow {
     Item {
         id: content
         anchors.horizontalCenter: parent.horizontalCenter
-        width: sizeBig ? Math.min(win.screen.width - Theme.spaceLg * 2, Theme.panelW)
+        width: sizeBig ? (sizeView === "launcher" ? Theme.launcherW
+                         : Math.min(win.screen.width - Theme.spaceLg * 2, Theme.panelW))
              : sizeView === "music" ? musicStrip.contentWidth : idleBar.contentWidth
         height: sizeBig ? (sizeView === "launcher" ? launcherView.contentH
                          : sizeView === "recordSettings" ? Theme.recordSettingsH
