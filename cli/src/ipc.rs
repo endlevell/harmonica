@@ -17,23 +17,35 @@ pub fn call(dir: &Path, target: &str, func: &str, args: &[String]) -> i32 {
     }
 }
 
-/// Launch the shell. detach=false runs quickshell in the foreground
-/// (used by systemd so the unit actually tracks the shell).
+/// Launch the shell. Detached = spawn quickshell and return immediately
+/// (interactive use). `--no-detach` blocks so the systemd unit tracks the
+/// shell directly.
 pub fn start(dir: &Path, detach: bool) -> i32 {
     use std::os::unix::process::CommandExt;
     let mut cmd = Command::new("qs");
     cmd.arg("-p").arg(dir);
     if detach {
-        cmd.process_group(0)
+        // spawn + orphan: CLI exits at once, quickshell keeps running
+        match cmd
+            .process_group(0)
             .stdin(Stdio::null())
             .stdout(Stdio::null())
-            .stderr(Stdio::null());
-    }
-    match cmd.status() {
-        Ok(s) => s.code().unwrap_or(0),
-        Err(e) => {
-            eprintln!("harmonica: failed to start quickshell: {e}");
-            1
+            .stderr(Stdio::null())
+            .spawn()
+        {
+            Ok(_) => 0,
+            Err(e) => {
+                eprintln!("harmonica: failed to start quickshell: {e}");
+                1
+            }
+        }
+    } else {
+        match cmd.status() {
+            Ok(s) => s.code().unwrap_or(0),
+            Err(e) => {
+                eprintln!("harmonica: failed to start quickshell: {e}");
+                1
+            }
         }
     }
 }

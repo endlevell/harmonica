@@ -78,6 +78,10 @@
               pkgs.wf-recorder   # screen-record backend
             ];
 
+            # autostart via Hyprland exec-once (clearest for a Wayland shell)
+            xdg.configFile."hypr/harmonica-autostart.conf".text =
+              "exec-once = ${pkg}/bin/harmonica start";
+
             systemd.user.services.harmonica = {
               Unit = {
                 Description = "Harmonica quickshell island";
@@ -93,5 +97,27 @@
             };
           };
         };
+
+      # nix develop — rust toolchain + quickshell + deps for local dev
+      devShells = forSystems (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        {
+          default = pkgs.mkShell {
+            packages = with pkgs; [
+              rustc
+              cargo
+              rust-analyzer
+              clippy
+              quickshell
+              grim
+              wf-recorder
+              wl-clipboard
+            ];
+          };
+        }
+      );
     };
 }
