@@ -1,16 +1,14 @@
 // Harmonica — composition root. Instantiates surfaces per screen; nothing else.
-// The ONLY non-island surface is RegionSelect — the approved fullscreen
-// exception for screenshot capture.
+// Approved exceptions: RegionSelect + WallpaperPicker.
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Modules.orchestra
 import qs.Modules.screenshot
+import qs.Modules.wallpaper
 import qs.Services
-
 Scope {
     id: root
-
     Variants {
         id: islandVariants
 
@@ -19,7 +17,6 @@ Scope {
 
         readonly property var island: instances[0] ?? null
     }
-
     RegionSelect {
         id: regionSelect
 
@@ -29,6 +26,8 @@ Scope {
         }
         onCancelled: pendingAnnotate = false
     }
+
+    WallpaperModule {}
 
     property bool pendingAnnotate: false
 
@@ -96,4 +95,5 @@ Scope {
         }
         function copyLast(): void { Screenshot.copyLast(); }
     }
+
 }

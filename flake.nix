@@ -75,6 +75,8 @@
           config = lib.mkIf cfg.enable {
             home.packages = [
               pkg
+              pkgs.awww          # wallpaper daemon/client
+              pkgs.pywal16       # palette generation after a pick
               pkgs.wf-recorder   # screen-record backend
             ];
 
@@ -90,6 +92,20 @@
               };
               Service = {
                 ExecStart = "${pkg}/bin/harmonica start --no-detach";
+                Restart = "on-failure";
+                RestartSec = 2;
+              };
+              Install.WantedBy = [ "graphical-session.target" ];
+            };
+
+            systemd.user.services.awww = {
+              Unit = {
+                Description = "Harmonica wallpaper daemon";
+                PartOf = [ "graphical-session.target" ];
+                After = [ "graphical-session.target" ];
+              };
+              Service = {
+                ExecStart = "${pkgs.awww}/bin/awww-daemon";
                 Restart = "on-failure";
                 RestartSec = 2;
               };
@@ -112,7 +128,9 @@
               rust-analyzer
               clippy
               quickshell
+              awww
               grim
+              pywal16
               wf-recorder
               wl-clipboard
             ];

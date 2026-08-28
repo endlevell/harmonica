@@ -34,6 +34,7 @@ This installs:
 
 - the `harmonica` binary on PATH
 - the QML shell config + `scripts/` (read-only, from the Nix store)
+- `awww` + `pywal16` (wallpaper apply + live palette regeneration)
 - `wf-recorder` (screen-record backend)
 - a systemd user service autostart (`harmonica start --no-detach`, restarts on failure)
 
@@ -53,13 +54,14 @@ nix run .#             # → run the CLI from the flake without installing
 | `harmonica ipc <target> <fn> [args…]` | Forward an IPC call to the shell. |
 | `harmonica scripts <name> [args…]` | Run a Lua script from `scripts/`. |
 
-IPC targets: `orchestra` (open/close/phase/page), `launcher` (open/close/toggle/results), `record` (start/pause/stop/settings/state), `screenshot` (region/window/fullscreen/annotate/save).
+IPC targets: `orchestra` (open/close/phase/page), `launcher` (open/close/toggle/results), `record` (start/pause/stop/settings/state), `screenshot` (region/window/fullscreen/annotate/save), `wallpaper` (open/close/toggle/isOpen/next/prev/focused/pick/apply/state).
 
 ## Hyprland keybinds
 
 ```ini
 bind = SUPER, S, exec, harmonica ipc launcher toggle      # app launcher
 bind = SUPER SHIFT, S, exec, harmonica ipc screenshot region
+bind = SUPER SHIFT, W, exec, harmonica ipc wallpaper toggle # wallpaper picker
 bind = SUPER SHIFT, R, exec, harmonica ipc record toggle  # record
 exec-once = harmonica start                               # autostart
 ```
@@ -67,7 +69,7 @@ exec-once = harmonica start                               # autostart
 ## Development
 
 ```bash
-nix develop          # rust toolchain + quickshell + grim + wf-recorder
+nix develop          # rust + quickshell + awww + pywal16 + grim + wf-recorder
 cargo build --release --manifest-path cli/Cargo.toml
 # run the shell from a config dir directly:
 nix run .# -- start
@@ -78,10 +80,11 @@ The canonical spec is [DESIGN.md](DESIGN.md) — read it before writing code. QM
 ## Layout
 
 ```
-shell.qml              composition root — one PanelWindow (the Orchestra)
+shell.qml              composition root — Orchestra + two approved overlays
 Common/                Theme (pywal tokens) · Paths · SettingsData
 Modules/orchestra/     phase views: idle, music, panel, launcher, record, annotate
 Modules/screenshot/    RegionSelect (the sanctioned fullscreen overlay)
+Modules/wallpaper/     approved standalone picker · carousel · IPC boundary
 Services/              headless QML services: mpris, network, battery, recorder…
 Widgets/               reusable QML widgets
 cli/                   Rust control CLI (the only place quickshell is invoked)

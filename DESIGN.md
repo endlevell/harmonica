@@ -33,7 +33,7 @@ There is exactly **one** `PanelWindow` in this shell: the Orchestra's.
 
 Every feature — launcher, settings, music player, screen-record UI, screenshot tool, anything built in the future — renders **inside the island container** as a phase or page of that one window. No feature may ever create its own `PanelWindow` or overlay window.
 
-**The only exception**: a full-screen overlay like the screenshot region-select canvas (§3.6) — and that requires explicit approval before building, never assumed.
+**Approved exceptions**: the fullscreen screenshot region-select canvas (§3.6) and the user-approved standalone Wallpaper Picker (§3.7). No other feature may create a window without explicit approval.
 
 Why this is non-negotiable:
 - Harmonica's identity is one shape morphing. Anything popping up elsewhere breaks that illusion completely.
@@ -120,6 +120,13 @@ Each page is its own file under `Modules/orchestra/pages/`.
 - Flow: hotkey → region-select overlay → annotation canvas (pen, highlighter, shapes, text, undo/redo, Theme-colored swatches) → save/copy/close.
 - Design is open. But region-select inherently needs full-screen bounds — the one flagged exception to the single-window rule (§2). **Get explicit approval before building it as a separate window.** Whether the annotation canvas also needs the exception, or can fit inside an expanded Orchestra view, is an open call — check "does this really need its own window?" first.
 
+### 3.7 Wallpaper Picker — Approved Standalone Tool
+
+- Fullscreen transparent `PanelWindow`; only a circle-reveal dim layer and flying carousel are visible. It is not an Orchestra phase.
+- Infinite, modulo-wrapped carousel: skewed rounded wallpaper cards, center emphasis, receding neighbors, wheel/arrow momentum, and image-content parallax.
+- Opening grows one centered dim circle; closing reverses it. Pick applies through `awww`, regenerates pywal, and closes cleanly.
+- CLI boundary: `harmonica ipc wallpaper open|close|toggle|isOpen|next|prev|focused|pick|apply|state`. Hyprland binds `SUPER+SHIFT+W` to `harmonica ipc wallpaper toggle`.
+
 ## 4. Signature Motion
 
 ### 4.1 Twitch
@@ -158,11 +165,11 @@ All color comes from pywal: `~/.cache/wal/colors.json`, read at runtime via `Fil
 
 | Category | Tokens |
 |---|---|
-| Colors | `surface` (fixed neutral dark, not pywal-driven), `surfaceHover`, `onBackground`/foreground, `colorAccentNet`, `colorOk`, `colorWarn`, `colorDanger`, a pulse-dot accent distinct from all of the above |
+| Colors | `surface`, `surfaceHover`, `foreground`, `colorNet`, `colorOk`, `warn`, `danger`, `overlayDim`, plus primary accent |
 | Type scale | full scale, at minimum `fontLg` (semibold — clock) and `fontSm` (secondary color — battery %) |
 | Spacing | 4px grid; `spaceMd` and up used for idle-pill zone gaps |
 | Radii | full scale, per skill skeleton |
-| Durations | `durNormal` (page slide), the morph expand/retract durations, and the 100–200ms twitch duration |
+| Durations | `durFast`, `durNormal`, `durSlow`, morph timings, `durReveal`, `durCarousel`, and `carouselTickMs` |
 | Easing | `OutBack` (expand), `OutCubic` (retract), the twitch spring curve, the pulse-dot bezier path params |
 
 ### 5.2 Semantic color mapping
@@ -224,6 +231,7 @@ harmonica/
 ├── Modules/orchestra/        # island container, one file per phase view, PulseDot.qml, Twitch.qml
 │   ├── pages/                # SettingsPage.qml, SystemInfoPage.qml, MusicPage.qml
 │   └── STUDY-NOTES.md        # ActivSpot research notes — read-only reference, see §4.3
+├── Modules/wallpaper/        # approved standalone picker + infinite carousel + IPC boundary
 ├── Widgets/                  # dumb reusable controls — LineGraph, Toggle, Radio, Slider,
 │                              #   Dropdown, IconButton, ArrowNav, Icon.qml
 ├── assets/icons/              # generated icon set + style-spec.json — see §6
@@ -300,7 +308,7 @@ Attach all of them to the report. A report without full visual proof isn't done.
 
 Each of these was built wrong once already and corrected — don't regress:
 
-1. **The launcher is not a separate window.** It's a phase inside the Orchestra, same as everything else. If a new feature seems to "need its own window," that's a signal to redesign it as a phase — ask first, and only for the flagged screenshot-region-select exception (§3.6).
+1. **The launcher is not a separate window.** It's a phase inside the Orchestra, same as everything else. Only the explicitly approved RegionSelect (§3.6) and Wallpaper Picker (§3.7) may create standalone surfaces; every future exception still requires approval first.
 2. **No borders, drop shadows, or blur/transparency on the island — ever.** Tried once for "richness," reverted. Richness comes from layout precision and pywal color, not chrome.
 3. **The hover panel shows exactly one page at a time.** All-pages-in-one-row, with dots that don't do anything, is the specific bug that happened twice — real paging means a real `ListView`/`SwipeView` with a one-page viewport, not a static row of content.
 4. **No truncated labels.** Every text element needs enough width or explicit `Text.ElideRight` + `Layout.maximumWidth` — clipped fragments must never ship again.
