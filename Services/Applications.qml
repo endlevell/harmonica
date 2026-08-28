@@ -95,11 +95,35 @@ Singleton {
 
     Component.onCompleted: rescan(true)
 
+    signal launchResult(string name, bool ok)
+    property string _probeName: ""
+
     function launch(app) {
         if (!app || !app.exec) return;
         const exe = app.exec.replace(/ ?%[a-zA-Z]/g, "").trim();
         if (exe === "") return;
         Quickshell.execDetached(["sh", "-c", exe]);
+    }
+
+    // Launch + spawn-validity probe. execDetached gives no failure feedback,
+    // so a fast `command -v` probe on the exec's binary tells the launcher
+    // whether the spawn can succeed (drives the progress bar's fail path).
+    function launchProbed(app) {
+        if (!app || !app.exec) { root.launchResult(app ? app.name : "", false); return; }
+        const exe = app.exec.replace(/ ?%[a-zA-Z]/g, "").trim();
+        if (exe === "") { root.launchResult(app.name, false); return; }
+        const bin = exe.split(/\s+/)[0].replace(/^["']|["']$/g, "").replace(/'/g, "");
+        _probeName = app.name;
+        probe.exec(["sh", "-c", "command -v '" + bin + "' >/dev/null 2>&1 && echo ok || echo no"]);
+        Quickshell.execDetached(["sh", "-c", exe]);
+    }
+
+    Process {
+        id: probe
+        command: []
+        stdout: StdioCollector {
+            onStreamFinished: root.launchResult(root._probeName, this.text.trim() === "ok")
+        }
     }
 
     // subsequence fuzzy match; score or -1 (consecutive + word-start bonuses)

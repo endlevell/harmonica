@@ -19,13 +19,20 @@ Item {
     readonly property int rowsShown: Math.min(resultCount, visibleRows)
     // honest list height: N rows + N-1 gaps
     readonly property int listH: rowsShown > 0 ? rowsShown * rowH + (rowsShown - 1) * rowSpacing : 0
-    // card height hugs content: pads + search row + list (or "no matches")
+    // card height hugs content: pads + search row + list (or "no matches") + launch bar
     readonly property int contentH: Theme.spaceSm * 2 + 34
         + (resultCount > 0 ? listH : input.text !== "" ? 26 : 0)
+        + (launching ? 8 : 0)
+
+    // ---- launching state ----
+    property bool launching: false
+    property real progress: 0.0
 
     function grabFocus(): void {
         input.text = "";
         list.currentIndex = 0;
+        launching = false;
+        progress = 0.0;
         Qt.callLater(() => input.forceActiveFocus());
     }
 
@@ -66,6 +73,7 @@ Item {
                     clip: true
                     cursorVisible: activeFocus
                     verticalAlignment: TextInput.AlignVCenter
+                    enabled: !lv.launching
 
                     Text {
                         visible: input.text === "" && !input.activeFocus
@@ -85,6 +93,32 @@ Item {
                 }
             }
         }
+
+        // launch progress bar ---------------------------------------------
+        Item {
+            width: parent.width
+            height: 4
+            visible: lv.launching
+
+            Rectangle {
+                width: parent.width
+                height: parent.height
+                radius: 2
+                color: Theme.surface
+            }
+
+            Rectangle {
+                id: progressBar
+                width: parent.width * lv.progress
+                height: parent.height
+                radius: 2
+                color: lv.barColor
+
+                Behavior on color { ColorAnimation { duration: 200 } }
+            }
+        }
+
+        Item { height: 4; width: 1; visible: lv.launching }
 
         // results ---------------------------------------------------------
         ListView {
@@ -197,10 +231,57 @@ Item {
         }
     }
 
+    // ---- color cycling during launch ----
+    readonly property var colorStops: [Theme.colorOk, Theme.primary, Theme.warn]
+    readonly property color barColor: failFlash > 0
+        ? Theme.mix(barColor, Theme.danger, failFlash)
+        : progress <= 0.33 ? Theme.mix(colorStops[0], colorStops[1], progress * 3)
+        : progress <= 0.66 ? Theme.mix(colorStops[1], colorStops[2], (progress - 0.33) * 3)
+        : Theme.mix(colorStops[2], colorStops[0], (progress - 0.66) * 3)
+
+    // ---- launch animation ----
+    NumberAnimation on progress {
+        id: launchAnim
+        running: false
+        from: 0.0
+        to: 1.0
+        duration: Theme.durSlow + 250
+        easing.type: Easing.OutCubic
+        onFinished: lv.closed()
+    }
+
+    // fail path (spec #6): bar stops where it is, brief danger flash, retract
+    property real failFlash: 0
+    SequentialAnimation {
+        id: failAnim
+        NumberAnimation { target: lv; property: "failFlash"; to: 1.0; duration: Theme.durFast }
+        NumberAnimation { target: lv; property: "failFlash"; to: 0.0; duration: Theme.durFast * 2 }
+        PauseAnimation { duration: Theme.durFast }
+    }
+    Timer {
+        id: failRetract
+        interval: Theme.durFast * 4
+        onTriggered: lv.closed()
+    }
+    Connections {
+        target: Applications
+        function onLaunchResult(name: string, ok: bool) {
+            if (!lv.launching || ok) return;
+            launchAnim.stop();
+            failAnim.start();
+            failRetract.start();
+        }
+    }
+
     function launchCurrent(): void {
         const vals = Applications.search(input.text);
         if (list.currentIndex < 0 || list.currentIndex >= vals.length) return;
-        Applications.launch(vals[list.currentIndex]);
-        lv.closed();
+        if (launching) return;  // already launching
+
+        launching = true;
+        progress = 0.0;
+        failFlash = 0.0;
+        Applications.launchProbed(vals[list.currentIndex]);
+        launchAnim.restart();
     }
 }
