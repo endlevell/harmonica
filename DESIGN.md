@@ -123,7 +123,10 @@ Each page is its own file under `Modules/orchestra/pages/`.
 ### 3.7 Wallpaper Picker — Approved Standalone Tool
 
 - Fullscreen transparent `PanelWindow`; only a circle-reveal dim layer and flying carousel are visible. It is not an Orchestra phase.
-- Infinite, modulo-wrapped carousel: skewed rounded wallpaper cards, center emphasis, receding neighbors, wheel/arrow momentum, and image-content parallax.
+- Exactly seven cards render at all times. Every card preserves its source image aspect ratio; wide images scale down uniformly instead of cropping, stretching, or letterboxing. Square sources remain geometrically square but read slightly wider through the common shear.
+- Cards are true Matrix4x4-sheared parallelograms with Theme-rounded masks and gaps of at least `Theme.spaceLg`. The center card is largest/frontmost; neighbors recede and lag; the two outer cards fade continuously toward their screen edge through directional gradient masks.
+- Infinite navigation uses a stable seven-slot modulo window. Wheel/touchpad velocity accumulates and decays, arrows add one themed impulse, and settling always lands on the nearest logical wallpaper with no visible edge or rebuild.
+- Picking plays one ~700ms cinematic sequence: 0–250ms spring zoom of the chosen native-ratio card while the other six blur/slide out; 250–500ms expanding circular iris/ripple reveals the new wallpaper texture; 500–700ms one horizontal Theme-palette bloom crosses the screen. Then the existing reverse circle closes the picker.
 - Opening grows one centered dim circle; closing reverses it. Pick applies through `awww`, regenerates pywal, and closes cleanly.
 - CLI boundary: `harmonica ipc wallpaper open|close|toggle|isOpen|next|prev|focused|pick|apply|state`. Hyprland binds `SUPER+SHIFT+W` to `harmonica ipc wallpaper toggle`.
 
@@ -231,7 +234,7 @@ harmonica/
 ├── Modules/orchestra/        # island container, one file per phase view, PulseDot.qml, Twitch.qml
 │   ├── pages/                # SettingsPage.qml, SystemInfoPage.qml, MusicPage.qml
 │   └── STUDY-NOTES.md        # ActivSpot research notes — read-only reference, see §4.3
-├── Modules/wallpaper/        # approved standalone picker + infinite carousel + IPC boundary
+├── Modules/wallpaper/        # picker + seven-card carousel + pick transition + IPC boundary
 ├── Widgets/                  # dumb reusable controls — LineGraph, Toggle, Radio, Slider,
 │                              #   Dropdown, IconButton, ArrowNav, Icon.qml
 ├── assets/icons/              # generated icon set + style-spec.json — see §6

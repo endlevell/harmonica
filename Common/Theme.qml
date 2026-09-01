@@ -86,20 +86,25 @@ Singleton {
     readonly property int annotateW: 680
     readonly property int recordSettingsH: 260
     readonly property int annotateH: 430
-    readonly property int wallpaperCardW: 250
-    readonly property int wallpaperCardH: 156
-    readonly property int wallpaperCardPitch: 150
-    readonly property int wallpaperParallaxShift: 14
+    readonly property int wallpaperVisibleCount: 7
+    readonly property int wallpaperCardMaxH: 220
+    readonly property int wallpaperGap: spaceXl
     readonly property int wallpaperArcRise: 10
     readonly property int wallpaperInputH: 300
     readonly property int wallpaperRevealStart: 32
-    readonly property int wallpaperVirtualCount: 10001
-    readonly property int wallpaperVirtualCenter: 5000
     readonly property int wallpaperWatchdogMs: 60000
     readonly property real wallpaperWheelStep: 0.34
     readonly property real wallpaperArrowImpulse: 1.0
     readonly property real wallpaperMomentumDecay: 0.84
     readonly property real wallpaperMomentumStop: 0.035
+    readonly property real wallpaperDefaultAspect: 1.5
+    readonly property real wallpaperEdgeOpacity: 0.08
+    readonly property real wallpaperPickBlur: 0.55
+    readonly property int wallpaperBlurMax: 32
+    readonly property real wallpaperBloomAlpha: 0.42
+    readonly property real wallpaperRippleStrength: 0.018
+    readonly property real wallpaperShearBase: -0.17
+    readonly property real wallpaperShearPerStep: -0.035
     // window itself NEVER resizes (ActivSpot lesson); only inner items animate
     readonly property int islandWinH: Math.max(Math.max(panelH, launcherH), annotateH) + spaceXs * 2
 
@@ -118,6 +123,9 @@ Singleton {
     readonly property int durReveal: 420          // wallpaper-picker circle reveal
     readonly property int durCarousel: 420        // carousel glide/decay settle
     readonly property int carouselTickMs: 16
+    readonly property int durWallpaperZoom: 250
+    readonly property int durWallpaperIris: 250
+    readonly property int durWallpaperBloom: 200
 
     // bezier splines for Easing.BezierSpline ([x1,y1,x2,y2,1,1] = one cubic segment)
     readonly property var easeDecel: [0.05, 0.7, 0.1, 1, 1, 1]        // entrances

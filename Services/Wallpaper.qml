@@ -19,6 +19,7 @@ Singleton {
     property string _scanDir: ""
     property string _pending: ""
     property bool _rescanPending: false
+    property bool _cancelled: false
 
     signal applied(string path)
     signal applyFailed(string path)
@@ -26,7 +27,9 @@ Singleton {
     Component.onCompleted: Qt.callLater(_syncThemeWallpaper)
     Connections {
         target: Theme
-        function onWallpaperChanged(): void { root._syncThemeWallpaper(); }
+        function onWallpaperChanged(): void {
+            root._syncThemeWallpaper();
+        }
     }
 
     function _syncThemeWallpaper(): void {
@@ -67,7 +70,9 @@ Singleton {
                         files.push(path);
                 }
                 files.sort((a, b) => a.localeCompare(b));
-                if (lister.scanDir === root._scanDir) root._wallpapers = files;
+                const unchanged = files.length === root._wallpapers.length && files.every((path, index) => path === root._wallpapers[index]);
+                if (lister.scanDir === root._scanDir && !unchanged)
+                    root._wallpapers = files;
                 if (root._rescanPending || lister.scanDir !== root._scanDir)
                     Qt.callLater(root.rescan);
             }
@@ -90,10 +95,18 @@ Singleton {
     function apply(path: string): bool {
         if (path === "" || applying)
             return false;
+        _cancelled = false;
         _pending = path;
         const quoted = _shellQuote(path);
-        applyProc.exec(["sh", "-c", "awww img " + quoted + " && wal -q -n -i " + quoted + " && printf '\\nHARMONICA_WALLPAPER_OK\\n'"]);
+        applyProc.exec(["sh", "-c", "awww img " + quoted + " && printf '\\nHARMONICA_AWWW_OK\\n' && wal -q -n -s -t -e -i " + quoted + " && printf '\\nHARMONICA_WALLPAPER_OK\\n'"]);
         return true;
+    }
+
+    function cancelApply(): void {
+        if (!applying)
+            return;
+        _cancelled = true;
+        applyProc.running = false;
     }
 
     Process {
@@ -102,10 +115,14 @@ Singleton {
         stdout: StdioCollector {
             onStreamFinished: {
                 const request = root._pending;
+                const cancelled = root._cancelled;
                 const ok = this.text.indexOf("HARMONICA_WALLPAPER_OK") >= 0;
+                const wallpaperChanged = this.text.indexOf("HARMONICA_AWWW_OK") >= 0;
                 root._pending = "";
-                if (ok) {
+                root._cancelled = false;
+                if (wallpaperChanged)
                     root._current = request;
+                if (ok && !cancelled) {
                     root.applied(request);
                 } else {
                     root.applyFailed(request);
