@@ -37,7 +37,7 @@ Rectangle {
         shadowEnabled: true
         shadowBlur: 0.35
         shadowOpacity: 0.2
-        shadowColor: "#000000"
+        shadowColor: Theme.shadow
         shadowVerticalOffset: 2
         shadowHorizontalOffset: 0
     }

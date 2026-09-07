@@ -41,10 +41,21 @@ Singleton {
     readonly property color colorNet: pick(_wal?.colors?.color6, "#b5a489")   // bright cyan/sand: network
     readonly property color colorOk: pick(_wal?.colors?.color2, "#a6e3a1")   // green family: battery full / success
     readonly property color warn: pick(_wal?.colors?.color3, "#f9e2af")   // yellow family: battery mid
-    readonly property color danger: pick(_wal?.colors?.color1, "#f38ba8")   // red family: low / destructive
-    readonly property color colorRecord: "#ff3b30"   // record red (fixed identity color)
-    readonly property color colorPause: "#ff9500"    // pause amber (fixed identity color)
-    readonly property color outline: pick(_wal?.colors?.color8, "#585b70")
+    readonly property color danger: pick(_wal?.colors?.color1, "#f38ba8") // red family: low / destructive
+    readonly property color shadow: Qt.darker(background, 2.0) // soft-cast shadow tone, no literals
+    // fixed record/pause hues survive ONLY as missing-wal fallbacks
+    readonly property color _walRed: pick(_wal?.colors?.color1, "#ff3b30")
+    readonly property color _walAmber: pick(_wal?.colors?.color3, "#ff9500")
+    // identity colors: wal hue when vivid, fixed axis when the palette runs gray
+    function identity(base: color, axisHue: real): color {
+        const vivid = base.hslSaturation >= 0.4;
+        const h = vivid ? base.hslHue : axisHue;
+        const s = vivid ? Math.min(1, base.hslSaturation * 1.5 + 0.2) : Math.max(base.hslSaturation, 0.75);
+        const l = vivid ? base.hslLightness : Math.max(base.hslLightness, 0.45);
+        return Qt.hsla(h, Math.min(1, s), l, 1);
+    }
+    readonly property color colorRecord: identity(_walRed, 0.0) // red axis
+    readonly property color colorPause: identity(_walAmber, 0.097) // amber axis (~35deg)
     // derived surfaces from background — no hardcoded hexes here either
     readonly property color surface: Qt.lighter(background, 1.25)
     readonly property color surfaceHover: Qt.lighter(background, 1.45)
