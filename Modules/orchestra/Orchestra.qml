@@ -42,15 +42,29 @@ PanelWindow {
     function _isBig(v: string): bool { return v === "panel" || v === "launcher" || v === "recordSettings"; }
 
     function goTo(view: string): void {
-        if (view === shownView && !swapSeq.running) return;
-        if (view === pendingView && swapSeq.running) return;
+        if (view === shownView && !swapSeq.running && !leadTimer.running) return;
+        if (view === pendingView && (swapSeq.running || leadTimer.running)) return;
         pendingView = view;
         leavingView = shownView;
+        // twitch plays first; the morph follows after morphTwitchLead
+        islandBody.trigger(1.0);
+        if (Theme.reducedMotion) beginMorph();
+        else leadTimer.restart();
+    }
+
+    function beginMorph(): void {
         sizeBig = win._isBig(pendingView);
         sizeView = pendingView;
         leaveOp = 1; leaveY = 0;
         enterOp = 0; enterY = -6;
         swapSeq.restart();
+    }
+
+    Timer {
+        id: leadTimer
+        interval: Theme.morphTwitchLead
+        repeat: false
+        onTriggered: win.beginMorph()
     }
 
     SequentialAnimation {
@@ -125,7 +139,6 @@ PanelWindow {
         }
 
         Twitch {
-            // TEMP-DBG
             id: islandBody
             anchors.fill: parent
 
