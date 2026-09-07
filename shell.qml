@@ -38,6 +38,9 @@ Scope {
             const t = reloadSentinel.text();
             if (t !== "" && t !== root._reloadSeen) {
                 root._reloadSeen = t;
+                // Quickshell.reload(hard: bool) — QuickshellGlobal singleton
+                // method per installed 0.3.0 quickshell-core.qmltypes; soft
+                // reload mirrors the file-watcher path.
                 Quickshell.reload(false);
             }
         }
