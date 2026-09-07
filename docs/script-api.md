@@ -32,7 +32,7 @@ Targets registered by the shell:
 - `orchestra` — open/close/isOpen/phase/page/nextPage/prevPage
 - `launcher`  — open/close/toggle/isOpen/results
 - `record`    — start/pause/stop/settings/state
-- `screenshot`— region/window/fullscreen/cancel/full/annotate/save/copyLast
+- `screenshot`— open/close/toggle/area/screen/output/saveArea/saveScreen/color
 
 ## `sys`
 

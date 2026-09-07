@@ -1,9 +1,9 @@
 import QtQuick
+import QtQuick.Effects
 import qs.Common
 import qs.Widgets
 
-// Bento-style quick toggle pill:
-// Icon circle left · Title + Subtitle right · Active highlight
+// Modern flat quick toggle with clean hover states
 Rectangle {
     id: pill
 
@@ -21,7 +21,26 @@ Rectangle {
     radius: Theme.radiusMd - 2
     color: active ? activeColor : (mouse.containsMouse ? Theme.surfaceHover : Theme.surface)
 
+    scale: mouse.pressed ? 0.98 : (mouse.containsMouse ? 1.03 : 1.0)
+
     Behavior on color { ColorAnimation { duration: Theme.durFast } }
+    Behavior on scale {
+        NumberAnimation {
+            duration: Theme.durNormal
+            easing.type: Easing.OutCubic
+        }
+    }
+
+    // Subtle shadow for depth (no gradient)
+    layer.enabled: pill.active
+    layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowBlur: 0.35
+        shadowOpacity: 0.2
+        shadowColor: "#000000"
+        shadowVerticalOffset: 2
+        shadowHorizontalOffset: 0
+    }
 
     Row {
         anchors.fill: parent
@@ -63,7 +82,7 @@ Rectangle {
 
             Text {
                 text: pill.statusText
-                color: pill.active ? Qt.darker(Theme.background, 1.25) : Theme.dimText
+                color: pill.active ? Qt.rgba(0, 0, 0, 0.6) : Theme.dimText
                 font.pixelSize: 10
                 elide: Text.ElideRight
                 width: parent.width

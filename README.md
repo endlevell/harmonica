@@ -1,6 +1,6 @@
 # Harmonica
 
-Dynamic-island-style desktop shell for **Hyprland on NixOS** — one morphing pill that becomes an app launcher, music strip, control panel, screen recorder and screenshot annotator. Built with [Quickshell](https://quickshell.outfoxxed.me) (QML) and a companion Rust CLI.
+Dynamic-island-style desktop shell for **Hyprland on NixOS** — one morphing pill that becomes an app launcher, music strip, control panel, screen recorder and screenshot capture row. Built with [Quickshell](https://quickshell.outfoxxed.me) (QML) and a companion Rust CLI.
 
 > **All shell control goes through the `harmonica` CLI.** Direct `qs`/`quickshell` invocation is banned outside the CLI's own implementation.
 
@@ -54,13 +54,13 @@ nix run .#             # → run the CLI from the flake without installing
 | `harmonica ipc <target> <fn> [args…]` | Forward an IPC call to the shell. |
 | `harmonica scripts <name> [args…]` | Run a Lua script from `scripts/`. |
 
-IPC targets: `orchestra` (open/close/phase/page), `launcher` (open/close/toggle/results), `record` (start/pause/stop/settings/state), `screenshot` (region/window/fullscreen/annotate/save), `wallpaper` (open/close/toggle/isOpen/next/prev/focused/pick/apply/state).
+IPC targets: `orchestra` (open/close/phase/page), `launcher` (open/close/toggle/results), `record` (start/pause/stop/settings/state), `screenshot` (open/close/toggle/area/screen/output/saveArea/saveScreen/color), `wallpaper` (open/close/toggle/isOpen/next/prev/focused/pick/apply/state).
 
 ## Hyprland keybinds
 
 ```ini
 bind = SUPER, S, exec, harmonica ipc launcher toggle      # app launcher
-bind = SUPER SHIFT, S, exec, harmonica ipc screenshot region
+bind = SUPER SHIFT, S, exec, harmonica ipc screenshot toggle
 bind = SUPER SHIFT, W, exec, harmonica ipc wallpaper toggle # wallpaper picker
 bind = SUPER SHIFT, R, exec, harmonica ipc record toggle  # record
 exec-once = harmonica start                               # autostart
@@ -82,8 +82,7 @@ The canonical spec is [DESIGN.md](DESIGN.md) — read it before writing code. QM
 ```
 shell.qml              composition root — Orchestra + two approved overlays
 Common/                Theme (pywal tokens) · Paths · SettingsData
-Modules/orchestra/     phase views: idle, music, panel, launcher, record, annotate
-Modules/screenshot/    RegionSelect (the sanctioned fullscreen overlay)
+Modules/orchestra/     phase views: idle, music, panel, launcher, record, screenshot
 Modules/wallpaper/     approved standalone picker · carousel · IPC boundary
 Services/              headless QML services: mpris, network, battery, recorder…
 Widgets/               reusable QML widgets

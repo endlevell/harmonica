@@ -18,9 +18,8 @@ PanelWindow {
     property bool _carouselVisible: false
     property string _pendingPick: ""
     property bool _pickTransition: false
-    property bool _applySucceeded: false
-    property bool _irisFinished: false
-    property bool _bloomStarted: false
+    property bool _applyDone: false
+    property bool _waitClose: false
     property real revealProgress: closedScale
     readonly property real diagonal: Math.sqrt(width * width + height * height)
     readonly property real closedScale: diagonal > 0 ? Theme.wallpaperRevealStart / diagonal : 0.02
@@ -33,15 +32,14 @@ PanelWindow {
         Wallpaper.rescan();
         _showing = true;
         _closing = false;
-        _carouselVisible = false;
-        carousel.interactive = true;
+        _carouselVisible = true;
+        carousel.interactive = false;
         carousel.resetToCurrent();
+        carousel.enter();
         revealClose.stop();
         revealOpen.from = Math.max(closedScale, revealProgress);
         revealOpen.restart();
-        carouselDelay.restart();
         watchdog.restart();
-        Qt.callLater(() => carousel.forceActiveFocus());
     }
 
     function close(): void {
@@ -51,11 +49,14 @@ PanelWindow {
     }
     function startClose(): void {
         _closing = true;
-        _carouselVisible = false;
         carousel.interactive = false;
         carousel.velocity = 0;
-        carouselDelay.stop();
         revealOpen.stop();
+        carousel.exit();
+    }
+    function beginRevealClose(): void {
+        if (!carousel.pickClosing)
+            _carouselVisible = false;
         revealClose.from = revealProgress;
         revealClose.to = closedScale;
         revealClose.restart();
@@ -73,36 +74,75 @@ PanelWindow {
         carousel.glide(-1);
     }
     function pick(): string {
-        if (busy || _closing)
+        if (!shown || busy || _closing)
             return "";
         return carousel.pick();
     }
+    // Beats run in the carousel; wal/awww apply fires on shrinkDone (beat 4)
+    // so the re-theme lands in parallel with check + close.
     function beginPick(path: string): string {
-        if (path === "" || _closing || _pickTransition || Wallpaper.applying) {
+        if (!shown || path === "" || _closing || _pickTransition || Wallpaper.applying) {
             if (shown && !_closing)
-                carousel.cancelPick();
+                carousel.abortPickSequence();
             return "";
         }
         _pendingPick = path;
         _pickTransition = true;
-        _applySucceeded = false;
-        _irisFinished = false;
-        _bloomStarted = false;
+        _applyDone = false;
+        _waitClose = false;
         carousel.interactive = false;
         watchdog.restart();
-        transition.start(path, carousel.focusedAspect, carousel.focusedCardWidth, carousel.cardHeight);
+        carousel.beginPickSequence();
         return path;
     }
 
+    function fireApply(): void {
+        if (!_pickTransition || _closing || _pendingPick === "")
+            return;
+        if (!Wallpaper.apply(_pendingPick))
+            abortPick();
+    }
+
     function abortPick(): void {
+        if (_closing) return;
+        Wallpaper.cancelApply();
         _pendingPick = "";
         _pickTransition = false;
-        _applySucceeded = false;
-        _irisFinished = false;
-        _bloomStarted = false;
-        transition.abort();
-        if (shown && !_closing)
-            carousel.cancelPick();
+        _applyDone = false;
+        _waitClose = false;
+        if (shown)
+            carousel.abortPickSequence();
+    }
+
+    // Beats 1-4 done: exit slots + shrink dim TOGETHER (~400ms),
+    // unless wal is still running — then applied/failed closes for us.
+    function finishPick(): void {
+        if (!shown) {
+            // beats outlived the surface — drop flags, never strand busy
+            _pendingPick = "";
+            _pickTransition = false;
+            _waitClose = false;
+            return;
+        }
+        if (_closing) return;
+        _pendingPick = "";
+        _pickTransition = false;
+        if (_applyDone || !Wallpaper.applying) doPickClose();
+        else _waitClose = true;
+    }
+
+    // light pick close: dim shrinks while the picked card melts outward
+    // into the new wallpaper (melt outlives the dim, no blink-out)
+    function doPickClose(): void {
+        if (!shown || _closing) return;
+        _closing = true;
+        carousel.interactive = false;
+        carousel.velocity = 0;
+        carousel.pickClosing = true;
+        revealOpen.stop();
+        carousel.exit();
+        carousel.meltOut();
+        beginRevealClose();
     }
     function apply(path: string): string {
         if (path === "" || busy || _closing)
@@ -116,14 +156,6 @@ PanelWindow {
         }
         watchdog.restart();
         return path;
-    }
-    function maybeStartBloom(): void {
-        if (!_pickTransition || _bloomStarted || !_applySucceeded || !_irisFinished)
-            return;
-        if (Theme.wallpaper !== _pendingPick)
-            return;
-        _bloomStarted = true;
-        transition.startBloom();
     }
 
     NumberAnimation {
@@ -144,51 +176,39 @@ PanelWindow {
         easing.type: Easing.BezierSpline
         easing.bezierCurve: Theme.easeAccel
         onFinished: {
+            if (carousel.pickClosing) return;   // melt tail hides us instead
             picker._showing = false;
             picker._closing = false;
             watchdog.stop();
         }
     }
 
-    Timer {
-        id: carouselDelay
-        interval: Theme.durReveal - Theme.durFast
-        onTriggered: if (!picker._closing)
-            picker._carouselVisible = true
-    }
-
     Connections {
         target: Wallpaper
         function onApplied(path: string): void {
-            if (path !== picker._pendingPick)
+            if (path !== picker._pendingPick && !picker._waitClose)
                 return;
-            if (!picker._pickTransition) {
-                picker._pendingPick = "";
+            picker._applyDone = true;
+            picker._pendingPick = "";
+            if (picker._waitClose) {
+                picker._waitClose = false;
+                picker.finishPick();
+            } else if (!picker._pickTransition) {
                 picker.startClose();
-                return;
             }
-            picker._applySucceeded = true;
-            picker.maybeStartBloom();
         }
         function onApplyFailed(path: string): void {
-            if (path !== picker._pendingPick)
+            if (path !== picker._pendingPick && !picker._waitClose)
                 return;
-            if (picker._pickTransition) {
+            if (picker._waitClose) {
+                // beats already played but nothing applied — still melt out
+                picker._waitClose = false;
+                picker._pickTransition = false;
+                picker._pendingPick = "";
+                picker.doPickClose();
+            } else {
                 picker.abortPick();
-                return;
             }
-            picker._pendingPick = "";
-            if (!picker.shown || picker._closing)
-                return;
-            carousel.interactive = true;
-            Qt.callLater(() => carousel.forceActiveFocus());
-        }
-    }
-
-    Connections {
-        target: Theme
-        function onWallpaperChanged(): void {
-            picker.maybeStartBloom();
         }
     }
 
@@ -238,31 +258,32 @@ PanelWindow {
 
     Item {
         anchors.fill: parent
-        opacity: picker._carouselVisible ? 1 : 0
-        y: picker._carouselVisible ? 0 : Theme.spaceXl
-
-        Behavior on opacity {
-            NumberAnimation {
-                duration: Theme.durNormal
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: Theme.easeDecel
-            }
-        }
-        Behavior on y {
-            NumberAnimation {
-                duration: Theme.durNormal
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: Theme.easeDecel
-            }
-        }
+        visible: picker._carouselVisible
 
         Carousel {
             id: carousel
             anchors.fill: parent
             onSelected: path => picker.beginPick(path)
+            onEntered: {
+                if (!picker._closing) {
+                    carousel.interactive = true;
+                    Qt.callLater(() => carousel.forceActiveFocus());
+                }
+            }
+            onExited: if (picker._closing && !carousel.pickClosing)
+                picker.beginRevealClose()
+            onPickFinished: picker.finishPick()
+            onShrinkDone: picker.fireApply()
+            onMeltDone: {
+                picker._carouselVisible = false;
+                picker._showing = false;
+                picker._closing = false;
+                watchdog.stop();
+            }
         }
 
         Text {
+            visible: !carousel.pickClosing
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: Theme.spaceLg
@@ -272,26 +293,6 @@ PanelWindow {
         }
     }
 
-    PickTransition {
-        id: transition
-        anchors.fill: parent
-        onZoomFinished: startIris()
-        onImagesReady: {
-            if (!Wallpaper.apply(picker._pendingPick))
-                picker.abortPick();
-        }
-        onIrisFinished: {
-            picker._irisFinished = true;
-            picker.maybeStartBloom();
-        }
-        onBloomFinished: {
-            picker._pendingPick = "";
-            picker._pickTransition = false;
-            transition.finish();
-            picker.close();
-        }
-        onLoadFailed: picker.abortPick()
-    }
 
     Timer {
         id: watchdog
@@ -304,9 +305,10 @@ PanelWindow {
     }
 
     onShownChanged: if (!shown) {
-        transition.abort();
-        carousel.cancelPick();
+        carousel.abortPickSequence();
         _pendingPick = "";
         _pickTransition = false;
+        _applyDone = false;
+        _waitClose = false;
     }
 }

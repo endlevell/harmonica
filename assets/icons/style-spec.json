@@ -6,7 +6,7 @@
   "licenseFile": "LICENSE",
   "grid": "0 -960 960 960",
   "renderedSize": 24,
-  "iconCount": 33,
+  "iconCount": 44,
   "notes": [
     "Vendored Material Symbols (Rounded, fill weight 1). Files normalized: width/height 24, fill currentColor on every path.",
     "OUR filenames and category folders are canonical — Icon.qml resolves category/name below; materialName records upstream origin.",
@@ -20,14 +20,18 @@
       "battery-full",
       "battery-charging",
       "bluetooth",
-      "airplane"
+      "airplane",
+      "bell"
     ],
     "system": [
       "cpu",
       "ram",
       "disk",
       "temperature",
-      "gear"
+      "gear",
+      "mic",
+      "volume",
+      "folder"
     ],
     "media": [
       "play",
@@ -37,11 +41,13 @@
       "prev",
       "shuffle",
       "repeat",
-      "music-note"
+      "music-note",
+      "videocam"
     ],
     "actions": [
       "search",
       "close",
+      "check",
       "minimize",
       "arrow-left",
       "arrow-right",
@@ -52,6 +58,11 @@
       "pause-circle",
       "stop-circle",
       "screenshot",
+      "crop-free",
+      "output",
+      "save",
+      "photo",
+      "colorize",
       "scissors"
     ]
   },
@@ -68,14 +79,17 @@
     "system/disk": "hard_drive",
     "system/temperature": "device_thermostat",
     "system/gear": "settings",
+    "system/mic": "mic",
+    "system/volume": "volume_up",
+    "system/folder": "folder",
     "media/play": "play_arrow",
     "media/pause": "pause",
     "media/stop": "stop",
     "media/next": "skip_next",
     "media/prev": "skip_previous",
     "media/shuffle": "shuffle",
-    "media/repeat": "repeat",
     "media/music-note": "music_note",
+    "media/videocam": "videocam",
     "actions/search": "search",
     "actions/close": "close",
     "actions/minimize": "minimize",
@@ -88,7 +102,14 @@
     "record/screenshot": "screenshot",
     "record/scissors": "content_cut",
     "status/wifi-off": "wifi_off",
-    "status/ethernet": "lan"
+    "status/ethernet": "lan",
+    "status/bell": "notifications",
+    "actions/check": "check",
+    "record/crop-free": "crop_free",
+    "record/output": "desktop_windows",
+    "record/save": "save",
+    "record/photo": "photo_camera",
+    "record/colorize": "colorize"
   },
   "generated": "2026-08-25"
 }

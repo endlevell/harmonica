@@ -3,12 +3,17 @@ import QtQuick.Effects
 import qs.Common
 import qs.Services
 
-// Exactly seven persistent logical slots. Only an offscreen slot is recycled,
+// Exactly nine persistent logical slots. Only an offscreen slot is recycled,
 // so crossing an index never swaps all delegate content at once.
 Item {
     id: root
 
     signal selected(string path)
+    signal entered
+    signal exited
+    signal pickFinished
+    signal shrinkDone
+    signal meltDone
 
     readonly property int count: Wallpaper.count
     readonly property int half: Math.floor(Theme.wallpaperVisibleCount / 2)
@@ -24,16 +29,19 @@ Item {
             value = Math.max(value, ratioFor(i));
         return value;
     }
-    readonly property real maxShear: Math.abs(Theme.wallpaperShearBase + half * Theme.wallpaperShearPerStep)
-    readonly property real cardHeight: Math.min(Theme.wallpaperCardMaxH, (availableWidth - Theme.wallpaperGap * (Theme.wallpaperVisibleCount - 1)) / (Theme.wallpaperVisibleCount * (maxAspect + maxShear)))
-    readonly property real pitch: cardHeight * (maxAspect + maxShear) + Theme.wallpaperGap
+    readonly property real maxShear: Math.abs(Theme.wallpaperShearBase)
+    readonly property real cardHeight: Math.min(Theme.wallpaperCardMaxH, availableWidth / (Theme.wallpaperVisibleCount * Theme.wallpaperStackStepRatio + maxAspect * Theme.wallpaperFocusScale + maxShear))
+    readonly property real pitch: cardHeight * Theme.wallpaperStackStepRatio
 
     property int baseWallpaper: 0
     property real offset: 0
     property real velocity: 0
     property bool interactive: true
     property bool picking: false
-    property real pickProgress: 0
+    property real activeZoom: 1
+    property real checkIn: 0
+    property bool pickClosing: false
+    property real activeGone: 0
     property var aspectRatios: ({})
 
     function mod(value: int, n: int): int {
@@ -61,15 +69,41 @@ Item {
     function resetToCurrent(): void {
         momentum.stop();
         settle.stop();
+        abortPickTimers();
+        picking = false;
+        pickClosing = false;
+        activeZoom = 1;
+        activeGone = 0;
+        checkIn = 0;
         if (count === 0)
             return;
         baseWallpaper = Math.max(0, Wallpaper.wallpapers.indexOf(Wallpaper.current));
         offset = 0;
         velocity = 0;
-        picking = false;
-        pickProgress = 0;
         resetSlots();
+        for (let i = 0; i < slots.count; i++) {
+            const item = slots.itemAt(i);
+            if (item) item.scatterReset();
+        }
         Qt.callLater(() => root.forceActiveFocus());
+    }
+    function enter(): void {
+        exitDone.stop();
+        for (let i = 0; i < slots.count; i++) {
+            const item = slots.itemAt(i);
+            if (item)
+                item.animateIn();
+        }
+        enterDone.restart();
+    }
+    function exit(): void {
+        enterDone.stop();
+        for (let i = 0; i < slots.count; i++) {
+            const item = slots.itemAt(i);
+            if (item)
+                item.animateOut();
+        }
+        exitDone.restart();
     }
     function recycleSlots(): void {
         const limit = half + 0.5;
@@ -86,8 +120,15 @@ Item {
     function glide(steps: int): void {
         if (!interactive || count === 0)
             return;
+        applyImpulse(steps * Theme.wallpaperArrowImpulse);
+    }
+    function applyImpulse(impulse: real): void {
+        if (!interactive || impulse === 0)
+            return;
         settle.stop();
-        velocity += steps * Theme.wallpaperArrowImpulse;
+        if (velocity * impulse < 0)
+            velocity = 0;
+        velocity += impulse;
         momentum.restart();
     }
     function focusKey(key: int): void {
@@ -108,17 +149,60 @@ Item {
         velocity = 0;
         const path = focusedPath;
         interactive = false;
-        picking = true;
-        pickProgress = 0;
         selected(path);
         return path;
     }
-    function cancelPick(): void {
-        pickZoom.stop();
+    // Five-beat pick sequence driver (timings in Theme):
+    // expand + scatter start together → shrink → solo check → pickFinished.
+    // Scattered cards STAY gone; the picker fires Wallpaper.apply on shrinkDone.
+    function beginPickSequence(): void {
+        if (picking) return;
+        picking = true;
+        activeZoom = 1;
+        checkIn = 0;
+        expandZoom.restart();
+        for (let i = 0; i < slots.count; i++) {
+            const item = slots.itemAt(i);
+            if (item) item.scatterOut();
+        }
+        shrinkTimer.restart();
+    }
+    function abortPickSequence(): void {
+        abortPickTimers();
         picking = false;
-        pickProgress = 0;
+        pickClosing = false;
+        activeZoom = 1;
+        activeGone = 0;
+        checkIn = 0;
+        for (let i = 0; i < slots.count; i++) {
+            const item = slots.itemAt(i);
+            if (item) item.scatterReset();
+        }
         interactive = true;
         Qt.callLater(() => root.forceActiveFocus());
+    }
+    function abortPickTimers(): void {
+        shrinkTimer.stop();
+        finishTimer.stop();
+        expandZoom.stop();
+        shrinkZoom.stop();
+        checkSeq.stop();
+        meltAnim.stop();
+    }
+    // pick-close exit: the chosen card swells and dissolves into the new
+    // wallpaper behind the lifting dim (outlives revealClose — no blink-out)
+    function meltOut(): void {
+        meltAnim.restart();
+    }
+    NumberAnimation {
+        id: meltAnim
+        target: root
+        property: "activeGone"
+        to: 1
+        duration: Theme.durWallpaperPickMelt
+        easing.type: Easing.BezierSpline
+        easing.bezierCurve: Theme.easeDecel
+        onFinished: { root.pickClosing = false; root.meltDone(); }
     }
 
     onOffsetChanged: recycleSlots()
@@ -131,10 +215,8 @@ Item {
         enabled: root.interactive
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onWheel: event => {
-            settle.stop();
             const raw = Math.abs(event.pixelDelta.y) > 0 ? event.pixelDelta.y / Math.max(1, root.pitch) : event.angleDelta.y / 120;
-            root.velocity += -raw * Theme.wallpaperWheelStep;
-            momentum.restart();
+            root.applyImpulse(-raw * Theme.wallpaperWheelStep);
         }
     }
 
@@ -169,15 +251,55 @@ Item {
         easing.bezierCurve: Theme.easeDecel
     }
     NumberAnimation {
-        id: pickZoom
+        id: expandZoom
         target: root
-        property: "pickProgress"
-        duration: Theme.durWallpaperZoom
+        property: "activeZoom"
+        from: 1
+        to: Theme.wallpaperPickExpandScale
+        duration: Theme.durWallpaperPickExpand
         easing.type: Easing.BezierSpline
-        easing.bezierCurve: Theme.easeTwitch
+        easing.bezierCurve: Theme.easeMorphExpand
     }
-    onPickingChanged: if (picking)
-        pickZoom.restart()
+    // scatter clears (stagger + glide) just as expand lands — no dead time
+    Timer {
+        id: shrinkTimer
+        interval: (root.half - 1) * Theme.wallpaperPickStaggerMs + Theme.durWallpaperPickScatter
+        onTriggered: shrinkZoom.restart()
+    }
+    NumberAnimation {
+        id: shrinkZoom
+        target: root
+        property: "activeZoom"
+        to: 1
+        duration: Theme.durWallpaperPickShrink
+        easing.type: Easing.OutCubic
+        onFinished: {
+            checkSeq.restart();
+            finishTimer.restart();
+            root.shrinkDone();
+        }
+    }
+    SequentialAnimation {
+        id: checkSeq
+        NumberAnimation { target: root; property: "checkIn"; to: 1; duration: Theme.durWallpaperPickCheck / 2; easing.type: Easing.OutCubic }
+        NumberAnimation { target: root; property: "checkIn"; to: 0; duration: Theme.durWallpaperPickCheck / 2; easing.type: Easing.InCubic }
+    }
+    Timer {
+        id: finishTimer
+        interval: Theme.durWallpaperPickCheck
+        onTriggered: { root.picking = false; root.pickFinished(); }
+    }
+
+    Timer {
+        id: enterDone
+        interval: Theme.durWallpaperItemEnter + root.half * Theme.wallpaperStaggerMs
+        onTriggered: root.entered()
+    }
+    Timer {
+        id: exitDone
+        interval: Theme.durWallpaperItemExit + root.half * Theme.wallpaperStaggerMs
+        onTriggered: root.exited()
+    }
 
     // Metadata probes: natural source ratio only, never drawn.
     Repeater {
@@ -217,21 +339,97 @@ Item {
             readonly property real aspect: wallpaperIndex >= 0 ? root.ratioFor(wallpaperIndex) : Theme.wallpaperDefaultAspect
             readonly property real nativeWidth: root.cardHeight * aspect
             readonly property bool chosen: logicalKey === root.focusedKey
-            readonly property real fadeAmount: Math.max(0, Math.min(1, (absDistance - 2) / 1.15))
+            readonly property real fadeAmount: Math.max(0, Math.min(1, absDistance - 2))
+            property real revealProgress: 0
+            property real scatter: 0
+
+            function animateIn(): void {
+                exitDelay.stop();
+                exitAnimation.stop();
+                enterDelay.stop();
+                enterAnimation.stop();
+                revealProgress = 0;
+                enterDelay.restart();
+            }
+            function animateOut(): void {
+                if (root.pickClosing && slot.chosen) return;
+                enterDelay.stop();
+                enterAnimation.stop();
+                exitDelay.stop();
+                exitAnimation.stop();
+                exitDelay.restart();
+            }
+            // dealt-cards scatter, one way only: outward slide + tilt + fade,
+            // staggered innermost-first — swept off the table, they stay gone
+            function scatterOut(): void {
+                if (slot.chosen) return;
+                scatterOutAnim.stop();
+                scatterDelay.interval = (Math.round(slot.absDistance) - 1) * Theme.wallpaperPickStaggerMs;
+                scatterDelay.restart();
+            }
+            function scatterReset(): void {
+                scatterDelay.stop();
+                scatterOutAnim.stop();
+                scatter = 0;
+            }
+            Timer {
+                id: scatterDelay
+                onTriggered: scatterOutAnim.restart()
+            }
+            NumberAnimation {
+                id: scatterOutAnim
+                target: slot
+                property: "scatter"
+                to: 1
+                duration: Theme.durWallpaperPickScatter
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Theme.easeDecel
+            }
 
             width: root.pitch
             height: root.height
-            x: root.width / 2 - width / 2 + distance * root.pitch - distance * Theme.spaceMd * Math.min(absDistance, 2) + (root.picking && !chosen ? Math.sign(distance) * root.width * 0.38 * root.pickProgress : 0)
-            z: chosen ? 200 : 100 - Math.round(absDistance * 10)
+            x: root.width / 2 - width / 2 + distance * root.pitch + Math.sign(distance) * Theme.wallpaperEntranceShift * (1 - revealProgress) + (!slot.chosen ? Math.sign(slot.distance) * root.width * Theme.wallpaperPickScatterTravel * slot.scatter : 0)
+            z: chosen ? 1000 : 900 - Math.round(absDistance * 100)
+            rotation: slot.chosen ? 0 : Math.sign(slot.distance) * Theme.wallpaperPickScatterTilt * slot.scatter
+            transformOrigin: Item.Center
+
+            Timer {
+                id: enterDelay
+                interval: Math.round(slot.absDistance) * Theme.wallpaperStaggerMs
+                onTriggered: enterAnimation.restart()
+            }
+            NumberAnimation {
+                id: enterAnimation
+                target: slot
+                property: "revealProgress"
+                to: 1
+                duration: Theme.durWallpaperItemEnter
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Theme.easeDecel
+            }
+            Timer {
+                id: exitDelay
+                interval: (root.half - Math.round(slot.absDistance)) * Theme.wallpaperStaggerMs
+                onTriggered: exitAnimation.restart()
+            }
+            NumberAnimation {
+                id: exitAnimation
+                target: slot
+                property: "revealProgress"
+                to: 0
+                duration: Theme.durWallpaperItemExit
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Theme.easeAccel
+            }
 
             Item {
                 id: card
                 width: slot.nativeWidth
                 height: root.cardHeight
                 anchors.centerIn: parent
-                anchors.verticalCenterOffset: slot.absDistance * Theme.wallpaperArcRise
-                scale: 1 - 0.18 * Math.min(slot.absDistance, 3) / 3
-                opacity: (1 - 0.48 * Math.min(slot.absDistance, 3) / 3) * (root.picking ? 1 - root.pickProgress : 1)
+                anchors.verticalCenterOffset: slot.absDistance * Theme.wallpaperArcRise + (1 - slot.revealProgress) * Theme.spaceXl
+                scale: (Theme.wallpaperOuterScale + (Theme.wallpaperFocusScale - Theme.wallpaperOuterScale) * (1 - Math.min(slot.absDistance, root.half) / root.half)) * (slot.chosen ? root.activeZoom * (1 + Theme.wallpaperPickMeltGrow * root.activeGone) : 1)
+                opacity: Math.max(Theme.wallpaperEdgeOpacity, 1 - slot.absDistance * Theme.wallpaperDepthOpacityStep) * slot.revealProgress * (slot.chosen ? 1 - root.activeGone : 1 - slot.scatter)
 
                 transform: Matrix4x4 {
                     matrix: {
@@ -240,9 +438,20 @@ Item {
                     }
                 }
 
+                RectangularShadow {
+                    anchors.fill: parent
+                    visible: slot.chosen
+                    radius: Theme.radiusMd
+                    blur: Theme.wallpaperFocusShadowBlur
+                    color: Qt.rgba(Theme.background.r, Theme.background.g, Theme.background.b, Theme.wallpaperFocusShadowOpacity)
+                    offset: Qt.vector2d(0, Theme.spaceMd)
+                    z: -1
+                }
+
                 Item {
                     id: imageSource
                     anchors.fill: parent
+                    clip: true
                     visible: false
                     layer.enabled: true
 
@@ -251,9 +460,12 @@ Item {
                         color: Theme.surface
                     }
                     Image {
-                        anchors.fill: parent
+                        anchors.verticalCenter: parent.verticalCenter
+                        x: -Theme.wallpaperParallaxOverscan - slot.distance * Theme.wallpaperParallaxShift
+                        width: parent.width + Theme.wallpaperParallaxOverscan * 2
+                        height: parent.height
                         source: slot.imagePath
-                        fillMode: Image.PreserveAspectFit
+                        fillMode: Image.PreserveAspectCrop
                         asynchronous: true
                         sourceSize.width: Math.round(slot.nativeWidth * 2)
                         sourceSize.height: Math.round(root.cardHeight * 2)
@@ -306,10 +518,51 @@ Item {
                     source: imageSource
                     maskEnabled: true
                     maskSource: cardMask
-                    blurEnabled: root.picking && !slot.chosen
-                    blur: root.pickProgress * Theme.wallpaperPickBlur
-                    blurMax: Theme.wallpaperBlurMax
                     antialiasing: true
+                }
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: Theme.radiusMd
+                    color: "transparent"
+                    border.width: slot.chosen ? Theme.spaceXs / 2 : 0
+                    border.color: Theme.background
+                    antialiasing: true
+                }
+
+                // pick-confirm badge: flat colorOk disc + painted check, no chrome
+                Item {
+                    visible: slot.chosen && root.checkIn > 0.001
+                    width: Theme.wallpaperPickCheckSize
+                    height: Theme.wallpaperPickCheckSize
+                    anchors.centerIn: parent
+                    z: 50
+                    opacity: root.checkIn
+
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: width / 2
+                        color: Theme.colorOk
+                    }
+                    Canvas {
+                        anchors.fill: parent
+                        antialiasing: true
+                        onVisibleChanged: if (visible) requestPaint()
+                        Component.onCompleted: requestPaint()
+                        onPaint: {
+                            const ctx = getContext("2d");
+                            ctx.clearRect(0, 0, width, height);
+                            ctx.strokeStyle = Theme.background.toString();
+                            ctx.lineWidth = Math.max(2, width * 0.14);
+                            ctx.lineCap = "round";
+                            ctx.lineJoin = "round";
+                            ctx.beginPath();
+                            ctx.moveTo(width * 0.30, height * 0.55);
+                            ctx.lineTo(width * 0.45, height * 0.69);
+                            ctx.lineTo(width * 0.71, height * 0.32);
+                            ctx.stroke();
+                        }
+                    }
                 }
 
                 MouseArea {

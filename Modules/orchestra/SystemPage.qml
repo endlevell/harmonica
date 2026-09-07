@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Shapes
 import Quickshell
 import qs.Common
 import qs.Services
@@ -177,22 +178,41 @@ Item {
                 // throughput
                 ColumnLayout {
                     visible: Network.state !== "disconnected"
-                    spacing: 3
+                    spacing: 4
 
-                    Text {
-                        text: "↓ " + page.fmtKbs(Network.downKBs)
-                        color: Theme.colorOk
-                        font.pixelSize: Theme.fontXs
-                        font.weight: Font.Medium
+                    component Rate: RowLayout {
+                        property color tint: Theme.foreground
+                        property bool up: false
+                        property string rate: ""
+                        spacing: Theme.spaceXs
                         Layout.alignment: Qt.AlignRight
+
+                        // drawn triangle marker (down/up) — no glyph fonts
+                        Shape {
+                            Layout.preferredWidth: 7
+                            Layout.preferredHeight: 7
+                            Layout.alignment: Qt.AlignVCenter
+                            preferredRendererType: Shape.CurveRenderer
+                            ShapePath {
+                                strokeColor: "transparent"
+                                fillColor: tint
+                                startX: up ? 0 : 3.5
+                                startY: up ? 7 : 0
+                                PathLine { x: up ? 7 : 0; y: up ? 7 : 7 }
+                                PathLine { x: up ? 3.5 : 7; y: up ? 0 : 7 }
+                            }
+                        }
+                        Text {
+                            text: rate
+                            color: tint
+                            font.pixelSize: Theme.fontXs
+                            font.weight: Font.Medium
+                            font.family: "monospace"
+                        }
                     }
-                    Text {
-                        text: "↑ " + page.fmtKbs(Network.upKBs)
-                        color: Theme.warn
-                        font.pixelSize: Theme.fontXs
-                        font.weight: Font.Medium
-                        Layout.alignment: Qt.AlignRight
-                    }
+
+                    Rate { tint: Theme.colorOk; up: false; rate: page.fmtKbs(Network.downKBs) }
+                    Rate { tint: Theme.warn; up: true; rate: page.fmtKbs(Network.upKBs) }
                 }
             }
         }

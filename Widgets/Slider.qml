@@ -2,8 +2,7 @@ import QtQuick
 import qs.Common
 import qs.Widgets
 
-// Capsule slider for volume/brightness:
-// Icon left · filled level bar · live % text right · interactive drag
+// Modern flat slider with clean hover states
 Rectangle {
     id: slider
 
@@ -16,12 +15,21 @@ Rectangle {
     signal moved(real val)
 
     implicitWidth: 190
-    implicitHeight: 28
+    implicitHeight: 32
     radius: Theme.radiusFull
     color: trackColor
     clip: true
 
-    // Active filled progress
+    scale: dragArea.containsMouse ? 1.02 : 1.0
+
+    Behavior on scale {
+        NumberAnimation {
+            duration: Theme.durNormal
+            easing.type: Easing.OutCubic
+        }
+    }
+
+    // Clean flat fill bar
     Rectangle {
         id: fillBar
         width: Math.max(slider.height, slider.value * slider.width)
@@ -29,7 +37,12 @@ Rectangle {
         radius: Theme.radiusFull
         color: slider.activeColor
 
-        Behavior on color { ColorAnimation { duration: Theme.durFast } }
+        Behavior on width {
+            NumberAnimation {
+                duration: Theme.durFast
+                easing.type: Easing.OutCubic
+            }
+        }
     }
 
     // Icon + Label overlay
@@ -62,6 +75,7 @@ Rectangle {
     MouseArea {
         id: dragArea
         anchors.fill: parent
+        hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
 
         function updateFromPos(mouseX) {

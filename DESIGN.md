@@ -53,7 +53,7 @@ The Orchestra is a single `PanelWindow` (`WlrLayershell`, top layer, exclusive z
 | 3 | Music Playing | Playback starts | Idle content slides down; compact preview strip takes over |
 | 4 | Launcher | Super+S | Search bar + fuzzy-filtered app list, inside the Orchestra |
 | 5 | Screen Record | Record hotkey/button | Record controls + live recording indicator |
-| 6 | Screenshot Annotation | Screenshot hotkey | Region select → annotation canvas → save/copy/close |
+| 6 | Screenshot | Screenshot hotkey | Quick-action row → collapse → capture after 300ms → idle check pulse |
 
 ### 3.1 Phase 1 — Idle
 
@@ -115,18 +115,17 @@ Each page is its own file under `Modules/orchestra/pages/`.
 - While recording: red circle (left) · elapsed timestamp (center) · thin looping waveform (beneath).
 - Renders as a phase inside the Orchestra like everything else — no exception needed here.
 
-### 3.6 Phase 6 — Screenshot Annotation
+### 3.6 Phase 6 — Screenshot
 
-- Flow: hotkey → region-select overlay → annotation canvas (pen, highlighter, shapes, text, undo/redo, Theme-colored swatches) → save/copy/close.
-- Design is open. But region-select inherently needs full-screen bounds — the one flagged exception to the single-window rule (§2). **Get explicit approval before building it as a separate window.** Whether the annotation canvas also needs the exception, or can fit inside an expanded Orchestra view, is an open call — check "does this really need its own window?" first.
+Quick actions only (old-shell parity: `grimblast copy area`, `hyprpicker`). No editor, no overlay. Flow: hotkey/IPC opens the pill row (area/screen/output/save-area/save-screen/color) → picking one collapses the island to IDLE → capture fires after Theme.shotCollapseDelayMs → success pulses a flat check on the idle bar. Cancelled selections and missing binaries are silent.
 
 ### 3.7 Wallpaper Picker — Approved Standalone Tool
 
 - Fullscreen transparent `PanelWindow`; only a circle-reveal dim layer and flying carousel are visible. It is not an Orchestra phase.
-- Exactly seven cards render at all times. Every card preserves its source image aspect ratio; wide images scale down uniformly instead of cropping, stretching, or letterboxing. Square sources remain geometrically square but read slightly wider through the common shear.
-- Cards are true Matrix4x4-sheared parallelograms with Theme-rounded masks and gaps of at least `Theme.spaceLg`. The center card is largest/frontmost; neighbors recede and lag; the two outer cards fade continuously toward their screen edge through directional gradient masks.
-- Infinite navigation uses a stable seven-slot modulo window. Wheel/touchpad velocity accumulates and decays, arrows add one themed impulse, and settling always lands on the nearest logical wallpaper with no visible edge or rebuild.
-- Picking plays one ~700ms cinematic sequence: 0–250ms spring zoom of the chosen native-ratio card while the other six blur/slide out; 250–500ms expanding circular iris/ripple reveals the new wallpaper texture; 500–700ms one horizontal Theme-palette bloom crosses the screen. Then the existing reverse circle closes the picker.
+- Exactly nine cards render at all times. Every card preserves its source image aspect ratio within its flat sheared frame.
+- Cards are true Matrix4x4-sheared parallelograms with Theme-rounded masks in a tight overlapping z-stack. The outlined, shadowed center card is largest/frontmost; neighbors progressively shrink, dim, and tuck behind it; positions ±3 and ±4 fade continuously toward their screen edge through directional gradient masks.
+- Infinite navigation uses a stable nine-slot modulo window. Wheel/touchpad velocity accumulates and decays, arrows add one themed impulse, direction reversal cancels opposite momentum immediately, and settling always lands on the nearest logical wallpaper with no visible edge or rebuild.
+- Picking plays one ~1.5s five-beat sequence inside the carousel: active card expands ~1.8x (380ms OutBack) while side cards scatter outward like dealt cards (320ms soft-decel glide, 30ms stagger, tilt + fade) and STAY GONE; active shrinks back alone (300ms OutCubic); a flat colorOk check badge flashes over it (~300ms); then the light exit — dim-circle shrink while the picked card swells ~12% and melts into the new wallpaper behind the lifting dim (~520ms dissolve; the carousel stays mounted until the dissolve completes and the window hides on a fully-dissolved frame, so nothing pops out). `awww`+pywal apply fires at beat 4 and re-themes in parallel with check + close.
 - Opening grows one centered dim circle; closing reverses it. Pick applies through `awww`, regenerates pywal, and closes cleanly.
 - CLI boundary: `harmonica ipc wallpaper open|close|toggle|isOpen|next|prev|focused|pick|apply|state`. Hyprland binds `SUPER+SHIFT+W` to `harmonica ipc wallpaper toggle`.
 
@@ -278,7 +277,7 @@ Two separate numbering systems — don't conflate them:
 | 3 | Music passive morph + Apple-style player page |
 | 4 | Launcher (Super+S) |
 | 5 | Screen record (+ settings sub-panel + recording UI) |
-| 6 | Screenshot annotation tool |
+| 6 | Screenshot quick-action row (+ collapse delay + idle confirm) |
 | 7 | Rust CLI (+ mlua scripts + example script) |
 
 **Process rule:** after each build phase, run the screenshot-review loop (§11), report what was built and what needs visual verification, then **stop and wait** for explicit go-ahead. Never write ahead of the current phase.
@@ -311,7 +310,7 @@ Attach all of them to the report. A report without full visual proof isn't done.
 
 Each of these was built wrong once already and corrected — don't regress:
 
-1. **The launcher is not a separate window.** It's a phase inside the Orchestra, same as everything else. Only the explicitly approved RegionSelect (§3.6) and Wallpaper Picker (§3.7) may create standalone surfaces; every future exception still requires approval first.
+1. **The launcher is not a separate window.** It's a phase inside the Orchestra, same as everything else. Only the explicitly approved Wallpaper Picker (§3.7) may create a standalone surface; every future exception still requires approval first.
 2. **No borders, drop shadows, or blur/transparency on the island — ever.** Tried once for "richness," reverted. Richness comes from layout precision and pywal color, not chrome.
 3. **The hover panel shows exactly one page at a time.** All-pages-in-one-row, with dots that don't do anything, is the specific bug that happened twice — real paging means a real `ListView`/`SwipeView` with a one-page viewport, not a static row of content.
 4. **No truncated labels.** Every text element needs enough width or explicit `Text.ElideRight` + `Layout.maximumWidth` — clipped fragments must never ship again.

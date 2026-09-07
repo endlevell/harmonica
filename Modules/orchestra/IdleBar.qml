@@ -59,15 +59,48 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
     }
 
-    // CENTER — clock (exact center of the pill) ------------------------------
     Text {
         id: clockLbl
         text: Qt.formatDateTime(bar.now, SettingsData.showSeconds ? "HH:mm:ss" : "HH:mm")
         color: Theme.foreground
         font.pixelSize: Theme.fontSm + 1
         font.weight: Font.DemiBold
-        font.family: "monospace"
+        font.family: Theme.fontUi
         anchors.centerIn: parent
+    }
+
+    // screenshot confirmation: flat check pulses over the clock, no glow
+    Item {
+        id: confirm
+        anchors.centerIn: parent
+        opacity: 0
+        scale: 0.8
+        Rectangle {
+            anchors.centerIn: parent
+            width: 22
+            height: 22
+            radius: 11
+            color: Theme.colorOk
+            Icon {
+                anchors.centerIn: parent
+                category: "actions"
+                name: "check"
+                size: 12
+                color: Theme.background
+            }
+        }
+        SequentialAnimation {
+            id: confirmAnim
+            NumberAnimation { target: confirm; property: "opacity"; to: 1; duration: Theme.durFast; easing.type: Easing.OutCubic }
+            NumberAnimation { target: confirm; property: "scale"; to: 1; duration: Theme.durNormal; easing.bezierCurve: Theme.easeDecel; easing.type: Easing.BezierSpline }
+            PauseAnimation { duration: Theme.durConfirmPulse }
+            NumberAnimation { target: confirm; property: "opacity"; to: 0; duration: Theme.durNormal; easing.type: Easing.OutCubic }
+            ScriptAction { script: confirm.scale = 0.8; }
+        }
+    }
+    Connections {
+        target: Screenshot
+        function onConfirmTickChanged() { confirmAnim.restart(); }
     }
 
     // RIGHT — battery --------------------------------------------------------

@@ -1,10 +1,10 @@
 // Harmonica — composition root. Instantiates surfaces per screen; nothing else.
-// Approved exceptions: RegionSelect + WallpaperPicker.
+// Approved exceptions: WallpaperPicker only.
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import Quickshell.Services.Notifications
 import qs.Modules.orchestra
-import qs.Modules.screenshot
 import qs.Modules.wallpaper
 import qs.Services
 Scope {
@@ -17,29 +17,25 @@ Scope {
 
         readonly property var island: instances[0] ?? null
     }
-    RegionSelect {
-        id: regionSelect
-
-        onRegionAccepted: (x, y, w, h) => {
-            pendingAnnotate = true;
-            Screenshot.captureRegionToFile(x, y, w, h, "/tmp/harmonica-annot-" + Screenshot.stamp() + ".png");
-        }
-        onCancelled: pendingAnnotate = false
-    }
 
     WallpaperModule {}
 
-    property bool pendingAnnotate: false
-
-    Connections {
-        target: Screenshot
-        function onCaptured(path: string) {
-            if (root.pendingAnnotate && islandVariants.island && path !== "") {
-                root.pendingAnnotate = false;
-                islandVariants.island.openAnnotate(path);
+    // XDG notification daemon: gated on busReady so a stale mako is evicted
+    // BEFORE we claim org.freedesktop.Notifications (no bus race, ever).
+    Loader {
+        active: Notifications.busReady
+        sourceComponent: Component {
+            NotificationServer {
+                keepOnReload: true
+                bodySupported: true
+                bodyMarkupSupported: true
+                actionsSupported: true
+                onNotification: n => Notifications._arrive(n)
+                Component.onCompleted: Notifications._adoptTracked(trackedNotifications)
             }
         }
     }
+
 
     IpcHandler {
         target: "orchestra"
@@ -76,24 +72,25 @@ Scope {
     IpcHandler {
         target: "screenshot"
 
-        function region(): void { regionSelect.open("snip"); }
-        function window(): void { regionSelect.open("window"); }
-        function cancel(): void { regionSelect.close(); root.pendingAnnotate = false; }
-        function fullscreen(): void {
-            root.pendingAnnotate = true;
-            Screenshot.captureFull();
-        }
-        function annotate(path: string): void {
-            if (islandVariants.island) islandVariants.island.openAnnotate(path);
-        }
-        function save(): string {
-            return islandVariants.island ? islandVariants.island.apiSaveAnnotate() : "";
-        }
-        function full(): string {
-            Screenshot.captureFull();
-            return Screenshot.lastShot;
-        }
-        function copyLast(): void { Screenshot.copyLast(); }
+        function open(): void { if (islandVariants.island) islandVariants.island.openScreenshot(); }
+        function close(): void { if (islandVariants.island) islandVariants.island.closeScreenshot(); }
+        function toggle(): void { if (islandVariants.island) islandVariants.island.toggleScreenshot(); }
+        function area(): void { Screenshot.request("area"); }
+        function screen(): void { Screenshot.request("screen"); }
+        function output(): void { Screenshot.request("output"); }
+        function saveArea(): void { Screenshot.request("save-area"); }
+        function saveScreen(): void { Screenshot.request("save-screen"); }
+        function color(): void { Screenshot.request("color"); }
+    }
+
+    IpcHandler {
+        target: "notifications"
+
+        function dismiss(): void { Notifications.dismissCurrent(); }
+        function activate(): void { Notifications.activateCurrent(); }
+        function clear(): void { Notifications.clearAll(); }
+        function count(): int { return Notifications.count; }
+        function current(): string { return Notifications.title; }
     }
 
 }

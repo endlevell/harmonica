@@ -4,8 +4,8 @@ import qs.Common
 import qs.Services
 import qs.Widgets
 
-// RIGHT page — Immersive music player with glassmorphism, large album art,
-// audio visualizer, and fluid controls. Bold, beautiful, emotionally engaging.
+// RIGHT page — music player. Album art framed by a progress ring, track meta
+// centered beneath, one clear control row. Composed, calm, not sprawling.
 Item {
     id: page
 
@@ -18,325 +18,171 @@ Item {
     readonly property real progress: (Mpris.lengthSecs > 0 && Mpris.positionSecs >= 0)
         ? Math.min(1, Mpris.positionSecs / Mpris.lengthSecs) : 0
 
-    // Empty state --------------------------------------------------------
+    // ---- empty state -------------------------------------------------------
     Column {
         anchors.centerIn: parent
         visible: !Mpris.hasPlayer
         spacing: Theme.spaceMd
 
         Icon {
-            category: "media"
-            name: "music-note"
-            size: 48
-            color: Theme.outline
+            category: "media"; name: "music-note"; size: 40
+            color: Theme.outline; opacity: 0.6
             anchors.horizontalCenter: parent.horizontalCenter
-            opacity: 0.5
         }
         Text {
-            text: "No music playing"
+            text: "Nothing playing"
             color: Theme.dimText
             font.pixelSize: Theme.fontMd
             anchors.horizontalCenter: parent.horizontalCenter
         }
     }
 
-    // Player UI ----------------------------------------------------------
+    // ---- player ------------------------------------------------------------
     ColumnLayout {
         anchors.fill: parent
-        anchors.leftMargin: Theme.spaceLg
-        anchors.rightMargin: Theme.spaceLg
-        anchors.topMargin: Theme.spaceMd
-        anchors.bottomMargin: Theme.spaceLg
+        anchors.topMargin: Theme.spaceLg
+        anchors.bottomMargin: Theme.spaceXl
         visible: Mpris.hasPlayer
         spacing: Theme.spaceSm
 
-        Item { Layout.fillHeight: true; Layout.preferredHeight: 8 }
-
-        // Album Art Glass Card with Glow ---------------------------------
-        GlassMorphCard {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 140
+        // Album art + progress ring ------------------------------------------
+        Item {
             Layout.alignment: Qt.AlignHCenter
+            Layout.preferredWidth: 116
+            Layout.preferredHeight: 116
 
-            RowLayout {
+            ProgressRing {
                 anchors.fill: parent
-                spacing: Theme.spaceMd
+                value: page.progress
+                ringColor: Theme.primary
+                lineWidth: 3
+            }
 
-                // Large Album Art
-                Rectangle {
-                    Layout.preferredWidth: 112
-                    Layout.preferredHeight: 112
-                    Layout.alignment: Qt.AlignVCenter
-                    radius: Theme.radiusMd
-                    color: Theme.surface
-                    clip: true
+            Rectangle {
+                anchors.centerIn: parent
+                width: 96
+                height: 96
+                radius: Theme.radiusMd
+                color: Theme.surface
+                clip: true
 
-                    // Outer glow effect
-                    Rectangle {
-                        anchors.fill: parent
-                        anchors.margins: -4
-                        radius: parent.radius + 4
-                        color: "transparent"
-                        border.width: 12
-                        border.color: Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.15)
-                        z: -1
-                    }
-
-                    Image {
-                        anchors.fill: parent
-                        source: Mpris.artUrl
-                        fillMode: Image.PreserveAspectCrop
-                        asynchronous: true
-                        visible: Mpris.artUrl !== ""
-                    }
-
-                    Icon {
-                        anchors.centerIn: parent
-                        visible: Mpris.artUrl === ""
-                        category: "media"
-                        name: "music-note"
-                        size: 36
-                        color: Theme.outline
-                    }
-
-                    // Rotating border on playing
-                    Rectangle {
-                        anchors.fill: parent
-                        radius: parent.radius
-                        color: "transparent"
-                        border.width: 2
-                        border.color: Theme.primary
-                        opacity: Mpris.playing ? 0.6 : 0
-                        visible: Mpris.artUrl !== ""
-
-                        Behavior on opacity {
-                            NumberAnimation { duration: Theme.durNormal }
-                        }
-                    }
+                Image {
+                    anchors.fill: parent
+                    source: Mpris.artUrl
+                    fillMode: Image.PreserveAspectCrop
+                    asynchronous: true
+                    visible: Mpris.artUrl !== ""
+                }
+                Icon {
+                    anchors.centerIn: parent
+                    visible: Mpris.artUrl === ""
+                    category: "media"; name: "music-note"
+                    size: 30; color: Theme.outline
                 }
 
-                // Track Info Column
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignVCenter
-                    spacing: Theme.spaceXs
-
-                    Text {
-                        text: Mpris.title
-                        color: Theme.foreground
-                        font.pixelSize: Theme.fontLg
-                        font.weight: Font.Bold
-                        Layout.fillWidth: true
-                        elide: Text.ElideRight
-                        maximumLineCount: 2
-                        wrapMode: Text.Wrap
-                    }
-
-                    Text {
-                        visible: Mpris.artist !== ""
-                        text: Mpris.artist
-                        color: Theme.dimText
-                        font.pixelSize: Theme.fontSm
-                        Layout.fillWidth: true
-                        elide: Text.ElideRight
-                    }
-
-                    Item { Layout.preferredHeight: 4 }
-
-                    // Now Playing indicator
-                    Row {
-                        spacing: Theme.spaceXs
-                        visible: Mpris.playing
-
-                        PulseRing {
-                            width: 8
-                            height: 8
-                            ringColor: Theme.colorOk
-                            active: true
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-
-                        Text {
-                            text: "Now Playing"
-                            color: Theme.colorOk
-                            font.pixelSize: Theme.fontXs
-                            font.weight: Font.Medium
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                    }
+                // dim slightly while paused for a subtle live/idle cue
+                Rectangle {
+                    anchors.fill: parent
+                    color: Theme.background
+                    opacity: Mpris.playing ? 0 : 0.35
+                    Behavior on opacity { NumberAnimation { duration: Theme.durNormal } }
                 }
             }
         }
 
-        Item { Layout.preferredHeight: Theme.spaceXs }
-
-        // Audio Visualizer -----------------------------------------------
-        AudioVisualizer {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 38
-            active: Mpris.playing
-            intensity: 0.7
-            barColor: Theme.primary
-        }
-
-        Item { Layout.preferredHeight: Theme.spaceXs }
-
-        // Progress Bar with Time -----------------------------------------
+        // Title + artist -----------------------------------------------------
         ColumnLayout {
             Layout.fillWidth: true
-            spacing: Theme.spaceXs
+            Layout.leftMargin: Theme.spaceXl
+            Layout.rightMargin: Theme.spaceXl
+            spacing: 1
 
-            // Progress bar
-            Rectangle {
+            Text {
+                text: Mpris.title || "Unknown title"
+                color: Theme.foreground
+                font.pixelSize: Theme.fontMd
+                font.weight: Font.Bold
+                elide: Text.ElideRight
+                horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
-                Layout.preferredHeight: 4
-                radius: Theme.radiusFull
-                color: Theme.surface
-
-                Rectangle {
-                    width: parent.width * page.progress
-                    height: parent.height
-                    radius: parent.radius
-                    color: Theme.primary
-
-                    Behavior on width {
-                        enabled: page.visible
-                        NumberAnimation {
-                            duration: 500
-                            easing.type: Easing.OutCubic
-                        }
-                    }
-                }
-
-                // Progress knob
-                Rectangle {
-                    x: (parent.width * page.progress) - width / 2
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 10
-                    height: 10
-                    radius: Theme.radiusFull
-                    color: Theme.primary
-                    visible: page.progress > 0
-
-                    Behavior on x {
-                        enabled: page.visible
-                        NumberAnimation {
-                            duration: 500
-                            easing.type: Easing.OutCubic
-                        }
-                    }
-                }
             }
-
-            // Time labels
-            Row {
+            Text {
+                visible: Mpris.artist !== ""
+                text: Mpris.artist
+                color: Theme.dimText
+                font.pixelSize: Theme.fontSm
+                elide: Text.ElideRight
+                horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
-
-                Text {
-                    text: fmtTime(Mpris.positionSecs)
-                    color: Theme.dimText
-                    font.pixelSize: Theme.fontXs
-                    font.family: "monospace"
-                    width: parent.width / 2
-                }
-
-                Text {
-                    text: fmtTime(Mpris.lengthSecs)
-                    color: Theme.dimText
-                    font.pixelSize: Theme.fontXs
-                    font.family: "monospace"
-                    width: parent.width / 2
-                    horizontalAlignment: Text.AlignRight
-                }
             }
         }
 
-        Item { Layout.fillHeight: true; Layout.preferredHeight: 4 }
+        // Time row -----------------------------------------------------------
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.leftMargin: Theme.spaceXl
+            Layout.rightMargin: Theme.spaceXl
 
-        // Playback Controls ----------------------------------------------
-        Row {
+            Text {
+                text: page.fmtTime(Mpris.positionSecs)
+                color: Theme.dimText
+                font.pixelSize: Theme.fontXs
+                font.family: "monospace"
+            }
+            Item { Layout.fillWidth: true }
+            Text {
+                text: page.fmtTime(Mpris.lengthSecs)
+                color: Theme.dimText
+                font.pixelSize: Theme.fontXs
+                font.family: "monospace"
+            }
+        }
+
+        Item { Layout.fillHeight: true }
+
+        // Controls -----------------------------------------------------------
+        RowLayout {
             Layout.alignment: Qt.AlignHCenter
-            spacing: Theme.spaceLg
+            Layout.topMargin: Theme.spaceMd
+            spacing: Theme.spaceXl
 
             IconButton {
-                category: "media"
-                iconName: "prev"
-                iconSize: 18
+                category: "media"; iconName: "prev"; iconSize: 20
                 pad: Theme.spaceSm
                 enabled: Mpris.canGoPrevious
                 onClicked: Mpris.previous()
+                Layout.alignment: Qt.AlignVCenter
             }
 
-            // Large Play/Pause button
             Rectangle {
-                width: 52
-                height: 52
+                Layout.alignment: Qt.AlignVCenter
+                width: 46; height: 46
                 radius: Theme.radiusFull
-                color: Theme.primary
+                color: playHover.hovered ? Qt.lighter(Theme.primary, 1.12) : Theme.primary
+                Behavior on color { ColorAnimation { duration: Theme.durFast } }
 
                 Icon {
                     anchors.centerIn: parent
                     category: "media"
                     name: Mpris.playing ? "pause" : "play"
-                    size: 22
+                    size: 20
                     color: Theme.background
                 }
 
-                MouseArea {
-                    anchors.fill: parent
+                HoverHandler { id: playHover }
+                TapHandler {
                     enabled: Mpris.canPlay
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: Mpris.togglePlaying()
-                }
-
-                // Pulse effect on playing
-                Rectangle {
-                    anchors.centerIn: parent
-                    width: parent.width + 8
-                    height: parent.height + 8
-                    radius: Theme.radiusFull
-                    color: "transparent"
-                    border.width: 2
-                    border.color: Theme.primary
-                    opacity: 0
-                    visible: Mpris.playing
-
-                    SequentialAnimation on opacity {
-                        running: Mpris.playing && page.visible
-                        loops: Animation.Infinite
-
-                        NumberAnimation {
-                            from: 0.5
-                            to: 0
-                            duration: 1500
-                            easing.type: Easing.OutCubic
-                        }
-                    }
-
-                    SequentialAnimation on scale {
-                        running: Mpris.playing && page.visible
-                        loops: Animation.Infinite
-
-                        NumberAnimation {
-                            from: 1
-                            to: 1.3
-                            duration: 1500
-                            easing.type: Easing.OutCubic
-                        }
-                    }
+                    onTapped: Mpris.togglePlaying()
                 }
             }
 
             IconButton {
-                category: "media"
-                iconName: "next"
-                iconSize: 18
+                category: "media"; iconName: "next"; iconSize: 20
                 pad: Theme.spaceSm
                 enabled: Mpris.canGoNext
                 onClicked: Mpris.next()
+                Layout.alignment: Qt.AlignVCenter
             }
         }
-
-        Item { Layout.fillHeight: true; Layout.preferredHeight: 8 }
     }
 }

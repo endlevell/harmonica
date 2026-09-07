@@ -1,7 +1,7 @@
 import QtQuick
 import qs.Common
 
-// Round hover-highlighting icon button.
+// Round icon button with hover scale and press animations
 Rectangle {
     id: btn
 
@@ -13,13 +13,23 @@ Rectangle {
     property color iconColor: Theme.foreground
     property int pad: Theme.spaceSm
     property bool accent: false
+    readonly property bool hovered: mouse.containsMouse
 
     implicitWidth: iconSize + pad * 2
     implicitHeight: iconSize + pad * 2
     radius: Theme.radiusFull
     color: mouse.containsMouse ? Theme.surfaceHover : (accent ? Theme.primary : "transparent")
     opacity: enabled ? 1 : 0.4
+
+    scale: mouse.pressed ? 0.94 : (mouse.containsMouse ? 1.08 : 1.0)
+
     Behavior on color { ColorAnimation { duration: Theme.durFast } }
+    Behavior on scale {
+        NumberAnimation {
+            duration: Theme.durNormal
+            easing.type: Easing.OutCubic
+        }
+    }
 
     Icon {
         anchors.centerIn: parent

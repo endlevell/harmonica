@@ -8,7 +8,7 @@ import qs.Widgets
 // The Orchestra — the SINGLE surface of Harmonica.
 // One PanelWindow whose size NEVER changes (islandWinH, transparent, masked);
 // an inner shape Item morphs between phase views:
-//   idle · music · panel(3 pages) · launcher
+//   idle · music · notification · panel(3 pages) · launcher
 //
 // Morph choreography (per STUDY-NOTES.md):
 //   twitch (70ms lead) → container sizes animate (expand: slight-back /
@@ -21,14 +21,13 @@ PanelWindow {
     readonly property ShellScreen screenRef: modelData as ShellScreen
 
     // ---- phase machine -------------------------------------------------
-    readonly property string basePhase: Recorder.active ? "recording" : Mpris.playing ? "music" : "idle"
+    readonly property string basePhase: Recorder.active ? "recording" : Notifications.showing ? "notification" : Mpris.playing ? "music" : "idle"
     property bool hoverOpen: false          // panel requested via hover/click
     property bool launcherOpen: false       // Super+S / IPC
     property bool recordSettingsOpen: false
-    property bool annotateOpen: false
-    property string annotatePath: ""        // frozen shot feeding the annotator
+    property bool screenshotOpen: false       // capture quick actions (pill)
 
-    readonly property string targetView: annotateOpen ? "annotate"
+    readonly property string targetView: screenshotOpen ? "screenshot"
         : recordSettingsOpen ? "recordSettings"
         : launcherOpen ? "launcher"
         : hoverOpen ? "panel" : basePhase
@@ -40,7 +39,7 @@ PanelWindow {
     property bool sizeBig: false            // container target: card vs pill
     property string sizeView: "idle"        // which small/huge height applies
 
-    function _isBig(v: string): bool { return v === "panel" || v === "launcher" || v === "annotate"; }
+    function _isBig(v: string): bool { return v === "panel" || v === "launcher"; }
 
     function goTo(view: string): void {
         if (view === shownView && !swapSeq.running) return;
@@ -92,22 +91,22 @@ PanelWindow {
 
     WlrLayershell.namespace: "harmonica:island"
     WlrLayershell.layer: WlrLayer.Top
-    WlrLayershell.keyboardFocus: launcherOpen || recordSettingsOpen || annotateOpen
+    WlrLayershell.keyboardFocus: launcherOpen || recordSettingsOpen
         ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand
 
-    mask: Region { item: pill }
+    // explicit rect (not item:) so the click region tracks every morph;
+    // item-form masks can go stale when the pill resizes between phases
+    mask: Region { x: content.x; y: content.y; width: content.width; height: content.height }
 
     // ---- the morphing shape --------------------------------------------
     Item {
         id: content
         anchors.horizontalCenter: parent.horizontalCenter
         width: sizeBig ? (sizeView === "launcher" ? Theme.launcherW
-                         : sizeView === "annotate" ? Theme.annotateW
                          : Math.min(win.screen.width - Theme.spaceLg * 2, Theme.panelW))
-             : sizeView === "music" ? musicStrip.contentWidth : idleBar.contentWidth
+             : sizeView === "music" ? musicStrip.contentWidth : sizeView === "notification" ? notifStrip.contentWidth : sizeView === "screenshot" ? shotStrip.contentWidth : idleBar.contentWidth
         height: sizeBig ? (sizeView === "launcher" ? launcherView.contentH
                          : sizeView === "recordSettings" ? Theme.recordSettingsH
-                         : sizeView === "annotate" ? Theme.annotateH
                          : Theme.panelH)
                         : Theme.barH
         Behavior on width {
@@ -181,6 +180,15 @@ PanelWindow {
                 enabled: shownView === "music"
             }
 
+            NotificationStrip {
+                id: notifStrip
+                anchors.fill: parent
+                opacity: shownView === "notification" ? enterOp : leavingView === "notification" ? leaveOp : 0
+                y: shownView === "notification" ? enterY : leavingView === "notification" ? leaveY : 0
+                visible: opacity > 0.001
+                enabled: shownView === "notification"
+            }
+
             PanelPages {
                 id: panelPages
                 anchors.fill: parent
@@ -219,15 +227,13 @@ PanelWindow {
                 Component.onCompleted: Recorder.refreshAudioSources()
             }
 
-            AnnotateView {
-                id: annotateView
+            ScreenshotStrip {
+                id: shotStrip
                 anchors.fill: parent
-                imagePath: win.annotatePath
-                opacity: shownView === "annotate" ? enterOp : leavingView === "annotate" ? leaveOp : 0
-                y: shownView === "annotate" ? enterY : leavingView === "annotate" ? leaveY : 0
+                opacity: shownView === "screenshot" ? enterOp : leavingView === "screenshot" ? leaveOp : 0
+                y: shownView === "screenshot" ? enterY : leavingView === "screenshot" ? leaveY : 0
                 visible: opacity > 0.001
-                enabled: shownView === "annotate"
-                onClosed: win.annotateOpen = false
+                enabled: shownView === "screenshot"
             }
         }
     }
@@ -245,15 +251,25 @@ PanelWindow {
         hoverOpen = false;
         recordSettingsOpen = true;
     }
+    // capture actions collapse every open view first (never in the shot)
+    Connections {
+        target: Screenshot
+        function onCollapseRequested() {
+            win.hoverOpen = false;
+            win.launcherOpen = false;
+            win.recordSettingsOpen = false;
+            win.screenshotOpen = false;
+        }
+    }
 
-    function openAnnotate(path: string): void {
+    function openScreenshot(): void {
         hoverOpen = false;
         recordSettingsOpen = false;
         launcherOpen = false;
-        annotatePath = path;
-        annotateOpen = true;
+        screenshotOpen = true;
     }
-    function apiSaveAnnotate(): string { annotateView.doSave(); return Screenshot.lastShot; }
+    function closeScreenshot(): void { screenshotOpen = false; }
+    function toggleScreenshot(): void { screenshotOpen ? closeScreenshot() : openScreenshot(); }
 
     // ---- input ----------------------------------------------------------
     // pure hover tracker (NoButton → never blocks clicks/wheel on content)
@@ -262,11 +278,11 @@ PanelWindow {
         anchors.fill: content
         hoverEnabled: true
         acceptedButtons: Qt.NoButton
-        cursorShape: hoverOpen || launcherOpen || recordSettingsOpen || annotateOpen ? Qt.ArrowCursor : Qt.PointingHandCursor
+        cursorShape: hoverOpen || launcherOpen || recordSettingsOpen || screenshotOpen || Notifications.showing ? Qt.ArrowCursor : Qt.PointingHandCursor
         onContainsMouseChanged: {
             if (containsMouse) {
                 closeDelay.stop();
-                if (!launcherOpen && !recordSettingsOpen) hoverOpen = true;
+                if (!launcherOpen && !recordSettingsOpen && !Notifications.showing) hoverOpen = true;
             } else {
                 closeDelay.restart();
             }
@@ -276,7 +292,7 @@ PanelWindow {
     // click-to-open only while a pill phase shows; never steals page clicks
     MouseArea {
         anchors.fill: content
-        enabled: !hoverOpen && !launcherOpen && !recordSettingsOpen && !annotateOpen
+        enabled: !hoverOpen && !launcherOpen && !recordSettingsOpen && !screenshotOpen && !Notifications.showing
         acceptedButtons: Qt.LeftButton
         onClicked: win.hoverOpen = true
     }
@@ -289,12 +305,10 @@ PanelWindow {
 
     Shortcut {
         sequence: "Escape"
-        enabled: hoverOpen || launcherOpen || recordSettingsOpen || annotateOpen
+        enabled: hoverOpen || launcherOpen || recordSettingsOpen || screenshotOpen || Notifications.showing
         onActivated: {
-            if (annotateOpen) annotateOpen = false;
+            if (screenshotOpen) screenshotOpen = false;
             else if (recordSettingsOpen) recordSettingsOpen = false;
-            else if (launcherOpen) closeLauncher();
-            else hoverOpen = false;
         }
     }
 

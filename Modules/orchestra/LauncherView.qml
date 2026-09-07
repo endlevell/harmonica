@@ -1,10 +1,14 @@
 import QtQuick
+import Quickshell
 import qs.Common
 import qs.Services
 import qs.Widgets
 
 // LAUNCHER phase view — lives INSIDE the island (single-surface rule).
-// Search bar + fuzzy app list. Arrow keys / wheel / click navigate.
+// Tokenized multi-field search (Applications): every query word substring-matches
+// Name/GenericName/Keywords/Exec-basename/file-stem, weighted + ranked; matched
+// substrings highlight, non-Name hits show their source field, empty results
+// offer the configurable fallback. Arrow keys / wheel / click navigate.
 // Esc / row click hand control back to Orchestra.
 Item {
     id: lv
@@ -12,10 +16,10 @@ Item {
     signal closed()
 
     readonly property int resultCount: list.count
-    readonly property int rowH: 34
+    readonly property int rowH: 52   // two-line wrapped name + detail line
     readonly property int rowSpacing: 2
     readonly property int visibleRows: 2
-    readonly property var results: Applications.search(input.text)
+    readonly property var results: Applications.search(input.text)   // sync over index: rescores every keystroke, no debounce
     readonly property int rowsShown: Math.min(resultCount, visibleRows)
     // honest list height: N rows + N-1 gaps
     readonly property int listH: rowsShown > 0 ? rowsShown * rowH + (rowsShown - 1) * rowSpacing : 0
@@ -23,6 +27,39 @@ Item {
     readonly property int contentH: Theme.spaceSm * 2 + 34
         + (resultCount > 0 ? listH : input.text !== "" ? 26 : 0)
         + (launching ? 8 : 0)
+    // ---- configurable no-match fallback (%1 = URL-encoded query) ----
+    property string fallbackTemplate: "xdg-open 'https://duckduckgo.com/?q=%1'"
+
+    function runFallback(): void {
+        const q = input.text.trim();
+        if (q === "") return;
+        Quickshell.execDetached(["sh", "-c", fallbackTemplate.split("%1").join(encodeURIComponent(q))]);
+    }
+
+    // ---- match highlighting (bold + primary tint over escaped text) ----
+    function esc(s: string): string {
+        return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function fmtHi(source: string): string {
+        const raw = String(source || "");
+        const spans = Applications.matchSpans(raw, input.text);
+        if (spans.length === 0) return esc(raw);
+        const hi = Theme.primary.toString();
+        let out = "", at = 0;
+        for (const s of spans) {
+            out += esc(raw.substring(at, s[0])) + '<b><font color="' + hi + '">'
+                + esc(raw.substring(s[0], s[1])) + "</font></b>";
+            at = s[1];
+        }
+        return out + esc(raw.substring(at));
+    }
+
+    function detailText(app): string {
+        const m = Applications.matchSource(app, input.text);
+        return m ? String(m.text) : "";
+    }
+
 
     // ---- launching state ----
     property bool launching: false
@@ -201,13 +238,30 @@ Item {
                         }
                     }
 
-                    Text {
+                    Column {
                         width: parent.width - 20 - Theme.spaceSm
-                        text: modelData.name
-                        color: index === list.currentIndex ? Theme.foreground : Theme.dimText
-                        font.pixelSize: Theme.fontSm
-                        elide: Text.ElideRight
                         anchors.verticalCenter: parent.verticalCenter
+                        spacing: 0
+
+                        Text {
+                            width: parent.width
+                            text: lv.fmtHi(modelData.name)
+                            textFormat: Text.RichText
+                            color: index === list.currentIndex ? Theme.foreground : Theme.dimText
+                            font.pixelSize: Theme.fontSm
+                            wrapMode: Text.WordWrap
+                            maximumLineCount: 2
+                            elide: Text.ElideRight
+                        }
+                        Text {
+                            visible: lv.detailText(modelData) !== ""
+                            width: parent.width
+                            text: lv.fmtHi(lv.detailText(modelData))
+                            textFormat: Text.RichText
+                            color: Theme.dimText
+                            font.pixelSize: Theme.fontXs
+                            elide: Text.ElideRight
+                        }
                     }
                 }
 
@@ -222,12 +276,26 @@ Item {
             }
         }
 
-        Text {
+        // fallback: no desktop entry matched — configurable system/web search
+        MouseArea {
             visible: input.text !== "" && list.count === 0 && !Applications.scanning
-            text: "No matches"
-            color: Theme.outline
-            font.pixelSize: Theme.fontXs
-            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
+            height: 26
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: lv.runFallback()
+
+            Text {
+                width: parent.width - Theme.spaceMd * 2
+                anchors.centerIn: parent
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
+                text: 'Search for "' + input.text + '" in the system'
+                color: hovered.hovered ? Theme.foreground : Theme.primary
+                font.pixelSize: Theme.fontXs
+                font.italic: true
+            }
+            HoverHandler { id: hovered }
         }
     }
 
@@ -275,6 +343,7 @@ Item {
 
     function launchCurrent(): void {
         const vals = Applications.search(input.text);
+        if (vals.length === 0) { lv.runFallback(); return; }
         if (list.currentIndex < 0 || list.currentIndex >= vals.length) return;
         if (launching) return;  // already launching
 

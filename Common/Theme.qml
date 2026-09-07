@@ -22,8 +22,7 @@ Singleton {
             return null;
         }
     }
-    readonly property string wallpaper: typeof _wal?.wallpaper === "string"
-        ? _wal.wallpaper : ""
+    readonly property string wallpaper: typeof _wal?.wallpaper === "string" ? _wal.wallpaper : ""
 
     FileView {
         id: walFile
@@ -35,25 +34,25 @@ Singleton {
     }
 
     // ---- palette ----
-    readonly property color background:      pick(_wal?.special?.background, "#1e1e2e")
-    readonly property color foreground:      pick(_wal?.special?.foreground, "#cdd6f4")
+    readonly property color background: pick(_wal?.special?.background, "#1e1e2e")
+    readonly property color foreground: pick(_wal?.special?.foreground, "#cdd6f4")
     // pywal 16-color slots mapped semantically — variety without new hexes:
-    readonly property color primary:         pick(_wal?.colors?.color4, "#b49043")   // gold/bright accent
-    readonly property color colorNet:        pick(_wal?.colors?.color6, "#b5a489")   // bright cyan/sand: network
-    readonly property color colorOk:         pick(_wal?.colors?.color2, "#a6e3a1")   // green family: battery full / success
-    readonly property color warn:            pick(_wal?.colors?.color3, "#f9e2af")   // yellow family: battery mid
-    readonly property color danger:          pick(_wal?.colors?.color1, "#f38ba8")   // red family: low / destructive
-    readonly property color outline:         pick(_wal?.colors?.color8, "#585b70")
+    readonly property color primary: pick(_wal?.colors?.color4, "#b49043")   // gold/bright accent
+    readonly property color colorNet: pick(_wal?.colors?.color6, "#b5a489")   // bright cyan/sand: network
+    readonly property color colorOk: pick(_wal?.colors?.color2, "#a6e3a1")   // green family: battery full / success
+    readonly property color warn: pick(_wal?.colors?.color3, "#f9e2af")   // yellow family: battery mid
+    readonly property color danger: pick(_wal?.colors?.color1, "#f38ba8")   // red family: low / destructive
+    readonly property color colorRecord: "#ff3b30"   // record red (fixed identity color)
+    readonly property color colorPause: "#ff9500"    // pause amber (fixed identity color)
+    readonly property color outline: pick(_wal?.colors?.color8, "#585b70")
     // derived surfaces from background — no hardcoded hexes here either
-    readonly property color surface:         Qt.lighter(background, 1.25)
-    readonly property color surfaceHover:    Qt.lighter(background, 1.45)
-    readonly property color dimText:         Qt.darker(foreground, 1.35)
-    readonly property color overlayDim:      Qt.rgba(background.r, background.g, background.b, 0.62)
+    readonly property color surface: Qt.lighter(background, 1.25)
+    readonly property color surfaceHover: Qt.lighter(background, 1.45)
+    readonly property color dimText: Qt.darker(foreground, 1.35)
+    readonly property color overlayDim: Qt.rgba(background.r, background.g, background.b, 0.62)
 
     function mix(a: color, b: color, t: real): color {
-        return Qt.rgba(a.r + (b.r - a.r) * t,
-                       a.g + (b.g - a.g) * t,
-                       a.b + (b.b - a.b) * t, 1);
+        return Qt.rgba(a.r + (b.r - a.r) * t, a.g + (b.g - a.g) * t, a.b + (b.b - a.b) * t, 1);
     }
 
     // ---- type scale ----
@@ -62,6 +61,15 @@ Singleton {
     readonly property int fontMd: 15
     readonly property int fontLg: 20
     readonly property int fontXl: 30
+    // UI family from fontconfig. Applied to QGuiApplication::font once
+    // here, so every Text without an explicit family inherits it. Mono spots
+    // (clocks, timers, speeds) intentionally keep fontconfig monospace instead.
+    readonly property string fontUi: "Google Sans"
+
+    function applyUiFont(): void {
+        Qt.application.font.family = fontUi;
+    }
+    Component.onCompleted: applyUiFont()
 
     // ---- spacing (4px grid) ----
     readonly property int spaceXs: 4
@@ -83,13 +91,12 @@ Singleton {
     readonly property int launcherW: 280
     readonly property int panelH: 300
     readonly property int launcherH: 330
-    readonly property int annotateW: 680
-    readonly property int recordSettingsH: 260
-    readonly property int annotateH: 430
-    readonly property int wallpaperVisibleCount: 7
+    readonly property int recordSettingsH: 400
+    readonly property int shotCollapseDelayMs: 300   // island collapse → capture gap
+    readonly property int wallpaperVisibleCount: 9
     readonly property int wallpaperCardMaxH: 220
     readonly property int wallpaperGap: spaceXl
-    readonly property int wallpaperArcRise: 10
+    readonly property int wallpaperArcRise: 0
     readonly property int wallpaperInputH: 300
     readonly property int wallpaperRevealStart: 32
     readonly property int wallpaperWatchdogMs: 60000
@@ -98,15 +105,35 @@ Singleton {
     readonly property real wallpaperMomentumDecay: 0.84
     readonly property real wallpaperMomentumStop: 0.035
     readonly property real wallpaperDefaultAspect: 1.5
-    readonly property real wallpaperEdgeOpacity: 0.08
-    readonly property real wallpaperPickBlur: 0.55
-    readonly property int wallpaperBlurMax: 32
-    readonly property real wallpaperBloomAlpha: 0.42
-    readonly property real wallpaperRippleStrength: 0.018
-    readonly property real wallpaperShearBase: -0.17
-    readonly property real wallpaperShearPerStep: -0.035
+    readonly property real wallpaperEdgeOpacity: 0.04
+    readonly property real wallpaperStackStepRatio: 0.57
+    readonly property real wallpaperFocusScale: 1.18
+    readonly property real wallpaperOuterScale: 0.76
+    readonly property real wallpaperDepthOpacityStep: 0.22
+    readonly property int wallpaperParallaxShift: 8
+    readonly property int wallpaperParallaxOverscan: 36
+    readonly property real wallpaperFocusShadowOpacity: 0.55
+    readonly property int wallpaperFocusShadowBlur: 28
+    readonly property int wallpaperStaggerMs: 30
+    readonly property int wallpaperEntranceShift: 72
+    readonly property int durWallpaperItemEnter: 280
+    readonly property int durWallpaperItemExit: 180
+    // ---- pick sequence: expand · scatter · shrink · check · close --------
+    readonly property real wallpaperPickExpandScale: 1.8
+    readonly property int durWallpaperPickExpand: 380
+    readonly property int durWallpaperPickScatter: 320
+    readonly property int durWallpaperPickShrink: 300
+    readonly property int durWallpaperPickCheck: 300
+    readonly property int wallpaperPickStaggerMs: 30
+    readonly property real wallpaperPickScatterTravel: 0.38   // × carousel width
+    readonly property real wallpaperPickScatterTilt: 8        // degrees
+    readonly property int wallpaperPickCheckSize: 26
+    readonly property int durWallpaperPickMelt: 520
+    readonly property real wallpaperPickMeltGrow: 0.12   // dissolve swell × base
+    readonly property real wallpaperShearBase: -0.3
+    readonly property real wallpaperShearPerStep: 0
     // window itself NEVER resizes (ActivSpot lesson); only inner items animate
-    readonly property int islandWinH: Math.max(Math.max(panelH, launcherH), annotateH) + spaceXs * 2
+    readonly property int islandWinH: Math.max(panelH, launcherH) + spaceXs * 2
 
     // ---- morph choreography ----
     readonly property int morphDurExpand: 420      // container grow (slight back)
@@ -120,16 +147,21 @@ Singleton {
     readonly property int durFast: 150
     readonly property int durNormal: 300
     readonly property int durSlow: 500
+    readonly property int durBellSwing: 1000     // notification bell damped swing
+    readonly property int durShutterHold: 100      // eyelid fully-closed hold
+    readonly property int durConfirmPulse: 700     // screenshot check pulse on idle
     readonly property int durReveal: 420          // wallpaper-picker circle reveal
     readonly property int durCarousel: 420        // carousel glide/decay settle
     readonly property int carouselTickMs: 16
-    readonly property int durWallpaperZoom: 250
-    readonly property int durWallpaperIris: 250
-    readonly property int durWallpaperBloom: 200
 
     // bezier splines for Easing.BezierSpline ([x1,y1,x2,y2,1,1] = one cubic segment)
     readonly property var easeDecel: [0.05, 0.7, 0.1, 1, 1, 1]        // entrances
     readonly property var easeAccel: [0.3, 0, 0.8, 0.15, 1, 1]        // exits
     readonly property var easeSpatial: [0.34, 1.36, 0.64, 1, 1, 1]    // overshoot moves
     readonly property var easeTwitch: [0.34, 1.86, 0.5, 1, 1, 1]      // elastic twitch
+    // ---- recorder ----
+    readonly property int recStaggerMs: 30          // settings row entrance step
+    readonly property int recCompactDebounceMs: 80  // hover-leave settle before compact
+    readonly property int recBreathMs: 2000         // compact breathing full cycle
+    property bool reducedMotion: SettingsData.reduceMotion
 }

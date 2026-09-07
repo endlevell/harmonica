@@ -2,8 +2,7 @@ import QtQuick
 import QtQuick.Shapes
 import qs.Common
 
-// Radial gauge for metrics — clean, bold, animated.
-// Renders a circular progress arc with center value display.
+// Clean flat circular gauge
 Item {
     id: root
 
@@ -35,6 +34,8 @@ Item {
     // Track arc (background)
     Shape {
         anchors.fill: parent
+        antialiasing: true
+        preferredRendererType: Shape.CurveRenderer
         ShapePath {
             strokeColor: root.trackColor
             strokeWidth: root.lineWidth
@@ -52,9 +53,11 @@ Item {
         }
     }
 
-    // Progress arc
+    // Clean flat progress arc
     Shape {
         anchors.fill: parent
+        antialiasing: true
+        preferredRendererType: Shape.CurveRenderer
         ShapePath {
             strokeColor: root.gaugeColor
             strokeWidth: root.lineWidth

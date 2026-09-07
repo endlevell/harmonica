@@ -1,10 +1,9 @@
 import QtQuick
+import QtQuick.Effects
 import qs.Common
 import qs.Widgets
 
-// Three sliding pages. CENTER (system) is default. Wheel or edge chevrons navigate.
-// Each page slides horizontally AND scales/fades by its distance from center so
-// the active page pops forward while neighbors recede — a depth-carousel feel.
+// Three sliding pages with fluid depth-carousel transitions
 Item {
     id: pages
 
@@ -16,8 +15,9 @@ Item {
     property real animIndex: 1
     Behavior on animIndex {
         NumberAnimation {
-            duration: Theme.durNormal
-            easing.type: Easing.OutCubic
+            duration: Theme.durSlow
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Theme.easeDecel
         }
     }
     onPageIndexChanged: animIndex = pageIndex
@@ -50,18 +50,27 @@ Item {
                     readonly property real dist: Math.abs(index - pages.animIndex)
                     readonly property real k: Math.min(1, dist)
 
-                    // recede + fade neighbors
-                    scale: 1 - k * 0.12
-                    opacity: 1 - k * 0.55
+                    // recede + fade neighbors with smoother curves
+                    scale: 1 - k * 0.08
+                    opacity: 1 - k * 0.4
                     transformOrigin: Item.Center
 
                     Loader {
+                        id: pageLoader
                         anchors.fill: parent
                         // only instantiate while the panel is shown → pollers
                         // (CPU/RAM/network) idle when the island is collapsed
                         active: pages.visible
                         sourceComponent: pageSlot.index === 0 ? cControl
                             : pageSlot.index === 1 ? cSystem : cMusic
+
+                        // subtle blur on inactive pages for depth
+                        layer.enabled: pageSlot.k > 0.1
+                        layer.effect: MultiEffect {
+                            blurEnabled: true
+                            blur: pageSlot.k * 0.3
+                            blurMax: 16
+                        }
                     }
                 }
             }
@@ -107,7 +116,14 @@ Item {
                 height: 6
                 radius: Theme.radiusFull
                 color: activeDot ? Theme.primary : Theme.surfaceHover
-                Behavior on width { NumberAnimation { duration: Theme.durNormal; easing.type: Easing.OutCubic } }
+                
+                Behavior on width {
+                    NumberAnimation {
+                        duration: Theme.durSlow
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: Theme.easeDecel
+                    }
+                }
                 Behavior on color { ColorAnimation { duration: Theme.durFast } }
             }
         }
