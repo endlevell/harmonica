@@ -75,9 +75,17 @@
           config = lib.mkIf cfg.enable {
             home.packages = [
               pkg
-              pkgs.awww          # wallpaper daemon/client
-              pkgs.pywal16       # palette generation after a pick
+              pkgs.awww                # wallpaper daemon/client
+              pkgs.pywal16             # palette generation after a pick
               pkgs.gpu-screen-recorder # screen-record backend (Recorder.qml)
+              pkgs.grimblast           # screenshot primary (Screenshot.qml)
+              pkgs.grim                # screenshot fallback capture
+              pkgs.slurp               # region/output picker fallback
+              pkgs.wl-clipboard        # wl-copy/wl-paste for captures
+              pkgs.hyprpicker          # color picker action
+              pkgs.libnotify           # notify-send for record notices
+              pkgs.pipewire            # pw-play for record start/stop blips
+              pkgs.zenity              # save-dir picker (kdialog/yad also accepted)
             ];
 
             # autostart via Hyprland exec-once (clearest for a Wayland shell)
@@ -130,6 +138,7 @@
               quickshell
               awww
               grim
+              slurp
               pywal16
               wf-recorder
               wl-clipboard
