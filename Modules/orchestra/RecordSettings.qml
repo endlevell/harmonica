@@ -59,6 +59,7 @@ Item {
     }
 
     component SegRow: Row {
+        id: segRow
         width: parent ? parent.width : 0
         property int order: 0
         property string label: ""
@@ -67,24 +68,24 @@ Item {
         signal picked(string v)
         spacing: Theme.spaceSm
         StaggerBox {
-            order: parent.order
-            width: parent.width
+            order: segRow.order
+            width: segRow.width
             height: 20
             Row {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: Theme.spaceSm
                 Text {
                     width: 64
-                    text: parent.parent.parent.label
+                    text: segRow.label
                     color: Theme.foreground
                     font.pixelSize: Theme.fontXs + 1
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Repeater {
-                    model: parent.parent.parent.options
+                    model: segRow.options
                     delegate: Rectangle {
                         required property string modelData
-                        property bool on: parent.parent.parent.parent.value === modelData
+                        property bool on: segRow.value === modelData
                         width: segText.implicitWidth + Theme.spaceMd
                         height: 20
                         radius: Theme.radiusFull
@@ -92,14 +93,14 @@ Item {
                         Text {
                             id: segText
                             anchors.centerIn: parent
-                            text: parent.modelData
+                            text: modelData
                             color: parent.on ? Theme.background : Theme.dimText
                             font.pixelSize: Theme.fontXs
                         }
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: parent.parent.parent.parent.parent.picked(parent.modelData)
+                            onClicked: segRow.picked(parent.modelData)
                         }
                     }
                 }
@@ -108,6 +109,7 @@ Item {
     }
 
     component ToggleRow: Row {
+        id: togRow
         width: parent ? parent.width : 0
         property int order: 0
         property string label: ""
@@ -115,26 +117,27 @@ Item {
         signal flipped(bool v)
         spacing: Theme.spaceSm
         StaggerBox {
-            order: parent.order
-            width: parent.width
+            order: togRow.order
+            width: togRow.width
             height: 20
             Text {
-                text: parent.parent.label
+                text: togRow.label
                 color: Theme.foreground
                 font.pixelSize: Theme.fontXs + 1
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
             }
             Toggle {
-                checked: parent.parent.checked
+                checked: togRow.checked
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                onToggled: parent.parent.flipped(checked)
+                onToggled: togRow.flipped(checked)
             }
         }
     }
 
     component DeviceRow: Row {
+        id: devRow
         width: parent ? parent.width : 0
         property int order: 0
         property string label: ""
@@ -158,19 +161,19 @@ Item {
         spacing: Theme.spaceSm
         opacity: rowEnabled ? 1 : 0.45
         StaggerBox {
-            order: parent.order
-            width: parent.width
+            order: devRow.order
+            width: devRow.width
             height: 22
             Icon {
-                category: parent.parent.iconCategory
-                name: parent.parent.iconName
+                category: devRow.iconCategory
+                name: devRow.iconName
                 size: 14
                 color: Theme.dimText
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
             }
             Text {
-                text: parent.parent.label
+                text: devRow.label
                 color: Theme.foreground
                 font.pixelSize: Theme.fontXs + 1
                 anchors.left: parent.left
@@ -183,13 +186,13 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 IconButton {
                     category: "actions"; iconName: "arrow-left"; iconSize: 11; pad: 3
-                    enabled: parent.parent.parent.rowEnabled
-                    onClicked: parent.parent.parent.step(-1)
+                    enabled: devRow.rowEnabled
+                    onClicked: devRow.step(-1)
                 }
                 Text {
                     width: Math.min(devLbl.implicitWidth, 170)
                     id: devLbl
-                    text: parent.parent.parent.labelFor(parent.parent.parent.selected)
+                    text: devRow.labelFor(devRow.selected)
                     color: Theme.dimText
                     font.pixelSize: Theme.fontXs
                     elide: Text.ElideMiddle
@@ -197,8 +200,8 @@ Item {
                 }
                 IconButton {
                     category: "actions"; iconName: "arrow-right"; iconSize: 11; pad: 3
-                    enabled: parent.parent.parent.rowEnabled
-                    onClicked: parent.parent.parent.step(1)
+                    enabled: devRow.rowEnabled
+                    onClicked: devRow.step(1)
                 }
             }
         }
