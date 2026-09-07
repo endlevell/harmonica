@@ -212,7 +212,6 @@ PanelWindow {
         }
     }
 
-    screen: Quickshell.screens[0] ?? null
     anchors {
         top: true
         left: true
