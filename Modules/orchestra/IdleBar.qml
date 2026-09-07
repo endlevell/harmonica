@@ -33,7 +33,7 @@ Item {
 
     Timer {
         interval: 500
-        running: true
+        running: bar.enabled
         repeat: true
         triggeredOnStart: true
         onTriggered: bar.now = new Date()

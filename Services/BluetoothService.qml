@@ -10,6 +10,11 @@ Singleton {
     property bool powered: false
     property string deviceName: ""
 
+    // demand-gated like CpuRam/Network: pollers run only while consumed
+    property int consumers: 0
+    function acquire(): void { consumers++; }
+    function release(): void { consumers = Math.max(0, consumers - 1); }
+
     function togglePower(): void {
         const next = !powered;
         root.powered = next;
@@ -42,7 +47,7 @@ Singleton {
 
     Timer {
         interval: 3000
-        running: true
+        running: root.consumers > 0
         repeat: true
         triggeredOnStart: true
         onTriggered: root.poll()

@@ -10,6 +10,11 @@ Singleton {
     property real volume: 0.5           // 0.0 .. 1.0
     property bool muted: false
 
+    // demand-gated like CpuRam/Network: pollers run only while consumed
+    property int consumers: 0
+    function acquire(): void { consumers++; }
+    function release(): void { consumers = Math.max(0, consumers - 1); }
+
     function setVolume(v: real): void {
         const clamped = Math.max(0.0, Math.min(1.0, v));
         root.volume = clamped;
@@ -46,7 +51,7 @@ Singleton {
 
     Timer {
         interval: 2000
-        running: true
+        running: root.consumers > 0
         repeat: true
         triggeredOnStart: true
         onTriggered: root.poll()

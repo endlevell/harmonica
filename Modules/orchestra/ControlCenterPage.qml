@@ -12,6 +12,9 @@ Item {
     property bool dndActive: false
     property bool nightLight: false
     property var now: new Date()
+    // volume + bluetooth pollers run only while this page is mounted
+    Component.onCompleted: { AudioService.acquire(); BluetoothService.acquire(); }
+    Component.onDestruction: { AudioService.release(); BluetoothService.release(); }
 
     // Live network speed tracking for sparkline
     property var downHistory: []
