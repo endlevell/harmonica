@@ -146,6 +146,7 @@ Singleton {
     }
     function _forceDrop(n): void {
         queue = queue.filter(x => x !== n);
+        _hooked = _hooked.filter(x => x !== n);
     }
 
     // ---- helpers ----
