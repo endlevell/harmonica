@@ -77,7 +77,7 @@
               pkg
               pkgs.awww          # wallpaper daemon/client
               pkgs.pywal16       # palette generation after a pick
-              pkgs.wf-recorder   # screen-record backend
+              pkgs.gpu-screen-recorder # screen-record backend (Recorder.qml)
             ];
 
             # autostart via Hyprland exec-once (clearest for a Wayland shell)
