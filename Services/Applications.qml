@@ -28,7 +28,7 @@ Singleton {
         // NOTE: written as plain lines — no ${} anywhere so this stays a dumb string
         const lines = [
             'LOCAL="${XDG_DATA_HOME:-$HOME/.local/share}"',
-            'DIRS="$LOCAL /run/current-system/sw/share /etc/profiles/per-user/$USER/share $HOME/.nix-profile/share ${XDG_DATA_DIRS:-}"',
+            'DIRS=$(printf "%s\\n" "$LOCAL" /run/current-system/sw/share "/etc/profiles/per-user/$USER/share" "$HOME/.nix-profile/share" "$HOME/.local/share/flatpak/exports/share" /var/lib/flatpak/exports/share; printf "%s" "${XDG_DATA_DIRS:-/usr/local/share:/usr/share}" | tr ":" "\\n")',
             'ICONROOTS="/run/current-system/sw/share/icons /etc/profiles/per-user/$USER/share/icons $HOME/.nix-profile/share/icons ${XDG_DATA_HOME:-$HOME/.local/share}/icons"',
             'resolve() {',
             '  i="$1"; [ -z "$i" ] && { printf ""; return; }',
@@ -45,7 +45,8 @@ Singleton {
             '  printf ""',
             '}',
             'seen=""',
-            'for d in $DIRS; do',
+            'printf "%s\\n" "$DIRS" | while IFS= read -r d; do',
+            '  [ -n "$d" ] || continue',
             '  [ -d "$d/applications" ] || continue',
             '  for f in "$d/applications/"*.desktop; do',
             '    [ -f "$f" ] || continue',
