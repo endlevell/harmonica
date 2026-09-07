@@ -242,9 +242,35 @@ Singleton {
         _state = "recording";
     }
 
+    // pause/resume only flip state after a liveness probe confirms the
+    // recorder pid is still alive; a dead process settles to idle via the
+    // stop path (expected exit, so no error notify), never to "paused"
+    property string _pendingToggle: ""
+
     function pauseToggle(): void {
-        if (_state === "recording") pause();
-        else if (_state === "paused") resume();
+        if (_state !== "recording" && _state !== "paused") return;
+        _pendingToggle = _state;
+        if (!liveProbe.running) liveProbe.exec(["bash", "-c", liveCheckCommand()]);
+    }
+
+    function liveCheckCommand(): string {
+        return "pid=$(cat " + shellQuote(root.pidFile) + " 2>/dev/null); [ -n \"$pid\" ] && kill -0 \"$pid\"";
+    }
+
+    Process {
+        id: liveProbe
+        command: []
+        onExited: code => {
+            const want = root._pendingToggle;
+            root._pendingToggle = "";
+            if (want === "recording" && root._state === "recording") {
+                if (code === 0) root.pause();
+                else root.stop();
+            } else if (want === "paused" && root._state === "paused") {
+                if (code === 0) root.resume();
+                else root.stop();
+            }
+        }
     }
 
     // ---- save-dir picker (zenity → kdialog → yad, like the old shell) ----
