@@ -30,6 +30,16 @@ Singleton {
 
     signal arrived()   // every NEW arrival (bell swing + content swap)
 
+    // same-object sender updates (notify-send -r): the daemon mutates the
+    // current object in place, so `current` never changes — bump revision
+    // so views re-sync their frozen copies
+    property int revision: 0
+    Connections {
+        target: root.current
+        function onSummaryChanged() { root.revision++; }
+        function onBodyChanged() { root.revision++; }
+    }
+
     // Boot order: evict a stale mako first so the server below always wins
     // the name race; the Loader only instantiates once the bus is settled.
     property bool busReady: false

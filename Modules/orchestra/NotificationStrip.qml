@@ -20,6 +20,11 @@ Item {
     property var cur: Notifications.current
 
     onCurChanged: if (cur) { swing.restart(); swapSeq.restart(); }
+    // in-place sender updates: same object, new content — crossfade only
+    Connections {
+        target: Notifications
+        function onRevisionChanged() { if (strip.cur) swapSeq.restart(); }
+    }
     component MarqueeLine: Item {
         id: line
         property string text: ""
