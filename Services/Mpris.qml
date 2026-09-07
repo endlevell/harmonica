@@ -26,8 +26,11 @@ Singleton {
     function next(): void { if (canGoNext) active.next(); }
     function previous(): void { if (canGoPrevious) active.previous(); }
 
-    // Docs pattern: position only refreshes on notification; while playing,
-    // nudge it on a timer so progress bars move smoothly.
+    // Docs pattern, verified: quickshell.org/docs/v0.3.0 MprisPlayer
+    // ("emit the positionChanged signal manually using Timer when the
+    // player is playing"); installed qmltypes confirm the position
+    // property's notify signal is positionChanged. Re-emitting it
+    // re-reads the value so progress bars move while playing.
     Timer {
         interval: 500
         running: root.playing
