@@ -99,7 +99,7 @@ Singleton {
                     });
                 }
                 const byKey = {};
-                for (const a of list) { if (!(a._n in byKey)) byKey[a._n] = a; }
+                for (const a of list) { const k = a.fileName !== "" ? a.fileName : a._n; if (!(k in byKey)) byKey[k] = a; }
                 root.apps = Object.values(byKey)
                     .sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
                 root.scanning = false;
