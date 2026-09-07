@@ -133,7 +133,7 @@ Singleton {
     readonly property real wallpaperShearBase: -0.3
     readonly property real wallpaperShearPerStep: 0
     // window itself NEVER resizes (ActivSpot lesson); only inner items animate
-    readonly property int islandWinH: Math.max(panelH, launcherH) + spaceXs * 2
+    readonly property int islandWinH: Math.max(panelH, launcherH, recordSettingsH) + spaceXs * 2
 
     // ---- morph choreography ----
     readonly property int morphDurExpand: 420      // container grow (slight back)

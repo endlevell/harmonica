@@ -39,7 +39,7 @@ PanelWindow {
     property bool sizeBig: false            // container target: card vs pill
     property string sizeView: "idle"        // which small/huge height applies
 
-    function _isBig(v: string): bool { return v === "panel" || v === "launcher"; }
+    function _isBig(v: string): bool { return v === "panel" || v === "launcher" || v === "recordSettings"; }
 
     function goTo(view: string): void {
         if (view === shownView && !swapSeq.running) return;
