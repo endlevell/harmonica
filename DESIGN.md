@@ -226,7 +226,6 @@ All icons are consumed through exactly **one** component, `Widgets/Icon.qml` —
 harmonica/
 ├── shell.qml                 # composition root ONLY (<100 lines)
 ├── DESIGN.md                 # this file
-├── config.json               # persisted settings (SettingsPage writes here)
 ├── Common/                   # singletons: Theme.qml (pywal), SettingsData.qml, Paths.qml
 ├── Services/                 # stateful logic, zero visuals — mpris, network, battery,
 │                              #   cpu/ram pollers, hyprland ipc, recorder, screenshot
