@@ -18,9 +18,22 @@ Item {
     readonly property string dataUrl: {
         const t = src.text();
         if (!t || t.length === 0) return "";
-        // Qt color.toString() → "#rrggbb" when opaque; svg-safe
         return "data:image/svg+xml;utf8," + encodeURIComponent(
-            t.replace(/currentColor/g, ic.color.toString()));
+            t.replace(/currentColor/g, ic.svgColor()));
+    }
+
+    // #rrggbb when opaque; rgba() when translucent — Qt.toString emits
+    // #AARRGGBB for alpha < 1, which SVG fill parsers reject, silently
+    // dropping the icon. Non-hex toString output falls back to rgb().
+    function svgColor(): string {
+        const c = ic.color;
+        const r = Math.round(c.r * 255), g = Math.round(c.g * 255), b = Math.round(c.b * 255);
+        if (c.a >= 1) {
+            const s = c.toString();
+            if (/^#[0-9a-fA-F]{6}$/.test(s)) return s;
+            return "rgb(" + r + "," + g + "," + b + ")";
+        }
+        return "rgba(" + r + "," + g + "," + b + "," + Number(c.a.toFixed(3)) + ")";
     }
 
     FileView {
