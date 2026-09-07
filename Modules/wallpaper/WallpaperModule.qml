@@ -27,7 +27,7 @@ Scope {
     }
 
     function open(): void {
-        focusProbe.exec(["sh", "-c", "hyprctl activeworkspace -j 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin).get(\"monitor\",\"\"))'"]);
+        focusProbe.exec(["sh", "-c", "hyprctl activeworkspace -j 2>/dev/null | sed -n 's/.*\"monitor\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p'"]);
     }
 
     function _openOnMonitor(name: string): void {
