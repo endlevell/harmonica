@@ -67,6 +67,7 @@ Singleton {
             if (typeof o.recCaptureMic === "boolean") root.recCaptureMic = o.recCaptureMic;
             if (typeof o.recShowCursor === "boolean") root.recShowCursor = o.recShowCursor;
             if (typeof o.recOutputDevice === "string") root.recOutputDevice = o.recOutputDevice;
+            if (typeof o.recInputDevice === "string") root.recInputDevice = o.recInputDevice;
             if (typeof o.recSaveDir === "string") root.recSaveDir = o.recSaveDir;
             if (typeof o.shotSaveDir === "string") root.shotSaveDir = o.shotSaveDir;
             else if (ver < 3 && typeof o.recAudioSource === "string" && o.recAudioSource !== "") root.recOutputDevice = o.recAudioSource;
@@ -96,6 +97,7 @@ Singleton {
             recCaptureMic: root.recCaptureMic,
             recShowCursor: root.recShowCursor,
             recOutputDevice: root.recOutputDevice,
+            recInputDevice: root.recInputDevice,
             recSaveDir: root.recSaveDir,
             shotSaveDir: root.shotSaveDir
         }, null, 2);
@@ -160,6 +162,7 @@ Singleton {
     onRecCaptureMicChanged: scheduleSave()
     onRecShowCursorChanged: scheduleSave()
     onRecOutputDeviceChanged: scheduleSave()
+    onRecInputDeviceChanged: scheduleSave()
     onRecSaveDirChanged: scheduleSave()
     onShotSaveDirChanged: scheduleSave()
 }
