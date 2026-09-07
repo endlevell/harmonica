@@ -94,12 +94,71 @@ pub fn do_reload(dir: &Path) {
     // quickshell live-reloads on config file changes; rewriting shell.qml
     // (same content) fires its watcher. An open() alone does not.
     let marker = dir.join("shell.qml");
-    match std::fs::read_to_string(&marker)
+    if let Ok(content) = std::fs::read_to_string(&marker) {
+        if std::fs::write(&marker, content).is_ok() {
+            println!("harmonica: reloaded {}", dir.display());
+            return;
+        }
+    }
+    // Read-only install (Nix store): the shell watches a sentinel file in
+    // the user cache dir instead — poke it with a fresh timestamp.
+    let base = std::env::var("XDG_CACHE_HOME")
+        .ok()
+        .filter(|s| !s.is_empty())
+        .map(PathBuf::from)
+        .or_else(|| std::env::var("HOME").ok().map(|h| PathBuf::from(h).join(".cache")))
+        .unwrap_or_else(|| PathBuf::from("/tmp"));
+    let trig = base.join("harmonica").join("reload-trigger");
+    let stamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_nanos())
+        .unwrap_or(0)
+        .to_string();
+    let res = trig
+        .parent()
+        .map(std::fs::create_dir_all)
+        .unwrap_or(Ok(()))
         .map_err(mlua::Error::external)
-        .and_then(|content| std::fs::write(&marker, content).map_err(mlua::Error::external))
-    {
-        Ok(_) => println!("harmonica: reloaded {}", dir.display()),
-        Err(e) => eprintln!("harmonica: reload failed ({}): {e}", marker.display()),
+        .and_then(|_| std::fs::write(&trig, stamp).map_err(mlua::Error::external));
+    match res {
+        Ok(_) => println!("harmonica: reloaded {} (sentinel)", dir.display()),
+        Err(e) => eprintln!("harmonica: reload failed ({}): {e}", trig.display()),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // One test covering both reload paths in sequence (env mutation is
+    // process-global, so the two scenarios must not run in parallel).
+    #[test]
+    fn reload_rewrites_writable_and_pokes_sentinel_when_readonly() {
+        // writable checkout → shell.qml rewrite, no sentinel
+        let dir = std::env::temp_dir().join(format!("harmonica-reload-w-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(dir.join("shell.qml"), "Scope {}").unwrap();
+        let cache = dir.join("cache");
+        std::env::set_var("XDG_CACHE_HOME", &cache);
+        do_reload(&dir);
+        assert!(!cache.join("harmonica").join("reload-trigger").exists());
+        let _ = std::fs::remove_dir_all(&dir);
+        // read-only install → sentinel poke (file read-only fails the rewrite)
+        let base = std::env::temp_dir().join(format!("harmonica-reload-ro-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&base);
+        let ro = base.join("ro");
+        std::fs::create_dir_all(&ro).unwrap();
+        let marker = ro.join("shell.qml");
+        std::fs::write(&marker, "Scope {}").unwrap();
+        let mut fperms = std::fs::metadata(&marker).unwrap().permissions();
+        fperms.set_readonly(true);
+        std::fs::set_permissions(&marker, fperms).unwrap();
+        let cache = base.join("cache");
+        std::env::set_var("XDG_CACHE_HOME", &cache);
+        do_reload(&ro);
+        assert!(cache.join("harmonica").join("reload-trigger").exists());
+        let _ = std::fs::remove_dir_all(&base);
     }
 }
 

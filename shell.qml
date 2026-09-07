@@ -19,6 +19,33 @@ Scope {
     }
 
     WallpaperModule {}
+    // Store-install reload: the CLI cannot rewrite shell.qml in the
+    // read-only Nix store, so it pokes this sentinel instead. Echo of our
+    // own boot-time creation is swallowed by content comparison; empty
+    // reads (cache wipe) never trigger.
+    property string _reloadSeen: ""
+    readonly property string reloadSentinelPath: {
+        const c = Quickshell.env("XDG_CACHE_HOME");
+        return ((c && c.length > 0) ? c : Quickshell.env("HOME") + "/.cache") + "/harmonica/reload-trigger";
+    }
+    FileView {
+        id: reloadSentinel
+        path: root.reloadSentinelPath
+        watchChanges: true
+        blockLoading: false
+        printErrors: false
+        onFileChanged: {
+            const t = reloadSentinel.text();
+            if (t !== "" && t !== root._reloadSeen) {
+                root._reloadSeen = t;
+                Quickshell.reload(false);
+            }
+        }
+        onLoadFailed: {
+            root._reloadSeen = "0";
+            reloadSentinel.setText("0");
+        }
+    }
 
     // XDG notification daemon: gated on busReady so a stale mako is evicted
     // BEFORE we claim org.freedesktop.Notifications (no bus race, ever).
