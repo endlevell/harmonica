@@ -92,6 +92,12 @@
             xdg.configFile."hypr/harmonica-autostart.conf".text =
               "exec-once = ${pkg}/bin/harmonica start";
 
+            # summon keys for the bottom islands — source this file from
+            # hyprland.conf (e.g. `source = ~/.config/hypr/harmonica-keys.conf`)
+            xdg.configFile."hypr/harmonica-keys.conf".text = ''
+              bind = SUPER, V, exec, ${pkg}/bin/harmonica ipc clipboard toggle
+            '';
+
             systemd.user.services.harmonica = {
               Unit = {
                 Description = "Harmonica quickshell island";

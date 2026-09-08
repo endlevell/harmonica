@@ -6,6 +6,7 @@ import Quickshell.Io
 import Quickshell.Services.Notifications
 import qs.Modules.orchestra
 import qs.Modules.wallpaper
+import qs.Modules.clipboard
 import qs.Services
 Scope {
     id: root
@@ -19,6 +20,7 @@ Scope {
     }
 
     WallpaperModule {}
+    ClipboardModule {}
     // Store-install reload: the CLI cannot rewrite shell.qml in the
     // read-only Nix store, so it pokes this sentinel instead. Echo of our
     // own boot-time creation is swallowed by content comparison; empty
