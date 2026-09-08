@@ -11,8 +11,8 @@ Item {
 
     readonly property int bellBox: 28
     readonly property int textW: 190
-    readonly property int contentWidth: Theme.spaceMd * 2 + bellBox + Theme.spaceSm + textW + Theme.spaceSm + bellBox   // trailing balance mirrors bell+gap: text block stays on optical center
-
+    readonly property int ackW: 64
+    readonly property int contentWidth: Theme.spaceMd * 2 + bellBox + Theme.spaceSm + textW + (Notifications.hasDefaultAction ? Theme.spaceSm + ackW + Theme.spaceMd : 0)
     property real swapOp: 1
     property real swapY: 0
     property string shownTitle: Notifications.title
@@ -99,11 +99,9 @@ Item {
     HoverHandler { id: stripHover }
 
     Row {
-        // text block (not the whole row) sits on the island's optical center:
-        // shift left by half the bell circle + gap
+        // bell · text · ack chip as one centered group
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: -(strip.bellBox + Theme.spaceSm) / 2
         spacing: Theme.spaceSm
         opacity: strip.swapOp
         y: strip.swapY
@@ -169,6 +167,30 @@ Item {
             }
             MouseArea {
                 anchors.fill: parent
+                enabled: strip.enabled
+                cursorShape: Qt.PointingHandCursor
+                onClicked: Notifications.activateCurrent()
+            }
+        }
+        Rectangle {
+            width: strip.ackW
+            height: 24
+            radius: Theme.radiusFull
+            color: ackMouse.containsMouse ? Theme.surfaceHover : Theme.surface
+            anchors.verticalCenter: parent.verticalCenter
+            visible: Notifications.hasDefaultAction
+            Behavior on color { ColorAnimation { duration: Theme.durFast } }
+            Text {
+                anchors.centerIn: parent
+                text: "ack"
+                color: Theme.primary
+                font.pixelSize: Theme.fontXs
+                font.weight: Font.DemiBold
+            }
+            MouseArea {
+                id: ackMouse
+                anchors.fill: parent
+                hoverEnabled: true
                 enabled: strip.enabled
                 cursorShape: Qt.PointingHandCursor
                 onClicked: Notifications.activateCurrent()
