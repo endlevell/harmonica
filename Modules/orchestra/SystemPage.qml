@@ -50,19 +50,9 @@ Item {
 
                 Behavior on color { ColorAnimation { duration: Theme.durFast } }
 
-                // hover glow ring
-                Rectangle {
-                    anchors.fill: parent
-                    radius: parent.radius
-                    color: "transparent"
-                    border.width: 1
-                    border.color: hov.hovered
-                        ? Qt.rgba(card.accent.r, card.accent.g, card.accent.b, 0.45)
-                        : Qt.rgba(card.accent.r, card.accent.g, card.accent.b, 0.0)
-                    Behavior on border.color { ColorAnimation { duration: Theme.durFast } }
-                }
-
+                // flat card, hover fill only (no borders anywhere)
                 HoverHandler { id: hov }
+
 
                 CircularGauge {
                     anchors.centerIn: parent
@@ -81,13 +71,13 @@ Item {
 
             GaugeCard {
                 value: CpuRam.cpuPct
-                accent: Theme.primary
+                accent: Theme.colorOk
                 cardLabel: "CPU"
                 cardValue: Math.round(CpuRam.cpuPct * 100) + "%"
             }
             GaugeCard {
                 value: CpuRam.memPct
-                accent: Theme.warn
+                accent: Theme.primary
                 cardLabel: "RAM"
                 cardValue: Math.round(CpuRam.memPct * 100) + "%"
             }

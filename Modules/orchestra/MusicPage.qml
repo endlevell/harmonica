@@ -40,16 +40,16 @@ Item {
     // ---- player ------------------------------------------------------------
     ColumnLayout {
         anchors.fill: parent
-        anchors.topMargin: Theme.spaceLg
-        anchors.bottomMargin: Theme.spaceXl
+        anchors.topMargin: Theme.spaceMd
+        anchors.bottomMargin: Theme.spaceMd
         visible: Mpris.hasPlayer
         spacing: Theme.spaceSm
 
         // Album art + progress ring ------------------------------------------
         Item {
             Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: 116
-            Layout.preferredHeight: 116
+            Layout.preferredWidth: 124
+            Layout.preferredHeight: 124
 
             ProgressRing {
                 anchors.fill: parent
@@ -60,9 +60,9 @@ Item {
 
             Rectangle {
                 anchors.centerIn: parent
-                width: 96
-                height: 96
-                radius: Theme.radiusMd
+                width: 108
+                height: 108
+                radius: Theme.radiusFull
                 color: Theme.surface
                 clip: true
 
@@ -109,7 +109,7 @@ Item {
             Text {
                 visible: Mpris.artist !== ""
                 text: Mpris.artist
-                color: Theme.dimText
+                color: Theme.primary
                 font.pixelSize: Theme.fontSm
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignHCenter
@@ -125,6 +125,13 @@ Item {
 
             Text {
                 text: page.fmtTime(Mpris.positionSecs)
+                color: Theme.dimText
+                font.pixelSize: Theme.fontXs
+                font.family: "monospace"
+            }
+            Item { Layout.fillWidth: true }
+            Text {
+                text: Math.round(page.progress * 100) + "%"
                 color: Theme.dimText
                 font.pixelSize: Theme.fontXs
                 font.family: "monospace"

@@ -89,7 +89,7 @@ Item {
             }
         }
         SequentialAnimation {
-            size: 14
+            id: confirmAnim
             NumberAnimation { target: confirm; property: "opacity"; to: 1; duration: Theme.durFast; easing.type: Easing.OutCubic }
             NumberAnimation { target: confirm; property: "scale"; to: 1; duration: Theme.durNormal; easing.bezierCurve: Theme.easeDecel; easing.type: Easing.BezierSpline }
             PauseAnimation { duration: Theme.durConfirmPulse }

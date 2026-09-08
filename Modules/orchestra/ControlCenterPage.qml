@@ -94,7 +94,7 @@ Item {
             }
             IconButton {
                 category: "actions"
-                iconName: "close"
+                iconName: "power"
                 iconSize: 15
                 pad: Theme.spaceSm
                 iconColor: Theme.danger
@@ -121,7 +121,7 @@ Item {
 
                     Icon {
                         category: "status"
-                        name: "battery"
+                        name: Battery.iconName
                         size: 16
                         color: Battery.percentage / 100 > 20 ? Theme.colorOk : Theme.danger
                     }
