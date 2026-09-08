@@ -103,6 +103,7 @@ Singleton {
     readonly property int panelH: 300
     readonly property int launcherH: 330
     readonly property int recordSettingsH: 400
+    readonly property int managerH: 340   // wifi/bluetooth drill-down cards
     readonly property int shotCollapseDelayMs: 300   // island collapse → capture gap
     readonly property int wallpaperVisibleCount: 9
     readonly property int wallpaperCardMaxH: 220

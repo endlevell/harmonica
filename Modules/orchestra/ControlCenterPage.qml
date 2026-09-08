@@ -289,10 +289,7 @@ Item {
                 statusText: Network.state === "wifi" ? (Network.ssid || "Connected") : "Disconnected"
                 active: Network.state === "wifi"
                 activeColor: Theme.primary
-                onClicked: {
-                    const next = Network.state === "disconnected" ? "on" : "off";
-                    Quickshell.execDetached(["nmcli", "radio", "wifi", next]);
-                }
+                onClicked: win.openWifi()
             }
 
             QuickPill {

@@ -6,7 +6,7 @@
   "licenseFile": "LICENSE",
   "grid": "0 -960 960 960",
   "renderedSize": 24,
-  "iconCount": 47,
+  "iconCount": 50,
   "notes": [
     "Vendored Material Symbols (Rounded, fill weight 1). Files normalized: width/height 24, fill currentColor on every path.",
     "OUR filenames and category folders are canonical — Icon.qml resolves category/name below; materialName records upstream origin.",
@@ -22,7 +22,8 @@
       "bluetooth",
       "airplane",
       "bell",
-      "brightness"
+      "brightness",
+      "lock"
     ],
     "system": [
       "cpu",
@@ -51,7 +52,8 @@
       "check",
       "power",
       "keyboard-return",
-      "minimize",
+      "visibility",
+      "visibility-off",
       "arrow-left",
       "arrow-right",
       "refresh"
@@ -106,12 +108,14 @@
     "record/scissors": "content_cut",
     "status/wifi-off": "wifi_off",
     "status/brightness": "light_mode",
+    "status/lock": "lock",
     "status/ethernet": "lan",
     "status/bell": "notifications",
     "actions/check": "check",
     "actions/power": "power_settings_new",
     "actions/keyboard-return": "keyboard_return",
-    "record/crop-free": "crop_free",
+    "actions/visibility": "visibility",
+    "actions/visibility-off": "visibility_off",
     "record/output": "desktop_windows",
     "record/save": "save",
     "record/photo": "photo_camera",

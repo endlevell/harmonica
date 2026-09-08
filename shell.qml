@@ -100,6 +100,14 @@ Scope {
     }
 
     IpcHandler {
+        target: "wifi"
+
+        function open(): void { if (islandVariants.island) islandVariants.island.openWifi(); }
+        function close(): void { if (islandVariants.island) islandVariants.island.closeWifi(); }
+        function toggle(): void { if (islandVariants.island) islandVariants.island.toggleWifi(); }
+    }
+
+    IpcHandler {
         target: "screenshot"
 
         function open(): void { if (islandVariants.island) islandVariants.island.openScreenshot(); }

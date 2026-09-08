@@ -26,8 +26,10 @@ PanelWindow {
     property bool launcherOpen: false       // Super+S / IPC
     property bool recordSettingsOpen: false
     property bool screenshotOpen: false       // capture quick actions (pill)
+    property bool wifiOpen: false             // wifi drill-down (big card)
 
     readonly property string targetView: screenshotOpen ? "screenshot"
+        : wifiOpen ? "wifi"
         : recordSettingsOpen ? "recordSettings"
         : launcherOpen ? "launcher"
         : hoverOpen ? "panel" : basePhase
@@ -38,8 +40,7 @@ PanelWindow {
     property string pendingView: ""         // destination of an in-flight morph
     property bool sizeBig: false            // container target: card vs pill
     property string sizeView: "idle"        // which small/huge height applies
-
-    function _isBig(v: string): bool { return v === "panel" || v === "launcher" || v === "recordSettings"; }
+    function _isBig(v: string): bool { return v === "panel" || v === "launcher" || v === "recordSettings" || v === "wifi"; }
 
     function goTo(view: string): void {
         if (view === shownView && !swapSeq.running && !leadTimer.running) return;
@@ -105,7 +106,7 @@ PanelWindow {
 
     WlrLayershell.namespace: "harmonica:island"
     WlrLayershell.layer: WlrLayer.Top
-    WlrLayershell.keyboardFocus: launcherOpen || recordSettingsOpen
+    WlrLayershell.keyboardFocus: launcherOpen || recordSettingsOpen || wifiOpen
         ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand
 
     // explicit rect (not item:) so the click region tracks every morph;
@@ -121,6 +122,7 @@ PanelWindow {
              : sizeView === "music" ? musicStrip.contentWidth : sizeView === "notification" ? notifStrip.contentWidth : sizeView === "screenshot" ? shotStrip.contentWidth : idleBar.contentWidth
         height: sizeBig ? (sizeView === "launcher" ? launcherView.contentH
                          : sizeView === "recordSettings" ? Theme.recordSettingsH
+                         : sizeView === "wifi" ? Theme.managerH
                          : Theme.panelH)
                         : Theme.barH
         Behavior on width {
@@ -240,6 +242,16 @@ PanelWindow {
                 Component.onCompleted: Recorder.refreshAudioSources()
             }
 
+            WifiManager {
+                id: wifiView
+                anchors.fill: parent
+                opacity: shownView === "wifi" ? enterOp : leavingView === "wifi" ? leaveOp : 0
+                y: shownView === "wifi" ? enterY : leavingView === "wifi" ? leaveY : 0
+                visible: opacity > 0.001
+                enabled: shownView === "wifi"
+                onBackRequested: win.closeWifi()
+            }
+
             ScreenshotStrip {
                 id: shotStrip
                 anchors.fill: parent
@@ -259,6 +271,10 @@ PanelWindow {
     onRecordSettingsOpenChanged: {
         if (recordSettingsOpen) Qt.callLater(() => recordSettings.grabFocus());
     }
+    onWifiOpenChanged: {
+        if (wifiOpen) Qt.callLater(() => wifiView.grabFocus());
+        else wifiView.releaseView();
+    }
 
     function openRecordSettings(): void {
         hoverOpen = false;
@@ -272,6 +288,7 @@ PanelWindow {
             win.launcherOpen = false;
             win.recordSettingsOpen = false;
             win.screenshotOpen = false;
+            win.wifiOpen = false;
         }
     }
 
@@ -283,6 +300,15 @@ PanelWindow {
     }
     function closeScreenshot(): void { screenshotOpen = false; }
     function toggleScreenshot(): void { screenshotOpen ? closeScreenshot() : openScreenshot(); }
+    function openWifi(): void {
+        hoverOpen = false;
+        recordSettingsOpen = false;
+        launcherOpen = false;
+        screenshotOpen = false;
+        wifiOpen = true;
+    }
+    function closeWifi(): void { wifiOpen = false; }
+    function toggleWifi(): void { wifiOpen ? closeWifi() : openWifi(); }
 
     // ---- input ----------------------------------------------------------
     // pure hover tracker (NoButton → never blocks clicks/wheel on content)
@@ -291,7 +317,7 @@ PanelWindow {
         anchors.fill: content
         hoverEnabled: true
         acceptedButtons: Qt.NoButton
-        cursorShape: hoverOpen || launcherOpen || recordSettingsOpen || screenshotOpen || Notifications.showing ? Qt.ArrowCursor : Qt.PointingHandCursor
+        cursorShape: hoverOpen || launcherOpen || recordSettingsOpen || screenshotOpen || wifiOpen || Notifications.showing ? Qt.ArrowCursor : Qt.PointingHandCursor
         onContainsMouseChanged: {
             if (containsMouse) {
                 closeDelay.stop();
@@ -305,7 +331,7 @@ PanelWindow {
     // click-to-open only while a pill phase shows; never steals page clicks
     MouseArea {
         anchors.fill: content
-        enabled: !hoverOpen && !launcherOpen && !recordSettingsOpen && !screenshotOpen && !Notifications.showing
+        enabled: !hoverOpen && !launcherOpen && !recordSettingsOpen && !screenshotOpen && !wifiOpen && !Notifications.showing
         acceptedButtons: Qt.LeftButton
         onClicked: win.hoverOpen = true
     }
@@ -318,9 +344,10 @@ PanelWindow {
 
     Shortcut {
         sequence: "Escape"
-        enabled: hoverOpen || launcherOpen || recordSettingsOpen || screenshotOpen || Notifications.showing
+        enabled: hoverOpen || launcherOpen || recordSettingsOpen || screenshotOpen || wifiOpen || Notifications.showing
         onActivated: {
-            if (screenshotOpen) screenshotOpen = false;
+            if (wifiOpen) { if (!wifiView.tryEscape()) wifiOpen = false; }
+            else if (screenshotOpen) screenshotOpen = false;
             else if (recordSettingsOpen) recordSettingsOpen = false;
         }
     }
