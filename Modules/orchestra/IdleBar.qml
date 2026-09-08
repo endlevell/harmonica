@@ -51,6 +51,8 @@ Item {
     Icon {
         id: netIcon
         category: "status"
+        name: Network.state === "ethernet" ? "ethernet"
+            : Network.state === "wifi" ? "wifi" : "wifi-off"
         size: 14
         color: Network.state === "disconnected" ? Theme.dimText : Theme.colorNet
         anchors.left: parent.left
