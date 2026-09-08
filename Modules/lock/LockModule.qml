@@ -27,5 +27,7 @@ Scope {
         function toggle(): void { if (!Lock.engaged) Lock.open(); }
         function isLocked(): bool { return Lock.engaged; }
         function state(): string { return Lock.engaged ? Lock.state : "unlocked"; }
+        function attempts(): int { return Lock.attemptsLeft; }
+        function error(): string { return Lock.errorText; }
     }
 }
