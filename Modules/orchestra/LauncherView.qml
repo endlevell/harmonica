@@ -88,46 +88,53 @@ Item {
         Item {
             width: parent.width
             height: 34
-            Row {
-                spacing: Theme.spaceSm
-                anchors.fill: parent
+            Icon {
+                id: searchIcon
+                category: "actions"
+                name: "search"
+                size: 15
+                color: Theme.dimText
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            Text {
+                id: escHint
+                text: "ESC"
+                color: Theme.outline
+                font.pixelSize: Theme.fontXs - 1
+                font.family: "monospace"
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            TextInput {
+                id: input
+                width: parent.width - searchIcon.width - escHint.implicitWidth - Theme.spaceSm * 2
+                height: parent.height
+                anchors.left: searchIcon.right
+                anchors.leftMargin: Theme.spaceSm
+                anchors.verticalCenter: parent.verticalCenter
+                color: Theme.foreground
+                font.pixelSize: Theme.fontSm
+                clip: true
+                cursorVisible: activeFocus
+                verticalAlignment: TextInput.AlignVCenter
+                enabled: !lv.launching
 
-                Icon {
-                    category: "actions"
-                    name: "search"
-                    size: 15
-                    color: Theme.dimText
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                TextInput {
-                    id: input
-                    width: parent.width - 15 - Theme.spaceSm
-                    height: parent.height
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: Theme.foreground
+                Text {
+                    visible: input.text === "" && !input.activeFocus
+                    text: "Search apps…"
+                    color: Theme.outline
                     font.pixelSize: Theme.fontSm
-                    clip: true
-                    cursorVisible: activeFocus
-                    verticalAlignment: TextInput.AlignVCenter
-                    enabled: !lv.launching
-
-                    Text {
-                        visible: input.text === "" && !input.activeFocus
-                        text: "Search apps…"
-                        color: Theme.outline
-                        font.pixelSize: Theme.fontSm
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    onTextChanged: { list.currentIndex = 0; list.positionViewAtIndex(0, ListView.Beginning) }
-
-                    Keys.onDownPressed: lv.move(1)
-                    Keys.onUpPressed: lv.move(-1)
-                    Keys.onReturnPressed: lv.launchCurrent()
-                    Keys.onEnterPressed: lv.launchCurrent()
-                    Keys.onEscapePressed: lv.closed()
+                    anchors.verticalCenter: parent.verticalCenter
                 }
+
+                onTextChanged: { list.currentIndex = 0; list.positionViewAtIndex(0, ListView.Beginning) }
+
+                Keys.onDownPressed: lv.move(1)
+                Keys.onUpPressed: lv.move(-1)
+                Keys.onReturnPressed: lv.launchCurrent()
+                Keys.onEnterPressed: lv.launchCurrent()
+                Keys.onEscapePressed: lv.closed()
             }
         }
 
@@ -204,42 +211,39 @@ Item {
                     anchors.rightMargin: Theme.spaceSm
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: Theme.spaceSm
-
-                    // app icon, or first-letter chip when none resolves
-                    Item {
-                        width: 20
-                        height: 20
+                    // app icon in a tinted disc, or first-letter chip when none resolves
+                    Rectangle {
+                        width: 28
+                        height: 28
+                        radius: Theme.radiusSm
+                        color: Theme.surface
                         anchors.verticalCenter: parent.verticalCenter
 
                         Image {
                             id: appIcon
-                            anchors.fill: parent
+                            anchors.centerIn: parent
+                            width: 18
+                            height: 18
                             source: modelData.icon !== "" ? modelData.icon : ""
-                            sourceSize.width: 40
-                            sourceSize.height: 40
+                            sourceSize.width: 36
+                            sourceSize.height: 36
                             fillMode: Image.PreserveAspectFit
                             smooth: true
                             visible: source !== "" && status !== Image.Error
                         }
 
-                        Rectangle {
-                            id: iconFallback
-                            anchors.fill: parent
-                            radius: Theme.radiusXs
-                            color: Theme.surface
+                        Text {
+                            anchors.centerIn: parent
+                            text: modelData.name.length > 0 ? modelData.name.charAt(0).toUpperCase() : "?"
+                            color: Theme.primary
+                            font.pixelSize: Theme.fontSm - 1
+                            font.weight: Font.DemiBold
                             visible: modelData.icon === "" || appIcon.status === Image.Error
-                            Text {
-                                anchors.centerIn: parent
-                                text: modelData.name.length > 0 ? modelData.name.charAt(0).toUpperCase() : "?"
-                                color: Theme.primary
-                                font.pixelSize: Theme.fontSm - 1
-                                font.weight: Font.DemiBold
-                            }
                         }
                     }
 
                     Column {
-                        width: parent.width - 20 - Theme.spaceSm
+                        width: parent.width - 28 - 14 - Theme.spaceSm * 2
                         anchors.verticalCenter: parent.verticalCenter
                         spacing: 0
 
@@ -262,6 +266,13 @@ Item {
                             font.pixelSize: Theme.fontXs
                             elide: Text.ElideRight
                         }
+                    }
+                    Icon {
+                        category: "actions"
+                        name: "keyboard-return"
+                        size: 14
+                        color: index === list.currentIndex ? Theme.primary : Theme.outline
+                        anchors.verticalCenter: parent.verticalCenter
                     }
                 }
 
