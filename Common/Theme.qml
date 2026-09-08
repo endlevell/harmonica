@@ -75,13 +75,19 @@ Singleton {
     readonly property int fontHero: 96   // lock-screen hero clock
     readonly property int durIris: 200   // lock unlock-reveal transition
     readonly property int fontXl: 30
-    // UI family from fontconfig. Applied to QGuiApplication::font once
-    // here, so every Text without an explicit family inherits it. Mono spots
-    // (clocks, timers, speeds) intentionally keep fontconfig monospace instead.
-    readonly property string fontUi: "Google Sans"
+    // UI families from fontconfig (apple-fonts.nix, declarative in nix flake).
+    // Display for clocks/titles/headers/stat values, Text for body/labels/rows,
+    // Mono for timestamps/IPs/sizes/passwords/pairing codes. Weights go through
+    // font.weight so Qt picks the real static cuts, never synthetic bold.
+    readonly property string fontDisplay: "SF Pro Display"
+    readonly property string fontText: "SF Pro Text"
+    readonly property string fontMono: "JetBrains Mono"
+    // letter-spacing: tight for hero/display, wide for small-caps labels
+    readonly property real fontTrackingTight: -2
+    readonly property real fontTrackingWide: 2
 
     function applyUiFont(): void {
-        Qt.application.font.family = fontUi;
+        Qt.application.font.family = fontText;
     }
     Component.onCompleted: applyUiFont()
 

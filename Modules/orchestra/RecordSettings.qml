@@ -38,8 +38,9 @@ Item {
     component SectionLabel: Text {
         property int order: 0
         color: Theme.dimText
+        font.family: Theme.fontText
         font.pixelSize: Theme.fontXs
-        font.letterSpacing: 2
+        font.letterSpacing: Theme.fontTrackingWide
         opacity: st.settingsStage > order ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: Theme.reducedMotion ? 0 : Theme.durFast; easing.type: Easing.OutCubic } }
     }
@@ -223,8 +224,9 @@ Item {
             Text {
                 text: "Screen recording"
                 color: Theme.dimText
+                font.family: Theme.fontText
                 font.pixelSize: Theme.fontXs
-                font.letterSpacing: 2
+                font.letterSpacing: Theme.fontTrackingWide
             }
 
             SectionLabel { text: "VIDEO"; order: 1 }
@@ -305,7 +307,7 @@ Item {
                     text: SettingsData.recOutDir
                     color: Theme.dimText
                     font.pixelSize: Theme.fontXs
-                    font.family: "monospace"
+                    font.family: Theme.fontMono
                     elide: Text.ElideMiddle
                 }
             }
@@ -342,7 +344,7 @@ Item {
                         text: SettingsData.recFilenameFormat
                         color: Theme.foreground
                         font.pixelSize: Theme.fontXs + 1
-                        font.family: "monospace"
+                        font.family: Theme.fontMono
                         clip: true
                         verticalAlignment: TextInput.AlignVCenter
                         onTextChanged: if (text.trim() !== "") SettingsData.recFilenameFormat = text

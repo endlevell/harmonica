@@ -90,7 +90,7 @@ Item {
                 color: Recorder.state === "paused" ? Theme.dimText : Theme.foreground
                 font.pixelSize: Theme.fontSm
                 font.weight: Font.DemiBold
-                font.family: "monospace"
+                font.family: Theme.fontMono
                 anchors.centerIn: parent
             }
 
@@ -160,7 +160,7 @@ Item {
                 color: Theme.foreground
                 font.pixelSize: Theme.fontSm
                 font.weight: Font.DemiBold
-                font.family: "monospace"
+                font.family: Theme.fontMono
                 anchors.verticalCenter: parent.verticalCenter
             }
         }

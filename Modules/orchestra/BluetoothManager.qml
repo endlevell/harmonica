@@ -59,7 +59,7 @@ Item {
                         : (BluetoothService.deviceName !== "" ? BluetoothService.deviceName : "On")
                     color: Theme.dimText
                     font.pixelSize: Theme.fontXs
-                    font.family: "monospace"
+                    font.family: Theme.fontMono
                 }
             }
             Item {
@@ -327,7 +327,7 @@ Item {
                 text: BluetoothService.present ? (BluetoothService.adapter.name || "adapter") : "no adapter"
                 color: Theme.dimText
                 font.pixelSize: Theme.fontXs
-                font.family: "monospace"
+                font.family: Theme.fontMono
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
             }

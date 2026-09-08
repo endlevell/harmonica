@@ -69,7 +69,7 @@ Rectangle {
         color: slider.value > 0.85 ? Theme.background : Theme.foreground
         font.pixelSize: Theme.fontXs
         font.weight: Font.DemiBold
-        font.family: "monospace"
+        font.family: Theme.fontMono
     }
 
     MouseArea {

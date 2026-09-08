@@ -214,7 +214,9 @@ PanelWindow {
                 Text {
                     text: "PINNED"
                     color: Theme.dimText
+                    font.family: Theme.fontText
                     font.pixelSize: Theme.fontXs
+                    font.letterSpacing: Theme.fontTrackingWide
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Repeater {
@@ -308,7 +310,7 @@ PanelWindow {
                                 text: Clipboard.ageText(modelData.time)
                                 color: Theme.dimText
                                 font.pixelSize: Theme.fontXs
-                                font.family: "monospace"
+                                font.family: Theme.fontMono
                             }
                         }
                         Rectangle {

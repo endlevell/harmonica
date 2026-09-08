@@ -84,6 +84,7 @@ Item {
             visible: root.valueText !== ""
             text: root.valueText
             color: Theme.foreground
+            font.family: Theme.fontDisplay
             font.pixelSize: Theme.fontLg
             font.weight: Font.Bold
             anchors.horizontalCenter: parent.horizontalCenter
@@ -93,8 +94,10 @@ Item {
             visible: root.label !== ""
             text: root.label
             color: Theme.dimText
+            font.family: Theme.fontText
             font.pixelSize: Theme.fontXs
             font.weight: Font.Medium
+            font.letterSpacing: Theme.fontTrackingWide
             anchors.horizontalCenter: parent.horizontalCenter
         }
     }

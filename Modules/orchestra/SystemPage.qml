@@ -159,7 +159,7 @@ Item {
                         text: Network.ip
                         color: Theme.dimText
                         font.pixelSize: Theme.fontXs
-                        font.family: "monospace"
+                        font.family: Theme.fontMono
                         Layout.fillWidth: true
                         elide: Text.ElideRight
                     }
@@ -197,7 +197,7 @@ Item {
                             color: tint
                             font.pixelSize: Theme.fontXs
                             font.weight: Font.Medium
-                            font.family: "monospace"
+                            font.family: Theme.fontMono
                         }
                     }
 
@@ -225,14 +225,16 @@ Item {
                     Text {
                         text: "MEMORY"
                         color: Theme.dimText
+                        font.family: Theme.fontText
                         font.pixelSize: Theme.fontXs
                         font.weight: Font.Bold
-                        font.letterSpacing: 1.5
+                        font.letterSpacing: Theme.fontTrackingWide
                     }
                     Item { Layout.fillWidth: true }
                     Text {
                         text: page.fmtGb(CpuRam.memTotalKb - CpuRam.memAvailKb) + " / " + page.fmtGb(CpuRam.memTotalKb)
                         color: Theme.foreground
+                        font.family: Theme.fontMono
                         font.pixelSize: Theme.fontXs
                         font.weight: Font.DemiBold
                     }

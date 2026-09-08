@@ -73,7 +73,7 @@ Item {
                     text: (Wifi.connectedSsid !== "" ? Wifi.connectedSsid : "Not connected") + (Wifi.ip !== "" ? " · " + Wifi.ip : "")
                     color: Theme.dimText
                     font.pixelSize: Theme.fontXs
-                    font.family: "monospace"
+                    font.family: Theme.fontMono
                 }
             }
             Item {
@@ -318,7 +318,7 @@ Item {
                                         height: parent.height
                                         color: Theme.foreground
                                         font.pixelSize: Theme.fontSm
-                                        font.family: "monospace"
+                                        font.family: Theme.fontMono
                                         echoMode: wm.showPass ? TextInput.Normal : TextInput.Password
                                         clip: true
                                         verticalAlignment: TextInput.AlignVCenter
@@ -410,7 +410,7 @@ Item {
                             height: 26
                             color: Theme.foreground
                             font.pixelSize: Theme.fontSm
-                            font.family: "monospace"
+                            font.family: Theme.fontMono
                             clip: true
                             verticalAlignment: TextInput.AlignVCenter
                             onTextChanged: wm.joinSsid = text
@@ -431,7 +431,7 @@ Item {
                             height: 26
                             color: Theme.foreground
                             font.pixelSize: Theme.fontSm
-                            font.family: "monospace"
+                            font.family: Theme.fontMono
                             echoMode: TextInput.Password
                             clip: true
                             verticalAlignment: TextInput.AlignVCenter
@@ -478,7 +478,7 @@ Item {
                 text: (Wifi.iface !== "" ? Wifi.iface : "wlan0") + (Wifi.radio ? "" : " · radio off")
                 color: Theme.dimText
                 font.pixelSize: Theme.fontXs
-                font.family: "monospace"
+                font.family: Theme.fontMono
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
             }

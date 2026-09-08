@@ -102,7 +102,7 @@ Item {
                 text: "ESC"
                 color: Theme.outline
                 font.pixelSize: Theme.fontXs - 1
-                font.family: "monospace"
+                font.family: Theme.fontMono
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
             }

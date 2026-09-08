@@ -63,10 +63,8 @@ Item {
     Text {
         id: clockLbl
         text: Qt.formatDateTime(bar.now, SettingsData.showSeconds ? "HH:mm:ss" : "HH:mm")
-        color: Theme.foreground
-        font.pixelSize: Theme.fontSm + 1
         font.weight: Font.DemiBold
-        font.family: Theme.fontUi
+        font.family: Theme.fontDisplay
         anchors.centerIn: parent
     }
 

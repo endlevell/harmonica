@@ -71,9 +71,10 @@ Item {
                 Text {
                     text: formatTime()
                     color: Theme.foreground
+                    font.family: Theme.fontDisplay
                     font.pixelSize: Theme.fontXl
                     font.weight: Font.Bold
-                    font.letterSpacing: -1
+                    font.letterSpacing: Theme.fontTrackingTight
                 }
                 Text {
                     text: formatDate()
@@ -206,9 +207,9 @@ Item {
                         Text {
                             text: (Network.downKBs / 1024).toFixed(1) + " MB/s"
                             color: Theme.foreground
+                            font.family: Theme.fontDisplay
                             font.pixelSize: Theme.fontXs
                             font.weight: Font.Bold
-                            font.family: "monospace"
                         }
                         Text {
                             text: "Download"
@@ -251,9 +252,9 @@ Item {
                         Text {
                             text: (Network.upKBs / 1024).toFixed(1) + " MB/s"
                             color: Theme.foreground
+                            font.family: Theme.fontDisplay
                             font.pixelSize: Theme.fontXs
                             font.weight: Font.Bold
-                            font.family: "monospace"
                         }
                         Text {
                             text: "Upload"

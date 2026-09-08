@@ -65,7 +65,7 @@ Item {
         text: "● HARMONICA // " + Lock.state.toUpperCase()
         color: Theme.dimText
         font.pixelSize: Theme.fontXs
-        font.family: "monospace"
+        font.family: Theme.fontMono
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.margins: Theme.spaceLg
@@ -79,7 +79,7 @@ Item {
             text: Battery.present ? Battery.percentage + "%" : ""
             color: Theme.dimText
             font.pixelSize: Theme.fontXs
-            font.family: "monospace"
+            font.family: Theme.fontMono
             anchors.verticalCenter: parent.verticalCenter
         }
         Icon {
@@ -103,8 +103,10 @@ Item {
         Text {
             text: lock.fmtClock()
             color: Theme.foreground
+            font.family: Theme.fontDisplay
             font.pixelSize: Theme.fontHero
             font.weight: Font.Bold
+            font.letterSpacing: Theme.fontTrackingTight
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -170,7 +172,7 @@ Item {
                     height: parent.height
                     color: Theme.foreground
                     font.pixelSize: Theme.fontMd
-                    font.family: "monospace"
+                    font.family: Theme.fontMono
                     echoMode: lock.showPass ? TextInput.Normal : TextInput.Password
                     clip: true
                     verticalAlignment: TextInput.AlignVCenter
@@ -369,7 +371,7 @@ Item {
         text: Lock.userName + " · logged in"
         color: Theme.dimText
         font.pixelSize: Theme.fontXs
-        font.family: "monospace"
+        font.family: Theme.fontMono
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.margins: Theme.spaceLg

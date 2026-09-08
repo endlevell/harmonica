@@ -127,21 +127,21 @@ Item {
                 text: page.fmtTime(Mpris.positionSecs)
                 color: Theme.dimText
                 font.pixelSize: Theme.fontXs
-                font.family: "monospace"
+                font.family: Theme.fontMono
             }
             Item { Layout.fillWidth: true }
             Text {
                 text: Math.round(page.progress * 100) + "%"
                 color: Theme.dimText
                 font.pixelSize: Theme.fontXs
-                font.family: "monospace"
+                font.family: Theme.fontMono
             }
             Item { Layout.fillWidth: true }
             Text {
                 text: page.fmtTime(Mpris.lengthSecs)
                 color: Theme.dimText
                 font.pixelSize: Theme.fontXs
-                font.family: "monospace"
+                font.family: Theme.fontMono
             }
         }
 
