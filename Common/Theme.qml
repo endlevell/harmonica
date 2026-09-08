@@ -155,7 +155,6 @@ Singleton {
     readonly property int morphDurRetract: 340     // container shrink (out-cubic)
     readonly property int morphOutMs: 150          // old content exit
     readonly property int morphInMs: 240           // new content enter
-    readonly property int morphTwitchLead: 70      // twitch plays before morph starts
     readonly property var easeMorphExpand: [0.22, 1.14, 0.36, 1, 1, 1]
 
     // ---- motion ----
@@ -171,9 +170,8 @@ Singleton {
 
     // bezier splines for Easing.BezierSpline ([x1,y1,x2,y2,1,1] = one cubic segment)
     readonly property var easeDecel: [0.05, 0.7, 0.1, 1, 1, 1]        // entrances
-    readonly property var easeAccel: [0.3, 0, 0.8, 0.15, 1, 1]        // exits
-    readonly property var easeSpatial: [0.34, 1.36, 0.64, 1, 1, 1]    // overshoot moves
-    readonly property var easeTwitch: [0.34, 1.86, 0.5, 1, 1, 1]      // elastic twitch
+    readonly property var easeAccel: [0.3, 0, 0.8, 0.15, 1, 1] // exits
+    readonly property var easeSpatial: [0.34, 1.36, 0.64, 1, 1, 1] // overshoot moves
     // ---- recorder ----
     readonly property int recStaggerMs: 30          // settings row entrance step
     readonly property int recCompactDebounceMs: 80  // hover-leave settle before compact
