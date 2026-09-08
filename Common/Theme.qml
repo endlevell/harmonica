@@ -72,6 +72,8 @@ Singleton {
     readonly property int fontSm: 13
     readonly property int fontMd: 15
     readonly property int fontLg: 20
+    readonly property int fontHero: 96   // lock-screen hero clock
+    readonly property int durIris: 200   // lock unlock-reveal transition
     readonly property int fontXl: 30
     // UI family from fontconfig. Applied to QGuiApplication::font once
     // here, so every Text without an explicit family inherits it. Mono spots

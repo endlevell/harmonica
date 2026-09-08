@@ -1,5 +1,5 @@
 // Harmonica — composition root. Instantiates surfaces per screen; nothing else.
-// Approved exceptions: WallpaperPicker only.
+// Approved surfaces: island, WallpaperPicker, clipboard/emoji bottom islands, lock screen.
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -8,6 +8,7 @@ import qs.Modules.orchestra
 import qs.Modules.wallpaper
 import qs.Modules.clipboard
 import qs.Modules.emoji
+import qs.Modules.lock
 import qs.Services
 Scope {
     id: root
@@ -23,6 +24,7 @@ Scope {
     WallpaperModule {}
     ClipboardModule {}
     EmojiModule {}
+    LockModule {}
     // Store-install reload: the CLI cannot rewrite shell.qml in the
     // read-only Nix store, so it pokes this sentinel instead. Echo of our
     // own boot-time creation is swallowed by content comparison; empty
