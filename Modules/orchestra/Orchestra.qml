@@ -27,9 +27,11 @@ PanelWindow {
     property bool recordSettingsOpen: false
     property bool screenshotOpen: false       // capture quick actions (pill)
     property bool wifiOpen: false             // wifi drill-down (big card)
+    property bool bluetoothOpen: false        // bluetooth drill-down (big card)
 
     readonly property string targetView: screenshotOpen ? "screenshot"
         : wifiOpen ? "wifi"
+        : bluetoothOpen ? "bluetooth"
         : recordSettingsOpen ? "recordSettings"
         : launcherOpen ? "launcher"
         : hoverOpen ? "panel" : basePhase
@@ -40,7 +42,7 @@ PanelWindow {
     property string pendingView: ""         // destination of an in-flight morph
     property bool sizeBig: false            // container target: card vs pill
     property string sizeView: "idle"        // which small/huge height applies
-    function _isBig(v: string): bool { return v === "panel" || v === "launcher" || v === "recordSettings" || v === "wifi"; }
+    function _isBig(v: string): bool { return v === "panel" || v === "launcher" || v === "recordSettings" || v === "wifi" || v === "bluetooth"; }
 
     function goTo(view: string): void {
         if (view === shownView && !swapSeq.running && !leadTimer.running) return;
@@ -123,6 +125,7 @@ PanelWindow {
         height: sizeBig ? (sizeView === "launcher" ? launcherView.contentH
                          : sizeView === "recordSettings" ? Theme.recordSettingsH
                          : sizeView === "wifi" ? Theme.managerH
+                         : sizeView === "bluetooth" ? Theme.managerH
                          : Theme.panelH)
                         : Theme.barH
         Behavior on width {
@@ -251,6 +254,15 @@ PanelWindow {
                 enabled: shownView === "wifi"
                 onBackRequested: win.closeWifi()
             }
+            BluetoothManager {
+                id: btView
+                anchors.fill: parent
+                opacity: shownView === "bluetooth" ? enterOp : leavingView === "bluetooth" ? leaveOp : 0
+                y: shownView === "bluetooth" ? enterY : leavingView === "bluetooth" ? leaveY : 0
+                visible: opacity > 0.001
+                enabled: shownView === "bluetooth"
+                onBackRequested: win.closeBluetooth()
+            }
 
             ScreenshotStrip {
                 id: shotStrip
@@ -275,6 +287,10 @@ PanelWindow {
         if (wifiOpen) Qt.callLater(() => wifiView.grabFocus());
         else wifiView.releaseView();
     }
+    onBluetoothOpenChanged: {
+        if (bluetoothOpen) Qt.callLater(() => btView.grabFocus());
+        else btView.releaseView();
+    }
 
     function openRecordSettings(): void {
         hoverOpen = false;
@@ -286,9 +302,10 @@ PanelWindow {
         function onCollapseRequested() {
             win.hoverOpen = false;
             win.launcherOpen = false;
-            win.recordSettingsOpen = false;
             win.screenshotOpen = false;
             win.wifiOpen = false;
+            win.bluetoothOpen = false;
+            win.recordSettingsOpen = false;
         }
     }
 
@@ -305,10 +322,21 @@ PanelWindow {
         recordSettingsOpen = false;
         launcherOpen = false;
         screenshotOpen = false;
+        bluetoothOpen = false;
         wifiOpen = true;
     }
     function closeWifi(): void { wifiOpen = false; }
     function toggleWifi(): void { wifiOpen ? closeWifi() : openWifi(); }
+    function openBluetooth(): void {
+        hoverOpen = false;
+        recordSettingsOpen = false;
+        launcherOpen = false;
+        screenshotOpen = false;
+        wifiOpen = false;
+        bluetoothOpen = true;
+    }
+    function closeBluetooth(): void { bluetoothOpen = false; }
+    function toggleBluetooth(): void { bluetoothOpen ? closeBluetooth() : openBluetooth(); }
 
     // ---- input ----------------------------------------------------------
     // pure hover tracker (NoButton → never blocks clicks/wheel on content)
@@ -317,7 +345,7 @@ PanelWindow {
         anchors.fill: content
         hoverEnabled: true
         acceptedButtons: Qt.NoButton
-        cursorShape: hoverOpen || launcherOpen || recordSettingsOpen || screenshotOpen || wifiOpen || Notifications.showing ? Qt.ArrowCursor : Qt.PointingHandCursor
+        cursorShape: hoverOpen || launcherOpen || recordSettingsOpen || screenshotOpen || wifiOpen || bluetoothOpen || Notifications.showing ? Qt.ArrowCursor : Qt.PointingHandCursor
         onContainsMouseChanged: {
             if (containsMouse) {
                 closeDelay.stop();
@@ -331,7 +359,7 @@ PanelWindow {
     // click-to-open only while a pill phase shows; never steals page clicks
     MouseArea {
         anchors.fill: content
-        enabled: !hoverOpen && !launcherOpen && !recordSettingsOpen && !screenshotOpen && !wifiOpen && !Notifications.showing
+        enabled: !hoverOpen && !launcherOpen && !recordSettingsOpen && !screenshotOpen && !wifiOpen && !bluetoothOpen && !Notifications.showing
         acceptedButtons: Qt.LeftButton
         onClicked: win.hoverOpen = true
     }
@@ -344,9 +372,10 @@ PanelWindow {
 
     Shortcut {
         sequence: "Escape"
-        enabled: hoverOpen || launcherOpen || recordSettingsOpen || screenshotOpen || wifiOpen || Notifications.showing
+        enabled: hoverOpen || launcherOpen || recordSettingsOpen || screenshotOpen || wifiOpen || bluetoothOpen || Notifications.showing
         onActivated: {
-            if (wifiOpen) { if (!wifiView.tryEscape()) wifiOpen = false; }
+            if (bluetoothOpen) bluetoothOpen = false;
+            else if (wifiOpen) { if (!wifiView.tryEscape()) wifiOpen = false; }
             else if (screenshotOpen) screenshotOpen = false;
             else if (recordSettingsOpen) recordSettingsOpen = false;
         }

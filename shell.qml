@@ -108,6 +108,14 @@ Scope {
     }
 
     IpcHandler {
+        target: "bluetooth"
+
+        function open(): void { if (islandVariants.island) islandVariants.island.openBluetooth(); }
+        function close(): void { if (islandVariants.island) islandVariants.island.closeBluetooth(); }
+        function toggle(): void { if (islandVariants.island) islandVariants.island.toggleBluetooth(); }
+    }
+
+    IpcHandler {
         target: "screenshot"
 
         function open(): void { if (islandVariants.island) islandVariants.island.openScreenshot(); }

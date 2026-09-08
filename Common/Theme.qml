@@ -60,6 +60,7 @@ Singleton {
     readonly property color surface: Qt.lighter(background, 1.25)
     readonly property color surfaceHover: Qt.lighter(background, 1.45)
     readonly property color dimText: Qt.darker(foreground, 1.35)
+    readonly property color outline: Qt.darker(dimText, 1.35) // muted placeholders, unfocused glyphs
     readonly property color overlayDim: Qt.rgba(background.r, background.g, background.b, 0.62)
 
     function mix(a: color, b: color, t: real): color {

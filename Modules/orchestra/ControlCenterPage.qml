@@ -300,7 +300,7 @@ Item {
                 statusText: BluetoothService.powered ? (BluetoothService.deviceName || "On") : "Off"
                 active: BluetoothService.powered
                 activeColor: Theme.colorNet
-                onClicked: BluetoothService.togglePower()
+                onClicked: win.openBluetooth()
             }
 
             QuickPill {
