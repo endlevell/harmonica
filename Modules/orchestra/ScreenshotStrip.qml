@@ -65,6 +65,7 @@ Item {
         color: Theme.surface
         visible: strip.hoveredLabel !== ""
         Text {
+            font.family: Theme.fontText
             id: tipLbl
             anchors.centerIn: parent
             text: strip.hoveredLabel

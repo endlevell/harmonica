@@ -154,6 +154,7 @@ PanelWindow {
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 TextInput {
+                    font.family: Theme.fontText
                     id: searchInput
                     width: parent.width - 14 - 20 - Theme.spaceSm * 2
                     height: parent.height
@@ -167,6 +168,7 @@ PanelWindow {
                     Keys.onDeletePressed: e => { if (searchInput.text === "") island.deleteCurrent(); }
                     Keys.onPressed: e => { if ((e.text === "p" || e.text === "P") && searchInput.text === "") island.pinCurrent(); }
                     Text {
+                        font.family: Theme.fontText
                         visible: parent.text === "" && !parent.activeFocus
                         text: "Search clipboard…"
                         color: Theme.outline
@@ -190,6 +192,7 @@ PanelWindow {
                         radius: Theme.radiusFull
                         color: island.filter === modelData ? Theme.primary : Theme.surface
                         Text {
+                            font.family: Theme.fontText
                             id: chipLbl
                             anchors.centerIn: parent
                             text: { const m = { all: "All", text: "Text", image: "Images", code: "Code" }; return m[parent.modelData]; }
@@ -229,6 +232,7 @@ PanelWindow {
                         color: Theme.surfaceHover
                         anchors.verticalCenter: parent.verticalCenter
                         Text {
+                            font.family: Theme.fontText
                             id: pinLbl
                             anchors.centerIn: parent
                             width: parent.width - Theme.spaceSm * 2
@@ -259,6 +263,7 @@ PanelWindow {
                 onCountChanged: histList.currentIndex = 0
 
                 Text {
+                    font.family: Theme.fontText
                     visible: histList.count === 0
                     width: parent.width
                     anchors.centerIn: parent
@@ -297,6 +302,7 @@ PanelWindow {
                             spacing: 0
                             anchors.verticalCenter: parent.verticalCenter
                             Text {
+                                font.family: Theme.fontText
                                 width: parent.width
                                 text: modelData.kind === "image" ? "image" : (modelData.kind === "code" ? modelData.text.split("\n")[0] : modelData.text)
                                 color: Theme.foreground
@@ -320,6 +326,7 @@ PanelWindow {
                             color: Theme.background
                             anchors.verticalCenter: parent.verticalCenter
                             Text {
+                                font.family: Theme.fontText
                                 anchors.centerIn: parent
                                 text: { const m = { text: "TEXT", image: "IMG", code: "CODE" }; return m[modelData.kind] || "?"; }
                                 color: Theme.dimText
@@ -328,6 +335,7 @@ PanelWindow {
                             }
                         }
                         Text {
+                            font.family: Theme.fontText
                             text: "×"
                             color: histHover.containsMouse ? Theme.danger : Theme.outline
                             font.pixelSize: Theme.fontMd
@@ -354,6 +362,7 @@ PanelWindow {
 
             // footer ------------------------------------------------------
             Text {
+                font.family: Theme.fontText
                 width: parent.width
                 height: 24
                 text: "↑↓ navigate · enter to paste · P pin · Del delete"

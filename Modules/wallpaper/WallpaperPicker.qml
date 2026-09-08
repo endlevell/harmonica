@@ -282,6 +282,7 @@ PanelWindow {
         }
 
         Text {
+            font.family: Theme.fontText
             visible: !carousel.pickClosing
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom

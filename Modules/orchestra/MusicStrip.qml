@@ -94,6 +94,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
 
             Text {
+                font.family: Theme.fontText
                 id: titleTxt
                 width: parent.width
                 text: Mpris.title || "—"
@@ -103,6 +104,7 @@ Item {
                 elide: Text.ElideRight
             }
             Text {
+                font.family: Theme.fontText
                 id: artistTxt
                 width: parent.width
                 visible: Mpris.artist !== ""

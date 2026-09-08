@@ -86,10 +86,9 @@ Singleton {
     readonly property real fontTrackingTight: -2
     readonly property real fontTrackingWide: 2
 
-    function applyUiFont(): void {
-        Qt.application.font.family = fontText;
-    }
-    Component.onCompleted: applyUiFont()
+    // NOTE: Qt.application.font is read-only under Quickshell (verified:
+    // assignment never sticks), so every Text/TextInput MUST set font.family
+    // explicitly. There is no working global default.
 
     // ---- spacing (4px grid) ----
     readonly property int spaceXs: 4

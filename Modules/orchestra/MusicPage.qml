@@ -30,6 +30,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
         }
         Text {
+            font.family: Theme.fontText
             text: "Nothing playing"
             color: Theme.dimText
             font.pixelSize: Theme.fontMd
@@ -108,6 +109,7 @@ Item {
                 Layout.fillWidth: true
             }
             Text {
+                font.family: Theme.fontText
                 visible: Mpris.artist !== ""
                 text: Mpris.artist
                 color: Theme.primary

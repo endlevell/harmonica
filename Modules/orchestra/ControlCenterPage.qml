@@ -77,6 +77,7 @@ Item {
                     font.letterSpacing: Theme.fontTrackingTight
                 }
                 Text {
+                    font.family: Theme.fontText
                     text: formatDate()
                     color: Theme.dimText
                     font.pixelSize: Theme.fontXs
@@ -132,12 +133,14 @@ Item {
                         spacing: 0
 
                         Text {
+                            font.family: Theme.fontText
                             text: Math.round(Battery.percentage / 100 * 100) + "%"
                             color: Theme.foreground
                             font.pixelSize: Theme.fontSm
                             font.weight: Font.Bold
                         }
                         Text {
+                            font.family: Theme.fontText
                             text: Battery.charging ? "Charging" : "Battery"
                             color: Theme.dimText
                             font.pixelSize: 9
@@ -212,6 +215,7 @@ Item {
                             font.weight: Font.Bold
                         }
                         Text {
+                            font.family: Theme.fontText
                             text: "Download"
                             color: Theme.dimText
                             font.pixelSize: 8
@@ -257,6 +261,7 @@ Item {
                             font.weight: Font.Bold
                         }
                         Text {
+                            font.family: Theme.fontText
                             text: "Upload"
                             color: Theme.dimText
                             font.pixelSize: 8

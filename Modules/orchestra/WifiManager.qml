@@ -82,6 +82,7 @@ Item {
                 height: 1
             }
             Text {
+                font.family: Theme.fontText
                 text: "RADIO"
                 color: Theme.dimText
                 font.pixelSize: Theme.fontXs
@@ -118,6 +119,7 @@ Item {
                     }
                 }
                 Text {
+                    font.family: Theme.fontText
                     text: wm.agoText()
                     color: Theme.dimText
                     font.pixelSize: Theme.fontXs
@@ -125,6 +127,7 @@ Item {
                 }
             }
             Text {
+                font.family: Theme.fontText
                 text: Wifi.networks.length + " NETWORKS IN RANGE"
                 color: Theme.dimText
                 font.pixelSize: Theme.fontXs
@@ -226,6 +229,7 @@ Item {
                                     }
                                 }
                                 Text {
+                                    font.family: Theme.fontText
                                     text: isConn ? "Connected · " + modelData.freq + " · " + modelData.security
                                         : modelData.security === "Open" ? "Open network" : modelData.security
                                     color: Theme.dimText
@@ -243,6 +247,7 @@ Item {
                                     spacing: 4
                                     // right cluster swaps by state
                                     Text {
+                                        font.family: Theme.fontText
                                         visible: isConn && !hoverRow.containsMouse
                                         text: "Connected"
                                         color: Theme.colorOk
@@ -277,6 +282,7 @@ Item {
                                         }
                                         }
                                     Text {
+                                        font.family: Theme.fontText
                                         visible: !isConn && !isBusy && modelData.security === "Open"
                                         text: "Connect"
                                         color: hoverRow.containsMouse ? Theme.foreground : Theme.dimText
@@ -339,6 +345,7 @@ Item {
                                 }
                             }
                             Text {
+                                font.family: Theme.fontText
                                 visible: hasErr
                                 text: Wifi.errorText
                                 color: Theme.danger
@@ -401,6 +408,7 @@ Item {
                         anchors.margins: Theme.spaceSm
                         spacing: 6
                         Text {
+                            font.family: Theme.fontText
                             visible: !joinBox.joinOpen
                             text: "+ Join hidden network…"
                             color: Theme.dimText
@@ -419,6 +427,7 @@ Item {
                             onAccepted: hiddenPass.forceActiveFocus()
                             onActiveFocusChanged: wm.typing = activeFocus
                             Text {
+                                font.family: Theme.fontText
                                 visible: parent.text === "" && !parent.activeFocus
                                 text: "Network name (SSID)"
                                 color: Theme.outline

@@ -107,6 +107,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
             TextInput {
+                font.family: Theme.fontText
                 id: input
                 width: parent.width - searchIcon.width - escHint.implicitWidth - Theme.spaceSm * 2
                 height: parent.height
@@ -121,6 +122,7 @@ Item {
                 enabled: !lv.launching
 
                 Text {
+                    font.family: Theme.fontText
                     visible: input.text === "" && !input.activeFocus
                     text: "Search apps…"
                     color: Theme.outline
@@ -233,6 +235,7 @@ Item {
                         }
 
                         Text {
+                            font.family: Theme.fontText
                             anchors.centerIn: parent
                             text: modelData.name.length > 0 ? modelData.name.charAt(0).toUpperCase() : "?"
                             color: Theme.primary
@@ -248,6 +251,7 @@ Item {
                         spacing: 0
 
                         Text {
+                            font.family: Theme.fontText
                             width: parent.width
                             text: lv.fmtHi(modelData.name)
                             textFormat: Text.RichText
@@ -258,6 +262,7 @@ Item {
                             elide: Text.ElideRight
                         }
                         Text {
+                            font.family: Theme.fontText
                             visible: lv.detailText(modelData) !== ""
                             width: parent.width
                             text: lv.fmtHi(lv.detailText(modelData))
@@ -297,6 +302,7 @@ Item {
             onClicked: lv.runFallback()
 
             Text {
+                font.family: Theme.fontText
                 width: parent.width - Theme.spaceMd * 2
                 anchors.centerIn: parent
                 horizontalAlignment: Text.AlignHCenter

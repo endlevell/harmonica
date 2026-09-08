@@ -317,6 +317,7 @@ Item {
     }
 
     Text {
+        font.family: Theme.fontText
         anchors.centerIn: parent
         visible: root.count === 0
         text: "No wallpapers found"
@@ -471,6 +472,7 @@ Item {
                         sourceSize.height: Math.round(root.cardHeight * 2)
                     }
                     Text {
+                        font.family: Theme.fontText
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: Theme.spaceSm

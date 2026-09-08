@@ -198,6 +198,7 @@ PanelWindow {
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 TextInput {
+                    font.family: Theme.fontText
                     id: searchInput
                     width: parent.width - 14 - Theme.spaceSm
                     height: parent.height
@@ -214,6 +215,7 @@ PanelWindow {
                     Keys.onReturnPressed: island.copyCurrent()
                     Keys.onEnterPressed: island.copyCurrent()
                     Text {
+                        font.family: Theme.fontText
                         visible: parent.text === "" && !parent.activeFocus
                         text: "Search emoji…"
                         color: Theme.outline
@@ -236,6 +238,7 @@ PanelWindow {
                         radius: Theme.radiusFull
                         color: island.category === modelData ? Theme.primary : Theme.surface
                         Text {
+                            font.family: Theme.fontText
                             id: catLbl
                             anchors.centerIn: parent
                             text: { const m = { Smileys: "Smileys", Hands: "Hands", Hearts: "Hearts", Food: "Food", Objects: "Objects", Symbols: "Symbols" }; return m[parent.modelData]; }
@@ -273,6 +276,7 @@ PanelWindow {
                     width: 52
                     height: 52
                     Text {
+                        font.family: Theme.fontText
                         anchors.centerIn: parent
                         text: modelData.e
                         font.pixelSize: 26
@@ -291,6 +295,7 @@ PanelWindow {
                 width: parent.width
                 height: 24
                 Text {
+                    font.family: Theme.fontText
                     visible: !island.toasted
                     anchors.centerIn: parent
                     text: "click or enter to copy"
@@ -305,6 +310,7 @@ PanelWindow {
                     radius: Theme.radiusFull
                     color: Theme.surface
                     Text {
+                        font.family: Theme.fontText
                         id: toastLbl
                         anchors.centerIn: parent
                         text: "COPIED · ⌘V TO PASTE"

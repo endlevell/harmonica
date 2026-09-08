@@ -76,6 +76,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: Theme.spaceSm
                 Text {
+                    font.family: Theme.fontText
                     width: 64
                     text: segRow.label
                     color: Theme.foreground
@@ -92,6 +93,7 @@ Item {
                         radius: Theme.radiusFull
                         color: on ? Theme.primary : Theme.surface
                         Text {
+                            font.family: Theme.fontText
                             id: segText
                             anchors.centerIn: parent
                             text: modelData
@@ -122,6 +124,7 @@ Item {
             width: togRow.width
             height: 20
             Text {
+                font.family: Theme.fontText
                 text: togRow.label
                 color: Theme.foreground
                 font.pixelSize: Theme.fontXs + 1
@@ -174,6 +177,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
             Text {
+                font.family: Theme.fontText
                 text: devRow.label
                 color: Theme.foreground
                 font.pixelSize: Theme.fontXs + 1
@@ -191,6 +195,7 @@ Item {
                     onClicked: devRow.step(-1)
                 }
                 Text {
+                    font.family: Theme.fontText
                     width: Math.min(devLbl.implicitWidth, 170)
                     id: devLbl
                     text: devRow.labelFor(devRow.selected)
@@ -312,6 +317,7 @@ Item {
                 }
             }
             Text {
+                font.family: Theme.fontText
                 visible: Recorder.lastError !== ""
                 text: Recorder.lastError
                 color: Theme.danger
@@ -324,6 +330,7 @@ Item {
                 width: parent.width
                 height: 22
                 Text {
+                    font.family: Theme.fontText
                     text: "Filename"
                     color: Theme.foreground
                     font.pixelSize: Theme.fontXs + 1

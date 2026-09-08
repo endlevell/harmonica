@@ -111,6 +111,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
         }
         Text {
+            font.family: Theme.fontText
             text: lock.fmtDate()
             color: Theme.dimText
             font.pixelSize: Theme.fontSm
@@ -136,6 +137,7 @@ Item {
             color: Theme.surface
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
+                font.family: Theme.fontText
                 anchors.centerIn: parent
                 text: Lock.userName.length > 0 ? Lock.userName.charAt(0).toUpperCase() : "?"
                 color: Theme.dimText
@@ -144,6 +146,7 @@ Item {
             }
         }
         Text {
+            font.family: Theme.fontText
             text: Lock.userName
             color: Theme.foreground
             font.pixelSize: Theme.fontSm
@@ -212,6 +215,7 @@ Item {
         }
 
         Text {
+            font.family: Theme.fontText
             visible: Lock.errorText !== ""
             text: Lock.errorText
             color: Theme.danger
@@ -219,6 +223,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
         }
         Text {
+            font.family: Theme.fontText
             visible: Lock.errorText === "" && !Lock.checking
             text: "press Enter to unlock"
             color: Theme.dimText
@@ -226,6 +231,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
         }
         Text {
+            font.family: Theme.fontText
             visible: Lock.checking
             text: "checking…"
             color: Theme.dimText
@@ -269,6 +275,7 @@ Item {
                 spacing: 2
                 anchors.verticalCenter: parent.verticalCenter
                 Text {
+                    font.family: Theme.fontText
                     width: parent.width
                     text: Mpris.title || "Austerity Economy"
                     color: Theme.foreground
@@ -277,6 +284,7 @@ Item {
                     elide: Text.ElideRight
                 }
                 Text {
+                    font.family: Theme.fontText
                     width: parent.width
                     text: Mpris.artist || "K Civil"
                     color: Theme.dimText
@@ -382,6 +390,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.margins: Theme.spaceLg
         Text {
+            font.family: Theme.fontText
             text: "Restart"
             color: Theme.dimText
             font.pixelSize: Theme.fontXs
@@ -393,6 +402,7 @@ Item {
             onClicked: Quickshell.execDetached(["sh", "-c", "systemctl reboot 2>/dev/null || loginctl reboot 2>/dev/null || true"])
         }
         Text {
+            font.family: Theme.fontText
             text: "Cancel"
             color: Theme.dimText
             font.pixelSize: Theme.fontXs

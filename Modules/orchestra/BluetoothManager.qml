@@ -68,6 +68,7 @@ Item {
                 height: 1
             }
             Text {
+                font.family: Theme.fontText
                 text: "POWER"
                 color: Theme.dimText
                 font.pixelSize: Theme.fontXs
@@ -104,6 +105,7 @@ Item {
                     }
                     }
                 Text {
+                    font.family: Theme.fontText
                     text: !BluetoothService.present ? "No adapter found"
                         : !BluetoothService.powered ? "Radio off"
                         : BluetoothService.discovering ? "Scanning…" : "Idle"
@@ -113,6 +115,7 @@ Item {
                 }
             }
             Text {
+                font.family: Theme.fontText
                 text: BluetoothService.deviceCount + " DEVICES NEARBY"
                 color: Theme.dimText
                 font.pixelSize: Theme.fontXs
@@ -137,6 +140,7 @@ Item {
                 spacing: Theme.spaceXs
 
                 Text {
+                    font.family: Theme.fontText
                     visible: !BluetoothService.present
                     width: parent.width
                     text: "No Bluetooth adapter found on this machine."
@@ -145,6 +149,7 @@ Item {
                     horizontalAlignment: Text.AlignHCenter
                 }
                 Text {
+                    font.family: Theme.fontText
                     visible: BluetoothService.present && BluetoothService.deviceCount === 0
                     width: parent.width
                     text: BluetoothService.powered ? "No devices nearby — put one in pairing mode." : "Turn on power to scan."
@@ -219,6 +224,7 @@ Item {
                                     }
                                 }
                                 Text {
+                                    font.family: Theme.fontText
                                     text: isConn ? "Connected" + (modelData.batteryAvailable ? " · " + Math.round(modelData.battery * 100) + "%" : "")
                                         : modelData.paired ? "Paired" : "Not paired"
                                     color: Theme.dimText
@@ -236,6 +242,7 @@ Item {
                                     anchors.verticalCenter: parent.verticalCenter
                                     spacing: 4
                                     Text {
+                                        font.family: Theme.fontText
                                         visible: isConn && !hoverRow.containsMouse
                                         text: "Connected"
                                         color: Theme.colorOk
@@ -270,6 +277,7 @@ Item {
                                         }
                                         }
                                     Text {
+                                        font.family: Theme.fontText
                                         visible: !isConn && !isBusy && !modelData.paired
                                         text: "Pair"
                                         color: hoverRow.containsMouse ? Theme.foreground : Theme.dimText
@@ -277,6 +285,7 @@ Item {
                                         Layout.alignment: Qt.AlignVCenter
                                     }
                                     Text {
+                                        font.family: Theme.fontText
                                         visible: !isConn && !isBusy && modelData.paired
                                         text: "Connect"
                                         color: hoverRow.containsMouse ? Theme.foreground : Theme.dimText
@@ -313,6 +322,7 @@ Item {
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 Text {
+                    font.family: Theme.fontText
                     text: "DISCOVERABLE"
                     color: Theme.dimText
                     font.pixelSize: Theme.fontXs

@@ -22,6 +22,7 @@ Rectangle {
     readonly property color baseCol: danger ? Theme.danger : accent ? Theme.primary : Theme.surfaceHover
 
     Text {
+        font.family: Theme.fontText
         id: lbl
         anchors.centerIn: parent
         text: b.label

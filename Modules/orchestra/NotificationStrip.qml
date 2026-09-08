@@ -36,6 +36,7 @@ Item {
         clip: true
         onTextChanged: label.x = 0
         Text {
+            font.family: Theme.fontText
             id: label
             width: parent.width
             text: line.text
@@ -143,6 +144,7 @@ Item {
                 anchors.rightMargin: -4
                 anchors.topMargin: -4
                 Text {
+                    font.family: Theme.fontText
                     anchors.centerIn: parent
                     text: Notifications.count
                     color: Theme.background
@@ -181,6 +183,7 @@ Item {
             visible: Notifications.hasDefaultAction
             Behavior on color { ColorAnimation { duration: Theme.durFast } }
             Text {
+                font.family: Theme.fontText
                 anchors.centerIn: parent
                 text: "ack"
                 color: Theme.primary

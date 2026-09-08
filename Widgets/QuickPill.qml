@@ -82,6 +82,7 @@ Rectangle {
             }
 
             Text {
+                font.family: Theme.fontText
                 text: pill.statusText
                 color: pill.active ? Qt.rgba(0, 0, 0, 0.6) : Theme.dimText
                 font.pixelSize: 10
