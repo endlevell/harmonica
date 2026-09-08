@@ -95,14 +95,13 @@ Item {
                     height: 7
                     radius: Theme.radiusFull
                     color: BluetoothService.discovering ? Theme.colorNet : Theme.dimText
-                    anchors.verticalCenter: parent.verticalCenter
                     SequentialAnimation on opacity {
-                        running: BluetoothService.discovering
+                        running: BluetoothService.discovering && !Theme.reducedMotion
                         loops: Animation.Infinite
                         NumberAnimation { to: 0.25; duration: 600; easing.type: Easing.InOutSine }
                         NumberAnimation { to: 1.0; duration: 600; easing.type: Easing.InOutSine }
                     }
-                }
+                    }
                 Text {
                     text: !BluetoothService.present ? "No adapter found"
                         : !BluetoothService.powered ? "Radio off"
@@ -262,12 +261,12 @@ Item {
                                         radius: 6
                                         color: Theme.primary
                                         SequentialAnimation on opacity {
-                                            running: isBusy
+                                            running: isBusy && !Theme.reducedMotion
                                             loops: Animation.Infinite
                                             NumberAnimation { to: 0.25; duration: 450; easing.type: Easing.InOutSine }
                                             NumberAnimation { to: 1.0; duration: 450; easing.type: Easing.InOutSine }
                                         }
-                                    }
+                                        }
                                     Text {
                                         visible: !isConn && !isBusy && !modelData.paired
                                         text: "Pair"

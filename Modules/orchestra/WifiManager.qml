@@ -110,7 +110,7 @@ Item {
                     color: Wifi.scanning ? Theme.colorNet : Theme.dimText
                     anchors.verticalCenter: parent.verticalCenter
                     SequentialAnimation on opacity {
-                        running: Wifi.scanning
+                        running: Wifi.scanning && !Theme.reducedMotion
                         loops: Animation.Infinite
                         NumberAnimation { to: 0.25; duration: 600; easing.type: Easing.InOutSine }
                         NumberAnimation { to: 1.0; duration: 600; easing.type: Easing.InOutSine }
@@ -136,7 +136,7 @@ Item {
                 enabled: Wifi.radio
                 onClicked: Wifi.rescan()
             }
-        }
+            }
 
         // network list -------------------------------------------------
         Flickable {
@@ -268,12 +268,12 @@ Item {
                                         radius: 6
                                         color: Theme.primary
                                         SequentialAnimation on opacity {
-                                            running: isBusy
+                                            running: isBusy && !Theme.reducedMotion
                                             loops: Animation.Infinite
                                             NumberAnimation { to: 0.25; duration: 450; easing.type: Easing.InOutSine }
                                             NumberAnimation { to: 1.0; duration: 450; easing.type: Easing.InOutSine }
                                         }
-                                    }
+                                        }
                                     Text {
                                         visible: !isConn && !isBusy && modelData.security === "Open"
                                         text: "Connect"
@@ -383,6 +383,7 @@ Item {
 
                 // hidden join --------------------------------------------
                 Rectangle {
+                    id: joinBox
                     width: netCol.width
                     height: joinOpen ? 132 : 30
                     radius: Theme.radiusSm
@@ -398,13 +399,13 @@ Item {
                         anchors.margins: Theme.spaceSm
                         spacing: 6
                         Text {
-                            visible: !parent.parent.joinOpen
+                            visible: !joinBox.joinOpen
                             text: "+ Join hidden network…"
                             color: Theme.dimText
                             font.pixelSize: Theme.fontXs
                         }
                         TextInput {
-                            visible: parent.parent.joinOpen
+                            visible: joinBox.joinOpen
                             width: parent.width
                             height: 26
                             color: Theme.foreground
@@ -425,7 +426,7 @@ Item {
                         }
                         TextInput {
                             id: hiddenPass
-                            visible: parent.parent.joinOpen
+                            visible: joinBox.joinOpen
                             width: parent.width
                             height: 26
                             color: Theme.foreground
@@ -439,7 +440,7 @@ Item {
                             onActiveFocusChanged: wm.typing = activeFocus
                         }
                         Row {
-                            visible: parent.parent.joinOpen
+                            visible: joinBox.joinOpen
                             spacing: Theme.spaceSm
                             anchors.right: parent.right
                             Buttonish {
