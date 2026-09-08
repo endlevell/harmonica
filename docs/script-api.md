@@ -33,6 +33,11 @@ Targets registered by the shell:
 - `launcher`  — open/close/toggle/isOpen/results
 - `record`    — start/pause/stop/settings/state
 - `screenshot`— open/close/toggle/area/screen/output/saveArea/saveScreen/color
+- `wifi` — open/close/toggle
+- `bluetooth` — open/close/toggle
+- `clipboard` — open/close/toggle
+- `emoji` — open/close/toggle
+- `lock` — open/toggle/isLocked/state (lock only, never unlocks)
 
 ## `sys`
 

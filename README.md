@@ -54,7 +54,7 @@ nix run .#             # → run the CLI from the flake without installing
 | `harmonica ipc <target> <fn> [args…]` | Forward an IPC call to the shell. |
 | `harmonica scripts <name> [args…]` | Run a Lua script from `scripts/`. |
 
-IPC targets: `orchestra` (open/close/phase/page), `launcher` (open/close/toggle/results), `record` (start/pause/stop/settings/state), `screenshot` (open/close/toggle/area/screen/output/saveArea/saveScreen/color), `wallpaper` (open/close/toggle/isOpen/next/prev/focused/pick/apply/state).
+IPC targets: `orchestra` (open/close/phase/page), `launcher` (open/close/toggle/results), `record` (start/pause/stop/settings/state), `screenshot` (open/close/toggle/area/screen/output/saveArea/saveScreen/color), `wallpaper` (open/close/toggle/isOpen/next/prev/focused/pick/apply/state), `wifi` (open/close/toggle), `bluetooth` (open/close/toggle), `clipboard` (open/close/toggle), `emoji` (open/close/toggle), `lock` (open/toggle/isLocked/state — locks only, never unlocks).
 
 ## Hyprland keybinds
 
@@ -63,6 +63,9 @@ bind = SUPER, S, exec, harmonica ipc launcher toggle      # app launcher
 bind = SUPER SHIFT, S, exec, harmonica ipc screenshot toggle
 bind = SUPER SHIFT, W, exec, harmonica ipc wallpaper toggle # wallpaper picker
 bind = SUPER SHIFT, R, exec, harmonica ipc record toggle  # record
+bind = SUPER, V, exec, harmonica ipc clipboard toggle    # clipboard (also in hypr/harmonica-keys.conf)
+bind = SUPER, period, exec, harmonica ipc emoji toggle   # emoji picker (also in hypr/harmonica-keys.conf)
+# lock screen: rebind your lock key to `harmonica ipc lock open` (takes the hyprlock slot)
 exec-once = harmonica start                               # autostart
 ```
 
@@ -80,12 +83,14 @@ The canonical spec is [DESIGN.md](DESIGN.md) — read it before writing code. QM
 ## Layout
 
 ```
-shell.qml              composition root — Orchestra + two approved overlays
+shell.qml              composition root — island + approved standalone surfaces
 Common/                Theme (pywal tokens) · Paths · SettingsData
-Modules/orchestra/     phase views: idle, music, panel, launcher, record, screenshot
+Modules/orchestra/     phase views: idle, music, panel, launcher, record, screenshot, wifi, bluetooth
 Modules/wallpaper/     approved standalone picker · carousel · IPC boundary
+Modules/clipboard/     bottom-island clipboard manager + history service
+Modules/emoji/         bottom-island emoji picker (static table)
+Modules/lock/          session lock screen (WlSessionLock + native PAM)
 Services/              headless QML services: mpris, network, battery, recorder…
 Widgets/               reusable QML widgets
 cli/                   Rust control CLI (the only place quickshell is invoked)
 scripts/               Lua scripts + screenshot-review loop
-```
