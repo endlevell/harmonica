@@ -163,6 +163,13 @@ Singleton {
     function hasDefault(n): bool {
         return ((n.actions || []).some(a => a.identifier === "default"));
     }
+    // chip label: the sender's own action text ("Open", "Reply", …), "Open" fallback
+    readonly property string defaultActionText: {
+        if (!current) return "";
+        const dflt = (current.actions || []).find(a => a.identifier === "default");
+        const t = dflt ? String(dflt.text || "").trim() : "";
+        return t !== "" ? t : "Open";
+    }
     function plainBody(s: string): string {
         return String(s || "").replace(/<[^>]*>/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, "&").trim();
     }

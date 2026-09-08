@@ -12,7 +12,8 @@ Item {
     readonly property int bellBox: 28
     readonly property int textW: 190
     readonly property int ackW: 64
-    readonly property int contentWidth: Theme.spaceMd * 2 + bellBox + Theme.spaceSm + textW + (Notifications.hasDefaultAction ? Theme.spaceSm + ackW + Theme.spaceMd : 0)
+    readonly property int ackChipW: Notifications.hasDefaultAction ? Math.min(140, Math.max(ackW, ackLabel.implicitWidth + Theme.spaceMd * 2)) : 0
+    readonly property int contentWidth: Theme.spaceMd * 2 + bellBox + Theme.spaceSm + textW + (Notifications.hasDefaultAction ? Theme.spaceSm + ackChipW + Theme.spaceMd : 0)
     property real swapOp: 1
     property real swapY: 0
     property string shownTitle: Notifications.title
@@ -175,7 +176,7 @@ Item {
             }
         }
         Rectangle {
-            width: strip.ackW
+            width: strip.ackChipW
             height: 24
             radius: Theme.radiusFull
             color: ackMouse.containsMouse ? Theme.surfaceHover : Theme.surface
@@ -183,12 +184,16 @@ Item {
             visible: Notifications.hasDefaultAction
             Behavior on color { ColorAnimation { duration: Theme.durFast } }
             Text {
+                id: ackLabel
                 font.family: Theme.fontText
                 anchors.centerIn: parent
-                text: "ack"
+                width: parent.width - Theme.spaceSm
+                text: Notifications.defaultActionText
                 color: Theme.primary
                 font.pixelSize: Theme.fontXs
                 font.weight: Font.DemiBold
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
             }
             MouseArea {
                 id: ackMouse
