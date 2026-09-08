@@ -96,6 +96,7 @@
             # hyprland.conf (e.g. `source = ~/.config/hypr/harmonica-keys.conf`)
             xdg.configFile."hypr/harmonica-keys.conf".text = ''
               bind = SUPER, V, exec, ${pkg}/bin/harmonica ipc clipboard toggle
+              bind = SUPER, period, exec, ${pkg}/bin/harmonica ipc emoji toggle
             '';
 
             systemd.user.services.harmonica = {
