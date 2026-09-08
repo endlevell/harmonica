@@ -63,8 +63,10 @@ Item {
     Text {
         id: clockLbl
         text: Qt.formatDateTime(bar.now, SettingsData.showSeconds ? "HH:mm:ss" : "HH:mm")
-        font.weight: Font.DemiBold
+        color: Theme.foreground
         font.family: Theme.fontDisplay
+        font.pixelSize: Theme.fontSm + 1
+        font.weight: Font.DemiBold
         anchors.centerIn: parent
     }
 
@@ -114,6 +116,7 @@ Item {
             visible: Battery.present
             text: Battery.percentage + "%"
             color: Theme.dimText
+            font.family: Theme.fontDisplay
             font.pixelSize: Theme.fontXs - 1
             font.weight: Font.Normal
             anchors.verticalCenter: parent.verticalCenter

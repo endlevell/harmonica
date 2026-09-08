@@ -74,6 +74,7 @@ Rectangle {
             Text {
                 text: pill.label
                 color: pill.active ? Theme.background : Theme.foreground
+                font.family: Theme.fontDisplay
                 font.pixelSize: Theme.fontXs + 1
                 font.weight: Font.DemiBold
                 elide: Text.ElideRight

@@ -66,6 +66,7 @@ Item {
                 Text {
                     text: "Wi-Fi"
                     color: Theme.foreground
+                    font.family: Theme.fontDisplay
                     font.pixelSize: Theme.fontMd
                     font.weight: Font.Bold
                 }
@@ -209,6 +210,7 @@ Item {
                                     Text {
                                         text: modelData.ssid
                                         color: Theme.foreground
+                                        font.family: Theme.fontDisplay
                                         font.pixelSize: Theme.fontSm
                                         font.weight: Font.DemiBold
                                         elide: Text.ElideRight

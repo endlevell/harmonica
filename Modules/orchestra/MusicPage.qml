@@ -100,6 +100,7 @@ Item {
             Text {
                 text: Mpris.title || "Unknown title"
                 color: Theme.foreground
+                font.family: Theme.fontDisplay
                 font.pixelSize: Theme.fontMd
                 font.weight: Font.Bold
                 elide: Text.ElideRight

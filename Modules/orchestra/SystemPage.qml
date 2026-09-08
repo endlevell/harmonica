@@ -140,6 +140,7 @@ Item {
                                 : Network.state === "wifi" ? (Network.ssid || "Wi-Fi")
                                 : "Disconnected"
                             color: Theme.foreground
+                            font.family: Theme.fontDisplay
                             font.pixelSize: Theme.fontMd
                             font.weight: Font.DemiBold
                             elide: Text.ElideRight
@@ -195,9 +196,9 @@ Item {
                         Text {
                             text: rate
                             color: tint
+                            font.family: Theme.fontDisplay
                             font.pixelSize: Theme.fontXs
                             font.weight: Font.Medium
-                            font.family: Theme.fontMono
                         }
                     }
 

@@ -50,6 +50,7 @@ Item {
                 Text {
                     text: "Bluetooth"
                     color: Theme.foreground
+                    font.family: Theme.fontDisplay
                     font.pixelSize: Theme.fontMd
                     font.weight: Font.Bold
                 }
@@ -202,6 +203,7 @@ Item {
                                     Text {
                                         text: modelData.name || modelData.deviceName || modelData.address
                                         color: Theme.foreground
+                                        font.family: Theme.fontDisplay
                                         font.pixelSize: Theme.fontSm
                                         font.weight: Font.DemiBold
                                         elide: Text.ElideRight
