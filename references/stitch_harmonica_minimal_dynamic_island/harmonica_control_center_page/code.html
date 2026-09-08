@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#0c0d12]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmonica Dynamic Island: Control Center Page</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Material Symbols Outlined & Rounded -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            harmonica: {
+              surface: '#1a1a24',
+              subsurface: '#22222c',
+              elevated: '#2a2a36',
+              gold: '#b49043',
+              goldHover: '#c5a052',
+              textDark: '#121217',
+              textLight: '#e4e5ee',
+              textMuted: '#787b8f',
+              textSubtle: '#4c4e5e',
+              borderDark: '#20212b',
+              green: '#34d399',
+              amber: '#f59e0b',
+              redMuted: '#e05252',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Strict zero shadow, zero transparency, flat solid philosophy */
+    * {
+      box-shadow: none !important;
+      text-shadow: none !important;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .material-symbols-rounded {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+    }
+
+    /* Slider track custom styles */
+    .slider-track {
+      position: relative;
+      height: 6px;
+      border-radius: 9999px;
+      background-color: #242430;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .slider-fill-gold {
+      height: 100%;
+      background-color: #b49043;
+      border-radius: 9999px;
+    }
+    .slider-fill-amber {
+      height: 100%;
+      background-color: #f59e0b;
+      border-radius: 9999px;
+    }
+    .slider-thumb-dot {
+      display: none;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 9999px;
+      background-color: #ffffff;
+    }
+    .slider-container:hover .slider-thumb-dot {
+      display: block;
+    }
+
+    /* Subtle grid wallpaper */
+    .dot-grid-bg {
+      background-color: #0c0d12;
+      background-image: radial-gradient(#1c1d27 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+  </style>
+</head>
+<body class="h-full dot-grid-bg font-sans text-harmonica-textLight flex flex-col justify-between p-6 select-none overflow-x-hidden">
+
+  <!-- Desktop Compositor Top Bar (Contextual Wayland Header) -->
+  <header class="w-full flex items-center justify-between text-xs font-mono text-harmonica-textMuted tracking-wider px-2 py-1 border-b border-[#161720]">
+    <div class="flex items-center gap-3">
+      <span class="inline-flex items-center justify-center w-4 h-4 rounded-sm bg-harmonica-gold text-harmonica-textDark font-bold text-[10px]">H</span>
+      <span>HARMONICA SHELL V0.4.1</span>
+      <span class="text-harmonica-textSubtle">/</span>
+      <span>WAYLAND WLROOTS COMPOSITOR</span>
+    </div>
+    <div class="flex items-center gap-4 text-[11px]">
+      <span class="inline-flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-harmonica-gold"></span>
+        <span class="text-harmonica-textLight font-medium">SURFACE #1a1a24 FLAT SOLID</span>
+      </span>
+      <span class="text-harmonica-textSubtle">•</span>
+      <span>DP-1 (PRIMARY)</span>
+      <span class="text-harmonica-textSubtle">•</span>
+      <span>3840×2160 @ 144Hz</span>
+    </div>
+  </header>
+
+  <!-- Main Display Stage (Dynamic Island Anchor & Expanded Card) -->
+  <main class="flex-1 flex flex-col items-center justify-center relative py-6">
+    
+    <!-- Top Anchor Hint (Represents the idle dynamic island dock) -->
+    <div class="flex flex-col items-center mb-3">
+      <div class="h-[6px] w-24 bg-[#1a1a24] rounded-full mb-1"></div>
+      <div class="text-[10px] font-mono tracking-widest text-harmonica-textSubtle uppercase">
+        Super + C &bull; Dynamic Island Morph Anchor
+      </div>
+    </div>
+
+    <!-- Paged Layering Stack Container -->
+    <div class="relative flex items-center justify-center">
+      
+      <!-- Receding Page 3 (Deep Deck) -->
+      <div class="absolute w-[460px] h-[330px] rounded-[14px] bg-[#111118] -top-3 scale-[0.88] pointer-events-none opacity-40"></div>
+      
+      <!-- Receding Page 2 (Mid Deck: Media & Audio Routing) -->
+      <div class="absolute w-[460px] h-[330px] rounded-[14px] bg-[#151520] -top-1.5 scale-[0.94] pointer-events-none opacity-70"></div>
+
+      <!-- PAGE 1: CONTROL CENTER (Active Card) -->
+      <!-- Strict flat dark card: solid #1a1a24, rounded 14px, NO borders, NO shadows, NO transparency, 460px wide -->
+      <section class="relative w-[460px] rounded-[14px] bg-[#1a1a24] p-5 z-10 flex flex-col gap-4" style="box-shadow: none !important;">
+        
+        <!-- 1. HEADER ROW -->
+        <div class="flex items-start justify-between">
+          <!-- Left: Large Live Clock & Date -->
+          <div class="flex flex-col">
+            <span class="text-[30px] font-bold leading-none tracking-tighter text-harmonica-textLight font-sans tabular-nums" id="live-clock">21:37</span>
+            <span class="text-[11px] font-medium text-harmonica-textMuted tracking-tight mt-1">Sunday, September 7</span>
+          </div>
+          
+          <!-- Right: Two Small Flat Circular Icon Buttons -->
+          <div class="flex items-center gap-2 pt-0.5">
+            <!-- Refresh Icon Button -->
+            <button class="w-8 h-8 rounded-full bg-harmonica-subsurface hover:bg-harmonica-elevated flex items-center justify-center transition-colors text-harmonica-textMuted hover:text-harmonica-textLight active:scale-95" title="Refresh metrics">
+              <span class="material-symbols-rounded text-[17px]">refresh</span>
+            </button>
+            <!-- Power Icon Button (Muted Red) -->
+            <button class="w-8 h-8 rounded-full bg-harmonica-subsurface hover:bg-[#2e1d20] flex items-center justify-center transition-colors text-harmonica-redMuted active:scale-95" title="Session / Power options">
+              <span class="material-symbols-rounded text-[17px]">power_settings_new</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. LIVE STATS ROW: Three small horizontal stat chips (38px tall, slightly lighter surface #22222c, rounded 8px) -->
+        <div class="grid grid-cols-3 gap-2">
+          
+          <!-- Stat 1: Battery Chip -->
+          <div class="h-[38px] bg-[#22222c] rounded-[8px] px-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span class="material-symbols-rounded text-harmonica-green text-[17px] shrink-0">battery_charging_full</span>
+              <div class="flex flex-col leading-none min-w-0">
+                <span class="text-[11px] font-bold text-harmonica-textLight font-mono tabular-nums">87%</span>
+                <span class="text-[9px] font-medium text-harmonica-textMuted mt-0.5">Battery</span>
+              </div>
+            </div>
+            <!-- Circular Ring Gauge -->
+            <div class="relative w-4 h-4 shrink-0 flex items-center justify-center">
+              <svg class="w-4 h-4 -rotate-90" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="7.5" fill="none" stroke="#2c2d3a" stroke-width="2.5"></circle>
+                <circle cx="10" cy="10" r="7.5" fill="none" stroke="#34d399" stroke-width="2.5" stroke-dasharray="47.1" stroke-dashoffset="6.1"></circle>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Stat 2: Download Chip -->
+          <div class="h-[38px] bg-[#22222c] rounded-[8px] px-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span class="material-symbols-rounded text-harmonica-green text-[16px] shrink-0">arrow_downward</span>
+              <div class="flex flex-col leading-none min-w-0">
+                <span class="text-[11px] font-bold text-harmonica-textLight font-mono tabular-nums">2.4 MB/s</span>
+                <span class="text-[9px] font-medium text-harmonica-textMuted mt-0.5">Download</span>
+              </div>
+            </div>
+            <!-- Green Sparkline SVG -->
+            <div class="shrink-0 w-7 h-3.5 flex items-center">
+              <svg class="w-full h-full" viewBox="0 0 28 14" fill="none">
+                <polyline points="0,11 6,8 11,10 16,3 21,7 27,2" stroke="#34d399" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Stat 3: Upload Chip -->
+          <div class="h-[38px] bg-[#22222c] rounded-[8px] px-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span class="material-symbols-rounded text-harmonica-amber text-[16px] shrink-0">arrow_upward</span>
+              <div class="flex flex-col leading-none min-w-0">
+                <span class="text-[11px] font-bold text-harmonica-textLight font-mono tabular-nums">0.3 MB/s</span>
+                <span class="text-[9px] font-medium text-harmonica-textMuted mt-0.5">Upload</span>
+              </div>
+            </div>
+            <!-- Amber Sparkline SVG -->
+            <div class="shrink-0 w-7 h-3.5 flex items-center">
+              <svg class="w-full h-full" viewBox="0 0 28 14" fill="none">
+                <polyline points="0,12 7,11 12,8 18,9 22,6 27,4" stroke="#f59e0b" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 3. QUICK TOGGLES: 2x2 grid of flat toggle pills (each ~40px tall, rounded 12px, slightly lighter surface) -->
+        <div class="grid grid-cols-2 gap-2">
+          
+          <!-- Toggle 1: Wi-Fi (ACTIVE STATE: entire pill filled with muted gold #b49043, icon and text dark) -->
+          <button class="h-[42px] rounded-[12px] bg-harmonica-gold hover:bg-harmonica-goldHover px-3 flex items-center gap-2.5 transition-colors text-left group active:scale-[0.98]">
+            <span class="material-symbols-rounded text-harmonica-textDark text-[19px] shrink-0">wifi</span>
+            <div class="flex flex-col leading-tight min-w-0">
+              <span class="text-[12px] font-bold text-harmonica-textDark tracking-tight truncate">Wi-Fi</span>
+              <span class="text-[10px] font-medium text-harmonica-textDark/80 tracking-tight truncate">HomeNet-5G</span>
+            </div>
+          </button>
+
+          <!-- Toggle 2: Bluetooth (Inactive: gray surface #22222c) -->
+          <button class="h-[42px] rounded-[12px] bg-harmonica-subsurface hover:bg-harmonica-elevated px-3 flex items-center gap-2.5 transition-colors text-left group active:scale-[0.98]">
+            <span class="material-symbols-rounded text-harmonica-textMuted text-[19px] shrink-0">bluetooth</span>
+            <div class="flex flex-col leading-tight min-w-0">
+              <span class="text-[12px] font-bold text-harmonica-textLight tracking-tight truncate">Bluetooth</span>
+              <span class="text-[10px] font-medium text-harmonica-textMuted tracking-tight">Off</span>
+            </div>
+          </button>
+
+          <!-- Toggle 3: Do Not Disturb (Inactive) -->
+          <button class="h-[42px] rounded-[12px] bg-harmonica-subsurface hover:bg-harmonica-elevated px-3 flex items-center gap-2.5 transition-colors text-left group active:scale-[0.98]">
+            <span class="material-symbols-rounded text-harmonica-textMuted text-[19px] shrink-0">do_not_disturb_on</span>
+            <div class="flex flex-col leading-tight min-w-0">
+              <span class="text-[12px] font-bold text-harmonica-textLight tracking-tight truncate">Do Not Disturb</span>
+              <span class="text-[10px] font-medium text-harmonica-textMuted tracking-tight">Off</span>
+            </div>
+          </button>
+
+          <!-- Toggle 4: Airplane Mode (Inactive) -->
+          <button class="h-[42px] rounded-[12px] bg-harmonica-subsurface hover:bg-harmonica-elevated px-3 flex items-center gap-2.5 transition-colors text-left group active:scale-[0.98]">
+            <span class="material-symbols-rounded text-harmonica-textMuted text-[19px] shrink-0">airplanemode_active</span>
+            <div class="flex flex-col leading-tight min-w-0">
+              <span class="text-[12px] font-bold text-harmonica-textLight tracking-tight truncate">Airplane Mode</span>
+              <span class="text-[10px] font-medium text-harmonica-textMuted tracking-tight">Off</span>
+            </div>
+          </button>
+
+        </div>
+
+        <!-- 4. SLIDERS: Two slim slider rows (music-note with 65% gold, brightness/sun with 40% amber) -->
+        <div class="flex flex-col gap-2.5 bg-harmonica-subsurface/40 p-2.5 rounded-[10px]">
+          
+          <!-- Slider 1: Volume / Audio Stream -->
+          <div class="flex items-center gap-3 slider-container group">
+            <span class="material-symbols-rounded text-[17px] text-harmonica-textMuted group-hover:text-harmonica-gold transition-colors shrink-0">music_note</span>
+            <div class="flex-1 slider-track h-[7px] bg-[#262734] rounded-full relative">
+              <div class="slider-fill-gold" style="width: 65%;"></div>
+              <div class="slider-thumb-dot" style="left: 65%;"></div>
+            </div>
+            <span class="text-[10px] font-mono text-harmonica-textMuted w-7 text-right tabular-nums">65%</span>
+          </div>
+
+          <!-- Slider 2: Display Brightness -->
+          <div class="flex items-center gap-3 slider-container group">
+            <span class="material-symbols-rounded text-[17px] text-harmonica-textMuted group-hover:text-harmonica-amber transition-colors shrink-0">wb_sunny</span>
+            <div class="flex-1 slider-track h-[7px] bg-[#262734] rounded-full relative">
+              <div class="slider-fill-amber" style="width: 40%;"></div>
+              <div class="slider-thumb-dot" style="left: 40%;"></div>
+            </div>
+            <span class="text-[10px] font-mono text-harmonica-textMuted w-7 text-right tabular-nums">40%</span>
+          </div>
+
+        </div>
+
+        <!-- 5. BOTTOM CENTER PAGINATION -->
+        <!-- Three page dots with the first one active (stretched into a small gold pill, other two tiny gray circles) -->
+        <div class="flex items-center justify-center gap-1.5 pt-1">
+          <!-- Active Page 1: 16px gold pill -->
+          <div class="w-4 h-[5px] rounded-full bg-harmonica-gold"></div>
+          <!-- Inactive Page 2: 5px gray circle -->
+          <div class="w-[5px] h-[5px] rounded-full bg-[#46485a]"></div>
+          <!-- Inactive Page 3: 5px gray circle -->
+          <div class="w-[5px] h-[5px] rounded-full bg-[#46485a]"></div>
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- Technical Specification Bench (Consistent with Harmonica System Canvas Standard) -->
+    <div class="w-[640px] max-w-full mt-8 bg-[#14151e] rounded-[10px] p-4 text-[11px] font-mono text-harmonica-textMuted flex flex-col gap-2">
+      <div class="flex items-center justify-between pb-2 border-b border-[#1f202c]">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[#34d399]"></span>
+          <span class="text-harmonica-textLight font-semibold">HARMONICA CONTROL CENTER SUB-PANEL</span>
+        </div>
+        <div class="flex items-center gap-3 text-harmonica-textSubtle text-[10px]">
+          <span>CARD: 460×300px</span>
+          <span>&bull;</span>
+          <span>RADIUS: 14px</span>
+          <span>&bull;</span>
+          <span>PAGE 01/03</span>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-3 gap-3 pt-1 text-[10.5px]">
+        <div>
+          <span class="text-harmonica-gold block font-semibold mb-0.5">01 // HEADER & CLOCK</span>
+          <p class="leading-relaxed text-harmonica-textMuted">21:37 tabular-nums header paired with quick refresh & Wayland session-lock trigger.</p>
+        </div>
+        <div>
+          <span class="text-harmonica-gold block font-semibold mb-0.5">02 // STAT CHIPS & PIPES</span>
+          <p class="leading-relaxed text-harmonica-textMuted">PipeWire audio 65%, sysfs backlight 40%, network io sparklines & battery ring.</p>
+        </div>
+        <div>
+          <span class="text-harmonica-gold block font-semibold mb-0.5">03 // ACTIVE GOLD LOGIC</span>
+          <p class="leading-relaxed text-harmonica-textMuted">Flat solid <code class="text-harmonica-textLight">#1a1a24</code>. Gold <code class="text-harmonica-gold">#b49043</code> reserved exclusively for active states.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Desktop Compositor Footer Bar -->
+  <footer class="w-full flex items-center justify-between text-[11px] font-mono text-harmonica-textSubtle px-2 pt-2 border-t border-[#161720]">
+    <div class="flex items-center gap-2">
+      <span>Harmonica Shell Project</span>
+      <span>&bull;</span>
+      <span>Flat Solid UI Subsystem</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span>Dynamic Island Physics: Spring 380ms (stiffness 320, damping 28)</span>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmonica Dynamic Island: Screenshot Actions & Paged Control Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #0c0d12;
+      color: #e2e4ed;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 1, 'wght' 450, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      line-height: 1;
+      vertical-align: middle;
+    }
+    /* Blueprint subtle dot grid wallpaper */
+    .desktop-bg {
+      background-color: #0c0d12;
+      background-image: radial-gradient(#1e202d 1px, transparent 1px), radial-gradient(#151620 1px, transparent 1px);
+      background-size: 32px 32px;
+      background-position: 0 0, 16px 16px;
+    }
+    /* Strictly flat solid surfaces - strictly no shadows, no borders, no gradients, no transparency */
+    .surface-base {
+      background-color: #1a1a24;
+    }
+    .surface-elevated {
+      background-color: #232331;
+    }
+    .surface-deeper {
+      background-color: #13131c;
+    }
+    .surface-layer2 {
+      background-color: #151520;
+    }
+    .surface-layer3 {
+      background-color: #101018;
+    }
+    .surface-tooltip {
+      background-color: #2c2d3d;
+    }
+    .accent-gold {
+      color: #d4af37;
+    }
+    .bg-accent-gold {
+      background-color: #d4af37;
+    }
+  </style>
+</head>
+<body class="desktop-bg min-h-screen text-xs select-none flex flex-col justify-between p-8">
+
+  <!-- TOP STATUS/WAYLAND PROTOCOL BAR -->
+  <header class="w-full max-w-6xl mx-auto flex items-center justify-between text-[#5f6377] font-mono tracking-wider pt-2 pb-6">
+    <div class="flex items-center space-x-3">
+      <span class="inline-flex items-center justify-center w-5 h-5 rounded bg-[#1a1a24] text-[#d4af37] font-bold text-[11px]">H</span>
+      <span>HARMONICA SHELL v0.4.1</span>
+      <span class="text-[#2e3144]">/</span>
+      <span class="text-[#858899]">WAYLAND WLROOTS INTERACTION MATRIX</span>
+    </div>
+    <div class="flex items-center space-x-6 text-[11px]">
+      <span class="flex items-center space-x-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#d4af37]"></span>
+        <span class="text-[#858899]">SURFACE #1a1a24 FLAT SOLID</span>
+      </span>
+      <span class="hidden md:inline text-[#4a4d62]">DP-1 • 3840×2160</span>
+      <span class="text-[#4a4d62]">ZERO-ALPHA COMPOSITOR</span>
+    </div>
+  </header>
+
+  <!-- MAIN DUAL-VIEW WORKBENCH CONTAINER -->
+  <main class="w-full max-w-6xl mx-auto flex-1 flex flex-col justify-center items-center py-6 space-y-16">
+    
+    <!-- HEADER INTRO TITLE -->
+    <div class="text-center space-y-2">
+      <div class="inline-flex items-center space-x-2 text-[11px] font-mono uppercase tracking-widest text-[#858899] mb-1">
+        <span class="w-2 h-2 rounded-full bg-[#d4af37]"></span>
+        <span>Dynamic Island Morph Modules</span>
+      </div>
+      <h1 class="text-2xl font-bold tracking-tight text-[#f0f2fa]">Screenshot Strip & Paged Control Panel</h1>
+      <p class="text-[#71758a] max-w-xl mx-auto text-[13px] leading-relaxed">
+        Strictly flat solid `#1a1a24` geometries with zero borders, zero box-shadows, and zero alpha transparency. High-density Wayland ergonomics with tactile keyboard and pointer workflows.
+      </p>
+    </div>
+
+    <!-- 2-COLUMN VIEW GRID -->
+    <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      
+      <!-- ================= VIEW 1: SCREENSHOT QUICK ACTIONS ================= -->
+      <section class="flex flex-col items-center">
+        <!-- View Label Badge -->
+        <div class="w-full flex items-center justify-between font-mono text-[11px] text-[#6d7188] mb-4 pb-2 border-b border-[#1c1d29]">
+          <div class="flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-[#ff9500]"></span>
+            <span class="text-[#e2e4ed] font-semibold">VIEW 1 — SCREENSHOT QUICK ACTIONS</span>
+          </div>
+          <span class="text-[#7d8299]">38px Fixed Island Pill</span>
+        </div>
+
+        <!-- Simulated Floating Shell Anchor (Centered Desktop Island Simulation) -->
+        <div class="w-full py-16 flex flex-col items-center justify-center relative min-h-[360px] rounded-2xl bg-[#0f1017]">
+          
+          <!-- Subtle Shell Context Hint -->
+          <div class="absolute top-4 left-6 flex items-center space-x-2 text-[10px] font-mono text-[#43465b]">
+            <span>TOP-CENTER ANCHOR (Y: 12px)</span>
+          </div>
+
+          <!-- Tooltip Container (Placed strictly above the crop/area-select button) -->
+          <div class="relative flex flex-col items-center">
+            
+            <!-- Tooltip Pill (Area to clipboard) on a lighter flat solid surface (#2c2d3d), no shadow, no border -->
+            <div class="mb-2.5 px-3 py-1 rounded-full surface-tooltip text-[#e2e4ed] text-[11px] font-medium tracking-wide flex items-center space-x-1.5 animate-pulse">
+              <span class="material-symbols-outlined text-[12px] text-[#d4af37]">crop</span>
+              <span>Area to clipboard</span>
+            </div>
+
+            <!-- VIEW 1 EXPANDED SHORT PILL (38px tall, flat solid #1a1a24, rounded-full) -->
+            <div class="h-[38px] px-3.5 surface-base rounded-full flex items-center space-x-2 select-none">
+              
+              <!-- 1. Crop / Area select (Active/Hovered with tooltip above) -->
+              <button class="w-7 h-7 rounded-full surface-elevated flex items-center justify-center text-[#e2e4ed] transition-colors focus:outline-none" title="Area Select (Rectangular Crop)">
+                <span class="material-symbols-outlined text-[14px]">crop</span>
+              </button>
+
+              <!-- 2. Camera / Screen capture (Full screen) -->
+              <button class="w-7 h-7 rounded-full flex items-center justify-center text-[#8e92a8] hover:text-[#e2e4ed] hover:surface-elevated transition-colors focus:outline-none" title="Full Screen Capture">
+                <span class="material-symbols-outlined text-[14px]">photo_camera</span>
+              </button>
+
+              <!-- 3. Output capture (Display/Window target) -->
+              <button class="w-7 h-7 rounded-full flex items-center justify-center text-[#8e92a8] hover:text-[#e2e4ed] hover:surface-elevated transition-colors focus:outline-none" title="Window Capture Target">
+                <span class="material-symbols-outlined text-[14px]">screenshot_monitor</span>
+              </button>
+
+              <!-- Divider accent (flat solid minimal pip) -->
+              <div class="w-1 h-1 rounded-full bg-[#2a2b3b]"></div>
+
+              <!-- 4. Save to file (Direct disk dump) -->
+              <button class="w-7 h-7 rounded-full flex items-center justify-center text-[#8e92a8] hover:text-[#e2e4ed] hover:surface-elevated transition-colors focus:outline-none" title="Direct Save to Disk">
+                <span class="material-symbols-outlined text-[14px]">save</span>
+              </button>
+
+              <!-- 5. Photo / Gallery picker (Image roll / Recent) -->
+              <button class="w-7 h-7 rounded-full flex items-center justify-center text-[#8e92a8] hover:text-[#e2e4ed] hover:surface-elevated transition-colors focus:outline-none" title="Recent Screenshots Library">
+                <span class="material-symbols-outlined text-[14px]">image</span>
+              </button>
+
+              <!-- 6. Color picker (Eyedropper) -->
+              <button class="w-7 h-7 rounded-full flex items-center justify-center text-[#8e92a8] hover:text-[#e2e4ed] hover:surface-elevated transition-colors focus:outline-none" title="Color Eyedropper Tool">
+                <span class="material-symbols-outlined text-[14px]">colorize</span>
+              </button>
+
+            </div>
+          </div>
+
+          <!-- Bottom Micro Spec Caption -->
+          <div class="absolute bottom-4 inset-x-0 text-center font-mono text-[10px] text-[#4d5168]">
+            <span>1-row compact pill • 6 flat icon buttons @ 14px • tooltip pill</span>
+          </div>
+
+        </div>
+
+        <!-- Spec Detail Card for View 1 -->
+        <div class="w-full mt-4 p-4 rounded-xl bg-[#11121b] font-mono text-[11px] text-[#787c95] space-y-2">
+          <div class="flex justify-between items-center text-[#9ea3be]">
+            <span class="text-[#e2e4ed] font-semibold">Ergonomics & Behavior</span>
+            <span class="text-[#d4af37]">Super + Shift + S</span>
+          </div>
+          <p class="leading-relaxed">
+            Pill expands horizontally from the idle 196px bar via 320ms spring physics. 6 single-click capture tools with instant Wayland pipewire-grab integration. Tooltips render on hover in lighter flat solid `#2c2d3d`.
+          </p>
+          <div class="pt-1 flex flex-wrap gap-2 text-[10px]">
+            <span class="px-2 py-0.5 rounded bg-[#1a1a24] text-[#a5a9c2]">Area Crop</span>
+            <span class="px-2 py-0.5 rounded bg-[#1a1a24] text-[#a5a9c2]">Full Screen</span>
+            <span class="px-2 py-0.5 rounded bg-[#1a1a24] text-[#a5a9c2]">Active Window</span>
+            <span class="px-2 py-0.5 rounded bg-[#1a1a24] text-[#a5a9c2]">Save Path</span>
+            <span class="px-2 py-0.5 rounded bg-[#1a1a24] text-[#a5a9c2]">Library</span>
+            <span class="px-2 py-0.5 rounded bg-[#1a1a24] text-[#a5a9c2]">Hex Pick</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= VIEW 2: CONTROL PANEL (PAGED CARD) ================= -->
+      <section class="flex flex-col items-center">
+        <!-- View Label Badge -->
+        <div class="w-full flex items-center justify-between font-mono text-[11px] text-[#6d7188] mb-4 pb-2 border-b border-[#1c1d29]">
+          <div class="flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-[#d4af37]"></span>
+            <span class="text-[#e2e4ed] font-semibold">VIEW 2 — PAGED CONTROL PANEL</span>
+          </div>
+          <span class="text-[#7d8299]">460×300px • 14px Radius</span>
+        </div>
+
+        <!-- Simulated Floating Shell Anchor with Overlapping Receding Pages -->
+        <div class="w-full py-8 flex flex-col items-center justify-center relative min-h-[360px] rounded-2xl bg-[#0f1017]">
+          
+          <div class="absolute top-4 left-6 flex items-center space-x-2 text-[10px] font-mono text-[#43465b]">
+            <span>EXPANDED DROP CARD (Super + C)</span>
+          </div>
+
+          <!-- OVERLAPPING STACK WRAPPER (460px width) -->
+          <div class="relative w-[460px] h-[300px] flex items-center justify-center">
+            
+            <!-- RECEDING PAGE 3 (Furthest back: scale 0.90, darker #101018, blur 2px, shifted slightly up) -->
+            <div class="absolute inset-0 w-[460px] h-[300px] rounded-[14px] surface-layer3 pointer-events-none transform scale-[0.88] -translate-y-6 filter blur-[1.5px] opacity-75 flex flex-col p-5 select-none">
+              <div class="flex justify-between items-center text-[#3a3c4f] font-mono text-[10px]">
+                <span>PAGE 03 / HARDWARE MONITORS</span>
+                <span>CPU • GPU • THERMALS</span>
+              </div>
+              <div class="mt-4 grid grid-cols-2 gap-3 opacity-30">
+                <div class="h-16 rounded-xl bg-[#161622]"></div>
+                <div class="h-16 rounded-xl bg-[#161622]"></div>
+              </div>
+            </div>
+
+            <!-- RECEDING PAGE 2 (Middle layer: scale 0.95, darker #151520, blur 1px, shifted slightly up) -->
+            <div class="absolute inset-0 w-[460px] h-[300px] rounded-[14px] surface-layer2 pointer-events-none transform scale-[0.94] -translate-y-3 filter blur-[0.75px] opacity-90 flex flex-col p-5 select-none">
+              <div class="flex justify-between items-center text-[#55586f] font-mono text-[10px]">
+                <span>PAGE 02 / NETWORK & BLUETOOTH</span>
+                <span>CONNECTED: ETH0</span>
+              </div>
+              <div class="mt-4 grid grid-cols-2 gap-3 opacity-50">
+                <div class="h-16 rounded-xl bg-[#1c1c2b]"></div>
+                <div class="h-16 rounded-xl bg-[#1c1c2b]"></div>
+              </div>
+            </div>
+
+            <!-- FRONT PAGE (Active card: exact 460x300px, 14px radius, solid #1a1a24, zero border/shadow/transparency) -->
+            <div class="relative z-10 w-[460px] h-[300px] rounded-[14px] surface-base p-5 flex flex-col justify-between select-none">
+              
+              <!-- CARD TOP BAR: TITLE & CLOSE / MODE INDICATOR -->
+              <div class="flex items-center justify-between pb-1 border-b border-[#232331]">
+                <div class="flex items-center space-x-2">
+                  <span class="w-2 h-2 rounded-full bg-[#d4af37]"></span>
+                  <span class="font-mono uppercase tracking-wider text-[11px] font-semibold text-[#e2e4ed]">Quick Controls</span>
+                </div>
+                <div class="flex items-center space-x-3 text-[11px] font-mono text-[#787c95]">
+                  <span>PAGE 01/03</span>
+                  <button class="w-5 h-5 rounded flex items-center justify-center hover:text-[#e2e4ed] hover:bg-[#232331] transition-colors focus:outline-none">
+                    <span class="material-symbols-outlined text-[13px]">close</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 2x2 GRID OF QUICK TOGGLE TILES (Soft rounded rectangles with small icons + 2-line labels) -->
+              <div class="grid grid-cols-2 gap-2.5 my-auto">
+                
+                <!-- Tile 1: Output / Mixer (Active state with subtle gold icon highlight) -->
+                <div class="h-[64px] px-3.5 py-2.5 rounded-xl surface-elevated flex items-center space-x-3 hover:bg-[#282838] transition-colors cursor-pointer group">
+                  <div class="w-8 h-8 rounded-lg bg-[#1a1a24] flex items-center justify-center text-[#d4af37] flex-shrink-0">
+                    <span class="material-symbols-outlined text-[16px]">volume_up</span>
+                  </div>
+                  <div class="flex flex-col justify-center text-left leading-tight overflow-hidden">
+                    <span class="text-[12px] font-semibold text-[#f0f2fa] group-hover:text-[#ffffff] truncate">Output</span>
+                    <span class="text-[11px] font-mono text-[#898da4] truncate">Mixer • PipeWire</span>
+                  </div>
+                </div>
+
+                <!-- Tile 2: Input / Open -->
+                <div class="h-[64px] px-3.5 py-2.5 rounded-xl surface-elevated flex items-center space-x-3 hover:bg-[#282838] transition-colors cursor-pointer group">
+                  <div class="w-8 h-8 rounded-lg bg-[#1a1a24] flex items-center justify-center text-[#a5a9c2] group-hover:text-[#e2e4ed] flex-shrink-0">
+                    <span class="material-symbols-outlined text-[16px]">mic</span>
+                  </div>
+                  <div class="flex flex-col justify-center text-left leading-tight overflow-hidden">
+                    <span class="text-[12px] font-semibold text-[#f0f2fa] group-hover:text-[#ffffff] truncate">Input</span>
+                    <span class="text-[11px] font-mono text-[#898da4] truncate">Open • Shure SM7B</span>
+                  </div>
+                </div>
+
+                <!-- Tile 3: Wallpaper / Scene -->
+                <div class="h-[64px] px-3.5 py-2.5 rounded-xl surface-elevated flex items-center space-x-3 hover:bg-[#282838] transition-colors cursor-pointer group">
+                  <div class="w-8 h-8 rounded-lg bg-[#1a1a24] flex items-center justify-center text-[#a5a9c2] group-hover:text-[#e2e4ed] flex-shrink-0">
+                    <span class="material-symbols-outlined text-[16px]">wallpaper</span>
+                  </div>
+                  <div class="flex flex-col justify-center text-left leading-tight overflow-hidden">
+                    <span class="text-[12px] font-semibold text-[#f0f2fa] group-hover:text-[#ffffff] truncate">Wallpaper</span>
+                    <span class="text-[11px] font-mono text-[#898da4] truncate">Scene • Moody Grid</span>
+                  </div>
+                </div>
+
+                <!-- Tile 4: Power / Session -->
+                <div class="h-[64px] px-3.5 py-2.5 rounded-xl surface-elevated flex items-center space-x-3 hover:bg-[#282838] transition-colors cursor-pointer group">
+                  <div class="w-8 h-8 rounded-lg bg-[#1a1a24] flex items-center justify-center text-[#a5a9c2] group-hover:text-[#e2e4ed] flex-shrink-0">
+                    <span class="material-symbols-outlined text-[16px]">power_settings_new</span>
+                  </div>
+                  <div class="flex flex-col justify-center text-left leading-tight overflow-hidden">
+                    <span class="text-[12px] font-semibold text-[#f0f2fa] group-hover:text-[#ffffff] truncate">Power</span>
+                    <span class="text-[11px] font-mono text-[#898da4] truncate">Session • Locked</span>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- ROW OF SMALL CIRCULAR QUICK-ACTION BUTTONS UNDER IT -->
+              <div class="flex items-center justify-between px-2 pt-1 pb-2">
+                <span class="font-mono text-[10px] text-[#6d7188] uppercase tracking-wider">Quick Actions</span>
+                <div class="flex items-center space-x-2.5">
+                  <!-- Button 1: DND / Silent -->
+                  <button class="w-7 h-7 rounded-full surface-elevated flex items-center justify-center text-[#8e92a8] hover:text-[#e2e4ed] hover:bg-[#2c2d3e] transition-colors focus:outline-none" title="Do Not Disturb">
+                    <span class="material-symbols-outlined text-[13px]">notifications_paused</span>
+                  </button>
+                  <!-- Button 2: Night Light / Redshift -->
+                  <button class="w-7 h-7 rounded-full surface-elevated flex items-center justify-center text-[#8e92a8] hover:text-[#e2e4ed] hover:bg-[#2c2d3e] transition-colors focus:outline-none" title="Night Light / Eye Comfort">
+                    <span class="material-symbols-outlined text-[13px]">bedtime</span>
+                  </button>
+                  <!-- Button 3: Lock Screen -->
+                  <button class="w-7 h-7 rounded-full surface-elevated flex items-center justify-center text-[#8e92a8] hover:text-[#e2e4ed] hover:bg-[#2c2d3e] transition-colors focus:outline-none" title="Lock Screen">
+                    <span class="material-symbols-outlined text-[13px]">lock</span>
+                  </button>
+                  <!-- Button 4: Terminal / Exec -->
+                  <button class="w-7 h-7 rounded-full surface-elevated flex items-center justify-center text-[#8e92a8] hover:text-[#e2e4ed] hover:bg-[#2c2d3e] transition-colors focus:outline-none" title="Open Floating Terminal">
+                    <span class="material-symbols-outlined text-[13px]">terminal</span>
+                  </button>
+                  <!-- Button 5: Settings / Config -->
+                  <button class="w-7 h-7 rounded-full surface-elevated flex items-center justify-center text-[#8e92a8] hover:text-[#e2e4ed] hover:bg-[#2c2d3e] transition-colors focus:outline-none" title="Shell Preferences">
+                    <span class="material-symbols-outlined text-[13px]">settings</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- BOTTOM CENTER PAGE DOTS: ACTIVE IS 16PX GOLD PILL, INACTIVE ARE 6PX GRAY CIRCLES -->
+              <div class="flex items-center justify-center space-x-2 pt-1">
+                <!-- Page 1 (Active): Stretched 16px pill, solid gold #d4af37 -->
+                <div class="w-4 h-1.5 rounded-full bg-[#d4af37]" title="Page 1: Quick Controls"></div>
+                <!-- Page 2 (Inactive): 6px gray circle -->
+                <div class="w-1.5 h-1.5 rounded-full bg-[#46485c] hover:bg-[#72758f] transition-colors cursor-pointer" title="Page 2: Networks"></div>
+                <!-- Page 3 (Inactive): 6px gray circle -->
+                <div class="w-1.5 h-1.5 rounded-full bg-[#46485c] hover:bg-[#72758f] transition-colors cursor-pointer" title="Page 3: Monitors"></div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Bottom Micro Spec Caption -->
+          <div class="absolute bottom-4 inset-x-0 text-center font-mono text-[10px] text-[#4d5168]">
+            <span>3 receding card pages • 2x2 grid tiles • circular quick actions • 16px gold pill pager</span>
+          </div>
+
+        </div>
+
+        <!-- Spec Detail Card for View 2 -->
+        <div class="w-full mt-4 p-4 rounded-xl bg-[#11121b] font-mono text-[11px] text-[#787c95] space-y-2">
+          <div class="flex justify-between items-center text-[#9ea3be]">
+            <span class="text-[#e2e4ed] font-semibold">Horizontal Paging & Deck Stacking</span>
+            <span class="text-[#d4af37]">Swipe / Mousewheel / H-L Keys</span>
+          </div>
+          <p class="leading-relaxed">
+            Card stack uses depth layering with scale transforms (`0.94` and `0.88`) and minimal blur to communicate swipeable horizontal decks. Bottom indicator centers the 16px gold pill on the active deck.
+          </p>
+          <div class="pt-1 flex flex-wrap gap-2 text-[10px]">
+            <span class="px-2 py-0.5 rounded bg-[#1a1a24] text-[#a5a9c2]">Output/Mixer</span>
+            <span class="px-2 py-0.5 rounded bg-[#1a1a24] text-[#a5a9c2]">Input/Open</span>
+            <span class="px-2 py-0.5 rounded bg-[#1a1a24] text-[#a5a9c2]">Wallpaper/Scene</span>
+            <span class="px-2 py-0.5 rounded bg-[#1a1a24] text-[#a5a9c2]">Power/Session</span>
+            <span class="px-2 py-0.5 rounded bg-[#1a1a24] text-[#d4af37]">16px Active Pill</span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- UNIFIED SYSTEM ARCHITECTURE FOOTER BENCH -->
+    <section class="w-full max-w-6xl p-6 rounded-2xl bg-[#13141f] border-t border-[#1c1e2b] font-mono text-[11px]">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between pb-4 mb-4 border-b border-[#1c1e2b] gap-3">
+        <div class="flex items-center space-x-3">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span>
+          <span class="font-semibold text-[#f0f2fa] text-[12px]">HARMONICA DYNAMIC ISLAND COMPOSITOR BENCH</span>
+          <span class="text-[#43475d]">|</span>
+          <span class="text-[#898da4]">Surface: #1a1a24 (Flat Solid) • Accent: #d4af37 (Gold)</span>
+        </div>
+        <div class="text-[#5b5f79]">
+          <span>Linux Kernel 6.8.9-arch • wlroots 0.17.2</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-[#787d96]">
+        <div>
+          <span class="text-[#d4af37] block font-semibold mb-1">VIEW 1: SCREENSHOT ENGINE</span>
+          <p class="leading-relaxed text-[#9ea3bf]">
+            Single-row 38px pill with 6 evenly spaced 14px Material Symbols. Seamless integration with <code class="text-[#e2e4ed]">grim</code> and <code class="text-[#e2e4ed]">slurp</code>. Tooltip renders on flat <code class="text-[#e2e4ed]">#2c2d3d</code>.
+          </p>
+        </div>
+        <div>
+          <span class="text-[#d4af37] block font-semibold mb-1">VIEW 2: PAGED CONTROL DECK</span>
+          <p class="leading-relaxed text-[#9ea3bf]">
+            460×300px card with 14px corner radius. Receding layers visually communicate horizontal gestures without breaking the flat solid philosophy.
+          </p>
+        </div>
+        <div>
+          <span class="text-[#d4af37] block font-semibold mb-1">DESIGN LANGUAGE CONTINUITY</span>
+          <p class="leading-relaxed text-[#9ea3bf]">
+            Strict adherence to zero shadows, zero borders, and zero alpha. All active feedback is isolated to muted gold (<code class="text-[#d4af37]">#d4af37</code>) and elevated slate (<code class="text-[#e2e4ed]">#232331</code>).
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM FOOTER -->
+  <footer class="w-full max-w-6xl mx-auto flex items-center justify-between text-[#4d5168] font-mono text-[11px] pt-6 pb-2 border-t border-[#161722]">
+    <div class="flex items-center space-x-4">
+      <span>Harmonica Shell Project</span>
+      <span>•</span>
+      <span>Flat Solid UI Subsystem</span>
+    </div>
+    <div>
+      <span>Dynamic Island Physics: Spring 380ms (stiffness 320, damping 28)</span>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmonica Dynamic Island Notification Banner</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #0b0c10;
+      color: #e2e4ed;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .material-symbols-rounded {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+    }
+    /* Dynamic Island Spring Morph Transitions */
+    .dynamic-island {
+      transition: all 400ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .dynamic-island:hover {
+      background-color: #232331 !important;
+      transform: scale(1.012);
+    }
+    @keyframes bell-ring {
+      0%, 100% { transform: rotate(-12deg); }
+      50% { transform: rotate(10deg); }
+    }
+    .bell-animate {
+      animation: bell-ring 2.4s ease-in-out infinite;
+      transform-origin: top center;
+    }
+  </style>
+</head>
+<body class="relative min-h-screen w-full flex flex-col items-center justify-between overflow-x-hidden bg-[#0a0a0f]">
+
+  <!-- Dark Moody Linux Wallpaper Background (Subtle Grid Texture, Flat Solid Aesthetic) -->
+  <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute inset-0 bg-[#090a0f] opacity-100"></div>
+    <!-- Clean Rice Blueprint Grid lines -->
+    <div class="absolute inset-0 opacity-[0.035]" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 32px 32px;"></div>
+    <!-- Soft Vignette -->
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,#050608_100%)]"></div>
+  </div>
+
+  <!-- Top Floating Dynamic Island Container -->
+  <header class="relative z-20 w-full pt-4 flex flex-col items-center">
+    
+    <!-- Morphed Dynamic Island: Exactly 38px tall, wider notification strip, flat solid #1a1a24 -->
+    <!-- No borders, no shadows, no transparency, no gradients -->
+    <div id="island-bar" class="dynamic-island cursor-pointer flex items-center justify-between h-[38px] px-2.5 rounded-full bg-[#1a1a24] text-[#e2e4ed]">
+      
+      <!-- Left: Small circular surface chip containing gold bell tilted -12 deg with badge '3' -->
+      <div class="flex items-center flex-shrink-0">
+        <div class="relative flex items-center justify-center w-[26px] h-[26px] rounded-full bg-[#232331]">
+          <!-- Gold Bell icon tilted -12 deg -->
+          <span class="material-symbols-rounded text-[#d4af37] text-[15px] bell-animate inline-block" style="transform: rotate(-12deg);">
+            notifications
+          </span>
+          <!-- Top-right corner badge showing '3' in dark text on light circular badge -->
+          <span class="absolute -top-1 -right-1 flex items-center justify-center min-w-[13px] h-[13px] px-[2.5px] rounded-full bg-[#e2e4ed] text-[#1a1a24] text-[9px] font-mono-code font-bold leading-none tracking-tighter">
+            3
+          </span>
+        </div>
+      </div>
+
+      <!-- Right of the bell: Two stacked text lines, horizontally centered as a block -->
+      <div class="mx-3.5 flex flex-col items-center justify-center text-center leading-tight whitespace-nowrap overflow-hidden">
+        <!-- Line 1: semibold, light -->
+        <span class="text-[11.5px] font-semibold tracking-tight text-[#e2e4ed]">
+          Vesktop <span class="text-[#8e91a0] font-normal">&mdash;</span> mention in <span class="text-[#cbd0df] font-medium">#general</span>
+        </span>
+        <!-- Line 2: smaller, muted gray -->
+        <span class="text-[10px] font-normal text-[#858899] tracking-normal pt-[0.5px]">
+          j0: check the CI pipeline when you can
+        </span>
+      </div>
+
+      <!-- Right anchor pill element (Balanced dismiss / quick ack badge) -->
+      <div class="flex items-center flex-shrink-0 pr-0.5">
+        <div class="flex items-center justify-center h-[20px] px-2 rounded-full bg-[#22222e] text-[#a1a4b5] hover:text-[#e2e4ed] transition-colors text-[10px] font-mono-code">
+          <span class="text-[9px] text-[#d4af37] font-semibold mr-1">↵</span> ack
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Micro Metadata label under the island -->
+    <div class="mt-2.5 flex items-center gap-2 text-[10px] font-mono-code text-[#424452] tracking-widest uppercase">
+      <span>Harmonica Shell v0.4.1</span>
+      <span>·</span>
+      <span class="text-[#d4af37]/80">Notification Morph [Vesktop]</span>
+    </div>
+
+  </header>
+
+  <!-- Main Center Canvas Display: Morph Transition States Showcase -->
+  <main class="relative z-10 w-full max-w-4xl px-6 my-auto py-12 flex flex-col items-center justify-center">
+    
+    <!-- Morph Lifecycle Comparative Preview Card -->
+    <div class="w-full max-w-xl bg-[#14141c] rounded-2xl p-6 flex flex-col gap-5">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-[#222230]">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-rounded text-[#d4af37] text-[18px]">motion_mode</span>
+          <span class="text-xs font-mono-code font-semibold tracking-wider text-[#d0d3e2] uppercase">Island Morph Geometry States</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[11px] font-mono-code text-[#7c8094]">Physics: Spring 400ms</span>
+        </div>
+      </div>
+
+      <!-- Comparative Render 1: Idle Status Bar State -->
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center justify-between text-[11px] font-mono-code text-[#72768a]">
+          <span>State 01 &mdash; Idle System Bar</span>
+          <span>Width: 196px · Height: 38px</span>
+        </div>
+        <div class="w-full bg-[#0d0e14] py-3 rounded-xl flex items-center justify-center">
+          <div class="flex items-center justify-between h-[38px] px-3.5 rounded-full bg-[#1a1a24] text-[#e2e4ed] gap-5 shadow-none border-0">
+            <span class="material-symbols-rounded text-[#d4af37] text-[14px]">wifi</span>
+            <span class="font-mono-code font-semibold text-[13px] tracking-wide text-[#e2e4ed]">21:37</span>
+            <div class="flex items-center gap-1">
+              <span class="font-mono-code text-[11px] text-[#8e91a0]">82%</span>
+              <span class="material-symbols-rounded text-emerald-400 text-[14px]">battery_charging_80</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparative Render 2: Active Morphed Notification State -->
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center justify-between text-[11px] font-mono-code text-[#d4af37]">
+          <span>State 02 &mdash; Morphed Notification Strip (Current)</span>
+          <span>Width: 430px · Height: 38px</span>
+        </div>
+        <div class="w-full bg-[#0d0e14] py-3 rounded-xl flex items-center justify-center">
+          <div class="flex items-center justify-between h-[38px] px-2.5 rounded-full bg-[#1a1a24] text-[#e2e4ed] shadow-none border-0">
+            <div class="relative flex items-center justify-center w-[26px] h-[26px] rounded-full bg-[#232331]">
+              <span class="material-symbols-rounded text-[#d4af37] text-[15px]" style="transform: rotate(-12deg);">notifications</span>
+              <span class="absolute -top-1 -right-1 flex items-center justify-center min-w-[13px] h-[13px] px-[2px] rounded-full bg-[#e2e4ed] text-[#1a1a24] text-[9px] font-mono-code font-bold">3</span>
+            </div>
+            <div class="mx-3.5 flex flex-col items-center justify-center text-center leading-tight">
+              <span class="text-[11.5px] font-semibold text-[#e2e4ed]">
+                Vesktop <span class="text-[#8e91a0] font-normal">&mdash;</span> mention in <span class="text-[#cbd0df] font-medium">#general</span>
+              </span>
+              <span class="text-[10px] text-[#858899]">j0: check the CI pipeline when you can</span>
+            </div>
+            <div class="flex items-center justify-center h-[20px] px-2 rounded-full bg-[#22222e] text-[#a1a4b5] text-[10px] font-mono-code">
+              <span class="text-[9px] text-[#d4af37] font-semibold mr-1">↵</span> ack
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Interactive Test Bench & Shell Diagnostics Panel (Consistent with previous screens) -->
+  <footer class="relative z-20 w-full max-w-xl pb-6 px-4">
+    <div class="bg-[#14141c] rounded-2xl p-5 border-0 flex flex-col gap-4">
+      
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-mono-code tracking-wider text-[#797d92] uppercase">Interactive Notification Bench</span>
+        <div class="flex items-center gap-1.5 text-[11px] font-mono-code text-emerald-400">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <span>active banner</span>
+        </div>
+      </div>
+
+      <!-- Action switcher buttons for previewing dynamic island behaviors -->
+      <div class="grid grid-cols-3 gap-2 text-xs font-mono-code">
+        <button id="btn-mention" onclick="setBanner('mention')" class="px-3 py-2 rounded-lg bg-[#222230] text-[#e2e4ed] font-medium hover:bg-[#2c2c3e] transition-colors border-l-2 border-[#d4af37] text-left">
+          <div class="text-[11px] text-[#d4af37] font-semibold">Mention</div>
+          <div class="text-[10px] text-[#787c91]">Vesktop #general</div>
+        </button>
+        <button id="btn-git" onclick="setBanner('git')" class="px-3 py-2 rounded-lg bg-[#1a1a24] text-[#8e91a0] hover:text-[#e2e4ed] hover:bg-[#20202d] transition-colors text-left">
+          <div class="text-[11px] font-semibold">Git Pull</div>
+          <div class="text-[10px] text-[#787c91]">harmonica-shell</div>
+        </button>
+        <button id="btn-idle" onclick="setBanner('idle')" class="px-3 py-2 rounded-lg bg-[#1a1a24] text-[#8e91a0] hover:text-[#e2e4ed] hover:bg-[#20202d] transition-colors text-left">
+          <div class="text-[11px] font-semibold">Dismiss</div>
+          <div class="text-[10px] text-[#787c91]">Return to clock</div>
+        </button>
+      </div>
+
+      <!-- Technical Specifications table -->
+      <div class="grid grid-cols-2 gap-y-1.5 pt-1 text-xs font-mono-code border-t border-[#1f202b]">
+        <span class="text-[#676b7e]">Height / Width:</span>
+        <span class="text-right text-[#b8bccd]">38px fixed / 440px auto</span>
+        
+        <span class="text-[#676b7e]">Surface Palette:</span>
+        <span class="text-right text-[#b8bccd]">#1a1a24 (Flat Solid)</span>
+        
+        <span class="text-[#676b7e]">Bell Accent:</span>
+        <span class="text-right text-[#d4af37]">#d4af37 (-12° tilt)</span>
+        
+        <span class="text-[#676b7e]">Badge Counter:</span>
+        <span class="text-right text-[#e2e4ed]">3 (pill chip)</span>
+      </div>
+
+      <!-- Terminal Neofetch info block -->
+      <div class="pt-2 border-t border-[#1f202b]">
+        <div class="flex items-center gap-1.5 mb-2">
+          <span class="w-2 h-2 rounded-full bg-[#2f313d]"></span>
+          <span class="w-2 h-2 rounded-full bg-[#2f313d]"></span>
+          <span class="w-2 h-2 rounded-full bg-[#2f313d]"></span>
+          <span class="text-[10px] font-mono-code text-[#555869] ml-1.5">notification-daemon --harmonica-env</span>
+        </div>
+        <div class="text-[11px] font-mono-code text-[#7c8094] leading-relaxed">
+          <div><span class="text-[#d4af37]">Event:</span> org.freedesktop.Notifications.Notify</div>
+          <div><span class="text-[#d4af37]">AppName:</span> Vesktop (Discord Wayland client)</div>
+          <div><span class="text-[#d4af37]">Urgency:</span> Normal (Transient overlay, autohide: 6s)</div>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Interactivity Script for Demo & Verification -->
+  <script>
+    const island = document.getElementById('island-bar');
+    
+    const bannerContents = {
+      mention: `
+        <div class="flex items-center flex-shrink-0">
+          <div class="relative flex items-center justify-center w-[26px] h-[26px] rounded-full bg-[#232331]">
+            <span class="material-symbols-rounded text-[#d4af37] text-[15px] bell-animate inline-block" style="transform: rotate(-12deg);">
+              notifications
+            </span>
+            <span class="absolute -top-1 -right-1 flex items-center justify-center min-w-[13px] h-[13px] px-[2.5px] rounded-full bg-[#e2e4ed] text-[#1a1a24] text-[9px] font-mono-code font-bold leading-none tracking-tighter">
+              3
+            </span>
+          </div>
+        </div>
+        <div class="mx-3.5 flex flex-col items-center justify-center text-center leading-tight whitespace-nowrap overflow-hidden">
+          <span class="text-[11.5px] font-semibold tracking-tight text-[#e2e4ed]">
+            Vesktop <span class="text-[#8e91a0] font-normal">&mdash;</span> mention in <span class="text-[#cbd0df] font-medium">#general</span>
+          </span>
+          <span class="text-[10px] font-normal text-[#858899] tracking-normal pt-[0.5px]">
+            j0: check the CI pipeline when you can
+          </span>
+        </div>
+        <div class="flex items-center flex-shrink-0 pr-0.5">
+          <div class="flex items-center justify-center h-[20px] px-2 rounded-full bg-[#22222e] text-[#a1a4b5] hover:text-[#e2e4ed] transition-colors text-[10px] font-mono-code">
+            <span class="text-[9px] text-[#d4af37] font-semibold mr-1">↵</span> ack
+          </div>
+        </div>
+      `,
+      git: `
+        <div class="flex items-center flex-shrink-0">
+          <div class="relative flex items-center justify-center w-[26px] h-[26px] rounded-full bg-[#232331]">
+            <span class="material-symbols-rounded text-[#d4af37] text-[15px] inline-block">
+              commit
+            </span>
+            <span class="absolute -top-1 -right-1 flex items-center justify-center min-w-[13px] h-[13px] px-[2.5px] rounded-full bg-[#e2e4ed] text-[#1a1a24] text-[9px] font-mono-code font-bold leading-none tracking-tighter">
+              1
+            </span>
+          </div>
+        </div>
+        <div class="mx-3.5 flex flex-col items-center justify-center text-center leading-tight whitespace-nowrap overflow-hidden">
+          <span class="text-[11.5px] font-semibold tracking-tight text-[#e2e4ed]">
+            GitHub <span class="text-[#8e91a0] font-normal">&mdash;</span> harmonica-shell/main
+          </span>
+          <span class="text-[10px] font-normal text-[#858899] tracking-normal pt-[0.5px]">
+            feat(daemon): dynamic island notification shape morph
+          </span>
+        </div>
+        <div class="flex items-center flex-shrink-0 pr-0.5">
+          <div class="flex items-center justify-center h-[20px] px-2 rounded-full bg-[#22222e] text-[#a1a4b5] hover:text-[#e2e4ed] transition-colors text-[10px] font-mono-code">
+            <span class="text-[9px] text-[#d4af37] font-semibold mr-1">↵</span> view
+          </div>
+        </div>
+      `,
+      idle: `
+        <div class="flex items-center gap-5 px-1">
+          <span class="material-symbols-rounded text-[#d4af37] text-[14px]">wifi</span>
+          <span class="font-mono-code font-semibold text-[13px] tracking-wide text-[#e2e4ed]">21:37</span>
+          <div class="flex items-center gap-1.5">
+            <span class="font-mono-code text-[11px] text-[#8e91a0]">82%</span>
+            <span class="material-symbols-rounded text-emerald-400 text-[14px]">battery_charging_80</span>
+          </div>
+        </div>
+      `
+    };
+
+    function setBanner(mode) {
+      island.innerHTML = bannerContents[mode];
+      
+      const buttons = ['btn-mention', 'btn-git', 'btn-idle'];
+      buttons.forEach(id => {
+        const btn = document.getElementById(id);
+        if (id === 'btn-' + mode) {
+          btn.className = "px-3 py-2 rounded-lg bg-[#222230] text-[#e2e4ed] font-medium transition-colors border-l-2 border-[#d4af37] text-left";
+        } else {
+          btn.className = "px-3 py-2 rounded-lg bg-[#1a1a24] text-[#8e91a0] hover:text-[#e2e4ed] hover:bg-[#20202d] transition-colors text-left";
+        }
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmonica Lock Screen: Unlock Transition (200ms)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0b0d11;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      user-select: none;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Upward motion blur simulation for departing elements */
+    .motion-depart-clock {
+      transform: translateY(-60px);
+      opacity: 0.35;
+      filter: blur(1.5px);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .motion-depart-media {
+      transform: translateY(-75px);
+      opacity: 0.50;
+      filter: blur(1.2px);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Ambient top status departing */
+    .motion-depart-status {
+      transform: translateY(-20px);
+      opacity: 0.25;
+      filter: blur(1px);
+    }
+
+    /* Clean geometric iris ring */
+    .iris-edge-ring {
+      border: 1px solid rgba(214, 217, 228, 0.22);
+      border-radius: 9999px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="relative w-screen h-screen min-h-[900px] flex flex-col justify-between overflow-hidden">
+
+  <!-- ================= BACKGROUND LAYER 1: BASE WALLPAPER (Full brightness) ================= -->
+  <div class="absolute inset-0 z-0 bg-[#0d1017] overflow-hidden">
+    <!-- Forest wallpaper vectors with misty layers and gradient night sky -->
+    <svg class="w-full h-full object-cover" viewBox="0 0 1920 1080" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Sky base -->
+      <rect width="1920" height="1080" fill="url(#sky_grad)" />
+      
+      <!-- Distant soft mountain silhouettes -->
+      <path d="M0 620 L180 570 L380 610 L620 540 L880 600 L1150 530 L1390 590 L1620 550 L1820 590 L1920 570 V1080 H0 Z" fill="#131722" />
+      <path d="M0 670 L140 630 L320 660 L540 610 L790 650 L1040 590 L1280 640 L1510 600 L1760 650 L1920 620 V1080 H0 Z" fill="#11141e" />
+
+      <!-- Misty Fog Band 1 -->
+      <ellipse cx="960" cy="680" rx="1100" ry="140" fill="url(#fog_band_1)" />
+
+      <!-- Distant Pine Tree Ridge (Layer 3) -->
+      <path d="M-20 740 
+               L30 710 L80 735 L130 695 L190 730 L250 690 L310 735 L370 705 L430 735 L500 680 L570 730 
+               L640 690 L710 735 L780 695 L850 735 L920 675 L990 730 L1060 690 L1130 735 L1200 685 
+               L1270 735 L1340 690 L1410 730 L1480 680 L1550 735 L1620 695 L1690 735 L1760 685 L1830 730 L1940 690 V1080 H-20 Z" 
+            fill="#0f121a" />
+
+      <!-- Midground Pine Tree Ridge (Layer 2) -->
+      <path d="M-30 810 
+               L20 760 L70 805 L120 745 L180 800 L240 740 L300 795 L370 735 L440 800 L510 730 L580 795 
+               L660 720 L730 790 L810 725 L880 795 L960 710 L1040 790 L1120 725 L1190 795 L1270 720 
+               L1350 790 L1430 725 L1510 795 L1590 730 L1670 790 L1750 725 L1830 790 L1910 735 L1960 800 V1080 H-30 Z" 
+            fill="#0b0e15" />
+
+      <!-- Misty Fog Band 2 -->
+      <ellipse cx="960" cy="810" rx="1000" ry="110" fill="url(#fog_band_2)" />
+
+      <!-- Foreground Sharp Pine Trees (Layer 1) -->
+      <path d="M-40 890 
+               L15 820 L70 885 L130 800 L195 875 L260 790 L330 870 L410 780 L490 865 L570 770 L655 860 
+               L740 765 L825 855 L915 750 L1005 850 L1095 760 L1185 855 L1275 765 L1365 855 L1455 770 
+               L1545 860 L1630 775 L1715 860 L1805 780 L1890 865 L1960 790 V1080 H-40 Z" 
+            fill="#080a0f" />
+
+      <defs>
+        <linearGradient id="sky_grad" x1="960" y1="0" x2="960" y2="1080" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#161b26" />
+          <stop offset="45%" stop-color="#11151f" />
+          <stop offset="70%" stop-color="#0d1017" />
+          <stop offset="100%" stop-color="#07080c" />
+        </linearGradient>
+        <radialGradient id="fog_band_1" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#1e2433" stop-opacity="0.28" />
+          <stop offset="60%" stop-color="#181d29" stop-opacity="0.12" />
+          <stop offset="100%" stop-color="#11151f" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="fog_band_2" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#232a3b" stop-opacity="0.32" />
+          <stop offset="70%" stop-color="#1a202d" stop-opacity="0.10" />
+          <stop offset="100%" stop-color="#0b0e15" stop-opacity="0" />
+        </radialGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- ================= LAYER 2: LIFTING DIM GRADIENT (Masked by Iris Reveal) ================= -->
+  <!-- 
+       Outside the iris circle: the dimming gradient still lingers at ~50% of its original strength (lifting).
+       Inside the 300px radius circle centered at the password field (screen center, y: ~56.5%): full light.
+  -->
+  <div class="absolute inset-0 z-10 pointer-events-none" 
+       style="mask-image: radial-gradient(circle 300px at 50% 56.5%, transparent 0, transparent 298px, black 302px, black 100%);
+              -webkit-mask-image: radial-gradient(circle 300px at 50% 56.5%, transparent 0, transparent 298px, black 302px, black 100%);">
+    <!-- Lingering vertical gradient (lifting, half-faded: 18% top -> 38% bottom instead of 35% -> 70%) -->
+    <div class="w-full h-full bg-gradient-to-b from-black/20 via-black/32 to-black/45 backdrop-brightness-[0.82]"></div>
+  </div>
+
+  <!-- ================= LAYER 3: IRIS LIGHT EDGE RING ================= -->
+  <!-- Center is 50% horizontal, 56.5% vertical (exact password input anchor). Radius: 300px => diameter: 600px -->
+  <div class="absolute z-20 pointer-events-none rounded-full iris-edge-ring"
+       style="width: 600px; height: 600px; left: calc(50% - 300px); top: calc(56.5% - 300px); box-shadow: inset 0 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 1px 0 rgba(255, 255, 255, 0.12);">
+  </div>
+
+  <!-- Subtle interior illumination wash inside iris circle: soft boost to highlight pure light contrast -->
+  <div class="absolute z-15 pointer-events-none rounded-full"
+       style="width: 600px; height: 600px; left: calc(50% - 300px); top: calc(56.5% - 300px); background: radial-gradient(circle at center, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.015) 70%, transparent 100%);">
+  </div>
+
+  <!-- ================= FOREGROUND / UI CONTENT ================= -->
+
+  <!-- Top bar telemetry cluster: departing gracefully -->
+  <header class="relative z-30 w-full px-12 pt-8 flex items-center justify-between motion-depart-status">
+    <div class="flex items-center gap-3">
+      <span class="w-1.5 h-1.5 rounded-full bg-[#52576b]"></span>
+      <span class="font-mono-code text-[11px] tracking-[0.24em] uppercase text-[#61677c]">Harmonica // Session</span>
+    </div>
+    <div class="flex items-center gap-2 font-mono-code text-[12px] text-[#73798f]">
+      <span>87%</span>
+      <span class="text-[#b49043]">⚡</span>
+    </div>
+  </header>
+
+  <!-- Upper Third: Hero Clock DEPARTING (risen ~60px, faded to 35%, motion blurred upward) -->
+  <main class="relative z-30 w-full flex-1 flex flex-col items-center justify-start pt-8 pointer-events-none">
+    <div class="flex flex-col items-center text-center motion-depart-clock">
+      <!-- 96px bold light gray clock, upward displaced -->
+      <h1 class="text-[96px] font-bold text-[#d6d9e4] tracking-[-0.05em] leading-none select-none">
+        21:37
+      </h1>
+      <!-- Muted date with generous letter-spacing -->
+      <p class="text-[13px] font-medium uppercase tracking-[0.24em] text-[#73798f] mt-3">
+        Sunday, September 7
+      </p>
+    </div>
+
+    <!-- Password field area is completely dissolved and gone: the iris originated here -->
+    <div class="mt-auto"></div>
+  </main>
+
+  <!-- Bottom Floating Media Card: DEPARTING (risen ~75px, faded to 50%, ahead of the clock) -->
+  <footer class="relative z-30 w-full pb-14 flex flex-col items-center justify-end pointer-events-none">
+    <div class="motion-depart-media">
+      <!-- Compact 300x76px rounded card in solid #22222c, zero border, zero shadow, zero blur -->
+      <div class="w-[300px] h-[76px] bg-[#22222c] rounded-[14px] px-3 flex items-center gap-3">
+        
+        <!-- 52px album artwork: dark abstract groove disc -->
+        <div class="w-[52px] h-[52px] rounded-[10px] bg-[#1a1a24] flex items-center justify-center flex-shrink-0 overflow-hidden relative">
+          <!-- Concentric abstract vinyl grooves -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-10 h-10 rounded-full border border-[#2f3140]"></div>
+            <div class="w-6 h-6 rounded-full border border-[#3b3d4f]"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-[#b49043]/80"></div>
+          </div>
+          <!-- Tiny abstract gold frequency arc -->
+          <svg class="w-7 h-7 relative z-10 text-[#b49043]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 3a9 9 0 0 1 9 9" stroke-dasharray="2 2" opacity="0.6"/>
+            <path d="M12 6a6 6 0 0 1 6 6" opacity="0.8"/>
+            <circle cx="12" cy="12" r="2" fill="currentColor"/>
+          </svg>
+        </div>
+
+        <!-- Track & artist info with gold progress hairline -->
+        <div class="flex-1 min-w-0 pr-1">
+          <div class="text-[13px] font-semibold text-[#d6d9e4] truncate tracking-tight">
+            Austerity Economy
+          </div>
+          <div class="text-[11px] text-[#73798f] truncate mt-0.5">
+            K Civil
+          </div>
+          <!-- Slim 2.5px gold progress hairline (#b49043) -->
+          <div class="w-full h-[2.5px] bg-[#2e303d] rounded-full mt-2 overflow-hidden">
+            <div class="h-full bg-[#b49043] rounded-full" style="width: 44%;"></div>
+          </div>
+        </div>
+
+        <!-- Quiet playback controls in muted gray -->
+        <div class="flex items-center gap-2 text-[#73798f] flex-shrink-0 pr-1">
+          <!-- Previous -->
+          <button type="button" class="p-1 focus:outline-none" aria-label="Previous">
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+              <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+            </svg>
+          </button>
+          <!-- Pause -->
+          <button type="button" class="p-1 focus:outline-none" aria-label="Pause">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+          </button>
+          <!-- Next -->
+          <button type="button" class="p-1 focus:outline-none" aria-label="Next">
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+              <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

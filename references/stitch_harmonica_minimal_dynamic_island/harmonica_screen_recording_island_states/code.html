@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmonica Screen Recording Island States</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #0b0b10;
+      color: #e2e4ed;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .font-mono-tabular {
+      font-family: 'JetBrains Mono', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Subtle desktop wallpaper grid pattern matching Harmonica environment */
+    .desktop-bg {
+      background-color: #0d0e14;
+      background-image: 
+        radial-gradient(ellipse at 50% 15%, rgba(30, 32, 48, 0.45) 0%, rgba(13, 14, 20, 0.95) 75%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 48px 48px, 48px 48px;
+    }
+
+    /* Pulse animations for status dots */
+    @keyframes pulse-record {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.35;
+        transform: scale(0.92);
+      }
+    }
+
+    @keyframes pulse-record-subtle {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    .animate-pulse-red {
+      animation: pulse-record 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    .animate-pulse-subtle {
+      animation: pulse-record-subtle 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    /* Animated waveform canvas/svg simulation */
+    @keyframes waveform-scroll {
+      0% {
+        stroke-dashoffset: 0;
+      }
+      100% {
+        stroke-dashoffset: -90;
+      }
+    }
+
+    .waveform-stream {
+      stroke-dasharray: 6 3;
+      animation: waveform-scroll 3s linear infinite;
+    }
+
+    /* Micro hover adjustments adhering to <=1.5% and flat color tint */
+    .pill-hover-transition {
+      transition: background-color 150ms ease, transform 150ms ease;
+    }
+    .pill-hover-transition:hover {
+      background-color: #232331;
+    }
+
+    .action-icon-btn {
+      transition: color 120ms ease, background-color 120ms ease;
+    }
+    .action-icon-btn:hover {
+      color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="desktop-bg min-h-screen flex flex-col items-center justify-between p-6 sm:p-10 select-none">
+
+  <!-- Desktop Top Shell Context Header -->
+  <header class="w-full max-w-6xl flex items-center justify-between text-xs tracking-wider uppercase text-[#5a5c6d] font-mono-tabular pb-4 border-b border-[#1b1c26]/60">
+    <div class="flex items-center gap-3">
+      <span class="inline-flex items-center justify-center w-5 h-5 rounded bg-[#1a1a24] text-[#d4af37] text-[11px] font-bold">H</span>
+      <span>Harmonica Shell v0.4.1</span>
+      <span class="text-[#363847]">/</span>
+      <span class="text-[#8e91a4]">Screen Capture Daemon (pipewire-wf)</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="flex items-center gap-1.5 text-[#ff3b30]">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#ff3b30] animate-pulse"></span>
+        <span>REC 60 FPS</span>
+      </span>
+      <span class="text-[#4e5163]">DP-1 • 3840×2160</span>
+    </div>
+  </header>
+
+  <!-- Main Showcase Container: Side by Side on One Canvas -->
+  <main class="w-full max-w-6xl my-auto py-12 flex flex-col items-center">
+    
+    <!-- Title & Concept Header -->
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14141d] text-[#8e91a4] text-[11px] font-mono-tabular tracking-wider uppercase mb-3">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#d4af37]"></span>
+        Dynamic Island Screen Recording Subsystem
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-[#e2e4ed]">Three Interaction States</h1>
+      <p class="text-sm text-[#737688] mt-1.5 font-normal max-w-xl mx-auto">
+        Strictly flat solid <code class="text-[#9ea1b5] bg-[#14141e] px-1.5 py-0.5 rounded text-xs">#1a1a24</code> pills without borders, drop-shadows, or transparency. Single cohesive dynamic island morphing family.
+      </p>
+    </div>
+
+    <!-- Triple States Canvas Display: Side by Side Row -->
+    <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 items-start justify-items-center">
+
+      <!-- ========================================== -->
+      <!-- STATE A: RECORDING (EXPANDED) -->
+      <!-- ========================================== -->
+      <div class="w-full flex flex-col items-center group">
+        <!-- State Metadata Pill Tag -->
+        <div class="flex items-center justify-between w-[300px] mb-3 px-1 text-[11px] font-mono-tabular text-[#6a6d80]">
+          <span class="flex items-center gap-1.5 text-[#ff3b30] font-medium">
+            <span class="w-2 h-2 rounded-full bg-[#ff3b30] animate-pulse-red"></span>
+            STATE A — EXPANDED
+          </span>
+          <span>300px × 38px</span>
+        </div>
+
+        <!-- Pill Container (State A: Exactly 300px wide, 38px tall, flat solid #1a1a24, rounded-full) -->
+        <div class="relative w-[300px] h-[38px] bg-[#1a1a24] rounded-full overflow-hidden flex items-center justify-between px-3 pill-hover-transition cursor-default">
+          
+          <!-- Left: Red Pulsing Dot (9px) -->
+          <div class="flex items-center justify-center w-6 shrink-0">
+            <div class="w-[9px] h-[9px] rounded-full bg-[#ff3b30] animate-pulse-red shrink-0" title="Active Recording"></div>
+          </div>
+
+          <!-- Center: Monospace Semibold Timer "04:12" -->
+          <div class="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
+            <span class="font-mono-tabular font-semibold text-[13px] tracking-tight text-[#e2e4ed]" id="timer-state-a">
+              04:12
+            </span>
+          </div>
+
+          <!-- Right: Three Small Icon Buttons (Pause, Stop, Settings Gear) -->
+          <div class="flex items-center gap-0.5 shrink-0 z-10 text-[#9ea1b5]">
+            <!-- Pause Button -->
+            <button class="action-icon-btn w-[22px] h-[22px] rounded-full flex items-center justify-center" title="Pause Recording (Super+Alt+P)">
+              <span class="material-symbols-outlined text-[14px] leading-none" style="font-variation-settings: 'FILL' 1, 'wght' 500;">
+                pause
+              </span>
+            </button>
+
+            <!-- Stop Button -->
+            <button class="action-icon-btn w-[22px] h-[22px] rounded-full flex items-center justify-center text-[#ff3b30]/90 hover:text-[#ff3b30]" title="Stop and Save (Super+Alt+S)">
+              <span class="material-symbols-outlined text-[13px] leading-none" style="font-variation-settings: 'FILL' 1, 'wght' 600;">
+                stop
+              </span>
+            </button>
+
+            <!-- Settings Gear Button -->
+            <button class="action-icon-btn w-[22px] h-[22px] rounded-full flex items-center justify-center" title="Capture Configuration">
+              <span class="material-symbols-outlined text-[14px] leading-none" style="font-variation-settings: 'FILL' 1, 'wght' 400;">
+                settings
+              </span>
+            </button>
+          </div>
+
+          <!-- Bottom Edge: Thin Animated Audio Waveform Line -->
+          <div class="absolute bottom-0 left-0 right-0 h-[2.5px] overflow-hidden pointer-events-none opacity-85">
+            <svg class="w-full h-full" viewBox="0 0 300 4" preserveAspectRatio="none">
+              <!-- Live audio stream polyline pattern -->
+              <path d="M0,2 Q10,0 20,2 T40,2 T60,0.5 T80,3 T100,1 T120,3 T140,0 T160,3.5 T180,1 T200,2.5 T220,0.5 T240,3 T260,1 T280,2.5 T300,2" 
+                    fill="none" 
+                    stroke="#ff3b30" 
+                    stroke-width="1.8" 
+                    stroke-linecap="round"
+                    class="waveform-stream" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- State Annotation Description -->
+        <div class="mt-4 text-center max-w-[280px]">
+          <div class="text-xs font-medium text-[#c0c3d4]">Active Focused / Hover</div>
+          <p class="text-[11px] text-[#636678] mt-1 leading-relaxed">
+            Full controls reveal on cursor hover or keypress. 9px red pulse, centered monospace timer, quick controls &amp; bottom edge mic waveform.
+          </p>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- STATE B: COMPACT (MOUSE AWAY) -->
+      <!-- ========================================== -->
+      <div class="w-full flex flex-col items-center group">
+        <!-- State Metadata Pill Tag -->
+        <div class="flex items-center justify-between w-[150px] mb-3 px-1 text-[11px] font-mono-tabular text-[#6a6d80]">
+          <span class="flex items-center gap-1.5 text-[#ff3b30] font-medium">
+            <span class="w-2 h-2 rounded-full bg-[#ff3b30] animate-pulse-subtle"></span>
+            STATE B — COMPACT
+          </span>
+          <span>150px × 38px</span>
+        </div>
+
+        <!-- Pill Container (State B: Exactly 150px wide, 38px tall, flat solid #1a1a24, rounded-full) -->
+        <div class="relative w-[150px] h-[38px] bg-[#1a1a24] rounded-full overflow-hidden flex items-center justify-between px-4 pill-hover-transition cursor-default">
+          
+          <!-- Left: Small Red Dot -->
+          <div class="flex items-center justify-center shrink-0">
+            <div class="w-[7.5px] h-[7.5px] rounded-full bg-[#ff3b30] animate-pulse-subtle" title="Recording in background"></div>
+          </div>
+
+          <!-- Monospace "04:12" Timer Centered/Balanced -->
+          <div class="flex-1 flex items-center justify-center pl-1">
+            <span class="font-mono-tabular font-semibold text-[13px] tracking-tight text-[#e2e4ed]" id="timer-state-b">
+              04:12
+            </span>
+          </div>
+
+          <!-- Subtle Right Spacer for optical centering -->
+          <div class="w-[7.5px] shrink-0"></div>
+        </div>
+
+        <!-- State Annotation Description -->
+        <div class="mt-4 text-center max-w-[280px]">
+          <div class="text-xs font-medium text-[#c0c3d4]">Ambient Idle (Mouse Away)</div>
+          <p class="text-[11px] text-[#636678] mt-1 leading-relaxed">
+            Shrunk to 150px to stay out of user focus. Feels quietly asleep yet actively alive. Minimal dot + timer with no interactive clutter.
+          </p>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- STATE C: PAUSED -->
+      <!-- ========================================== -->
+      <div class="w-full flex flex-col items-center group">
+        <!-- State Metadata Pill Tag -->
+        <div class="flex items-center justify-between w-[150px] mb-3 px-1 text-[11px] font-mono-tabular text-[#6a6d80]">
+          <span class="flex items-center gap-1.5 text-[#ff9500] font-medium">
+            <span class="w-2 h-2 rounded-full bg-[#ff9500]"></span>
+            STATE C — PAUSED
+          </span>
+          <span>150px × 38px</span>
+        </div>
+
+        <!-- Pill Container (State C: Compact 150px wide, 38px tall, flat solid #1a1a24, rounded-full) -->
+        <div class="relative w-[150px] h-[38px] bg-[#1a1a24] rounded-full overflow-hidden flex items-center justify-between px-4 pill-hover-transition cursor-default">
+          
+          <!-- Left: Amber Dot instead of red (Static, unpulsed) -->
+          <div class="flex items-center justify-center shrink-0">
+            <div class="w-[7.5px] h-[7.5px] rounded-full bg-[#ff9500]" title="Recording Paused"></div>
+          </div>
+
+          <!-- Timer Dimmed Gray (#717488) & Static; No Waveform -->
+          <div class="flex-1 flex items-center justify-center pl-1">
+            <span class="font-mono-tabular font-semibold text-[13px] tracking-tight text-[#6d7083]">
+              04:12
+            </span>
+          </div>
+
+          <!-- Optical balance anchor -->
+          <div class="w-[7.5px] shrink-0"></div>
+        </div>
+
+        <!-- State Annotation Description -->
+        <div class="mt-4 text-center max-w-[280px]">
+          <div class="text-xs font-medium text-[#c0c3d4]">Hold / Suspended</div>
+          <p class="text-[11px] text-[#636678] mt-1 leading-relaxed">
+            Amber #ff9500 status dot, dimmed gray timer, and zero waveform. Communicates immediate suspended state with zero CPU waste.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Comparative Interactive Spec Bench -->
+    <section class="w-full max-w-4xl mt-14 bg-[#14141d] rounded-2xl p-6 border border-[#1e202e]/60 text-xs font-mono-tabular">
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#212333]/80">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[#2fd17b]"></span>
+          <span class="text-[#c4c7d7] font-semibold">HARMONICA ISLAND RECORDING BENCH</span>
+        </div>
+        <div class="text-[#646779] text-[11px]">
+          Surface: <span class="text-[#9fa3b6]">#1a1a24 (Flat Solid)</span> • Radius: <span class="text-[#9fa3b6]">9999px (Pill)</span> • Height: <span class="text-[#9fa3b6]">38px Fixed</span>
+        </div>
+      </div>
+
+      <!-- State Specs Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-5">
+        <!-- Col 1 -->
+        <div class="space-y-2">
+          <div class="text-[#ff3b30] font-medium text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+            <span>●</span> State A (Expanded)
+          </div>
+          <ul class="text-[11px] text-[#787b8f] space-y-1.5">
+            <li>Width: <span class="text-[#e2e4ed]">300px</span> (Spring morph)</li>
+            <li>Dot: <span class="text-[#ff3b30]">9px #ff3b30</span> @ 1.6s pulse</li>
+            <li>Waveform: <span class="text-[#ff3b30]">2.5px audio stream</span></li>
+            <li>Controls: <span class="text-[#e2e4ed]">Pause · Stop · Setup</span></li>
+          </ul>
+        </div>
+
+        <!-- Col 2 -->
+        <div class="space-y-2">
+          <div class="text-[#ff3b30] font-medium text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+            <span>●</span> State B (Compact)
+          </div>
+          <ul class="text-[11px] text-[#787b8f] space-y-1.5">
+            <li>Width: <span class="text-[#e2e4ed]">150px</span> (Shrunk 50%)</li>
+            <li>Dot: <span class="text-[#ff3b30]">7.5px #ff3b30</span> quiet breath</li>
+            <li>Waveform: <span class="text-[#56596b]">Suppressed</span></li>
+            <li>Timer: <span class="text-[#e2e4ed]">Active semibold light</span></li>
+          </ul>
+        </div>
+
+        <!-- Col 3 -->
+        <div class="space-y-2">
+          <div class="text-[#ff9500] font-medium text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+            <span>●</span> State C (Paused)
+          </div>
+          <ul class="text-[11px] text-[#787b8f] space-y-1.5">
+            <li>Width: <span class="text-[#e2e4ed]">150px</span> (Compact)</li>
+            <li>Dot: <span class="text-[#ff9500]">7.5px #ff9500</span> (Solid amber)</li>
+            <li>Waveform: <span class="text-[#56596b]">Suppressed</span></li>
+            <li>Timer: <span class="text-[#6d7083]">#6d7083 (Dimmed text)</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Interactive Controls Toggle -->
+      <div class="mt-6 pt-4 border-t border-[#212333]/80 flex flex-wrap items-center justify-between gap-3 text-[11px]">
+        <div class="text-[#646779]">
+          Keybinds: <span class="text-[#c4c7d7] bg-[#1a1a24] px-1.5 py-0.5 rounded">Super + Alt + R</span> (Toggle) • <span class="text-[#c4c7d7] bg-[#1a1a24] px-1.5 py-0.5 rounded">Super + Alt + P</span> (Pause)
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[#646779]">Simulate:</span>
+          <button id="btn-toggle-time" class="px-2 py-1 bg-[#1c1d29] hover:bg-[#252636] text-[#b3b6c7] rounded transition-colors" onclick="toggleClockSimulation()">
+            Increment Seconds
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Desktop Bottom Dock / Taskbar Hint Context -->
+  <footer class="w-full max-w-6xl flex items-center justify-between text-xs text-[#4b4e5f] font-mono-tabular pt-4 border-t border-[#1b1c26]/60">
+    <div>Harmonica Wayland Compositor • wlroots 0.17</div>
+    <div class="flex items-center gap-4">
+      <span>Dynamic Island Physics: Spring 380ms (stiffness 320, damping 28)</span>
+    </div>
+  </footer>
+
+  <script>
+    // Simple live second incrementer to demonstrate live timer behavior
+    let seconds = 252; // 04:12 in seconds
+    let isTicking = true;
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60).toString().padStart(2, '0');
+      const s = (sec % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    setInterval(() => {
+      if (isTicking) {
+        seconds++;
+        const str = formatTime(seconds);
+        const timerA = document.getElementById('timer-state-a');
+        const timerB = document.getElementById('timer-state-b');
+        if (timerA) timerA.textContent = str;
+        if (timerB) timerB.textContent = str;
+      }
+    }, 1000);
+
+    function toggleClockSimulation() {
+      seconds += 10;
+      const str = formatTime(seconds);
+      const timerA = document.getElementById('timer-state-a');
+      const timerB = document.getElementById('timer-state-b');
+      if (timerA) timerA.textContent = str;
+      if (timerB) timerB.textContent = str;
+    }
+  </script>
+</body>
+</html>

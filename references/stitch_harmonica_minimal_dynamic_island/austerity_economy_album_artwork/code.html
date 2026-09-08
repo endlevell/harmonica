@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" fill="#13131b"/>
+  <!-- Circular ambient radial grad -->
+  <defs>
+    <radialGradient id="grad1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2c2a38"/>
+      <stop offset="70%" stop-color="#181822"/>
+      <stop offset="100%" stop-color="#121219"/>
+    </radialGradient>
+    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#b49043" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#d4af37" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#b49043" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="100" fill="url(#grad1)"/>
+  <!-- Minimalist abstract geometric sound wave ripples -->
+  <circle cx="100" cy="100" r="75" fill="none" stroke="#252535" stroke-width="1.5" stroke-dasharray="2 4"/>
+  <circle cx="100" cy="100" r="55" fill="none" stroke="#323246" stroke-width="1.5"/>
+  <circle cx="100" cy="100" r="35" fill="none" stroke="#414159" stroke-width="1"/>
+  <!-- Modern stylized sound bars or geometric sine waves -->
+  <path d="M 40 100 Q 55 70, 70 100 T 100 100 T 130 100 T 160 100" fill="none" stroke="url(#waveGrad)" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 45 100 Q 60 120, 75 100 T 105 100 T 135 100 T 155 100" fill="none" stroke="#b49043" stroke-width="1.5" stroke-opacity="0.4" stroke-linecap="round"/>
+  <circle cx="100" cy="100" r="6" fill="#d4af37"/>
+  <circle cx="100" cy="100" r="2.5" fill="#13131b"/>
+</svg>

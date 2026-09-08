@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmonica - Dynamic Status Pill</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,1,0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .font-mono-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-feature-settings: "tnum" 1;
+    }
+    .mat-icon {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 14px;
+      line-height: 1;
+      display: inline-block;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+
+    /* Battery charging slow gentle dual-color pulse animation */
+    @keyframes chargingPulse {
+      0%, 100% {
+        color: #4ade80; /* emerald-400 */
+        opacity: 0.95;
+      }
+      50% {
+        color: #d4af37; /* muted gold accent */
+        opacity: 0.65;
+      }
+    }
+    .battery-charging-pulse {
+      animation: chargingPulse 2.8s ease-in-out infinite;
+    }
+
+    /* Pill transition */
+    .pill-surface {
+      background-color: #1a1a24;
+      height: 38px;
+      transition: background-color 0.18s cubic-bezier(0.4, 0, 0.2, 1), transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .pill-surface:hover {
+      background-color: #232331;
+      transform: scale(1.012);
+    }
+    .pill-surface:active {
+      transform: scale(0.995);
+    }
+
+    /* Dropdown preview tooltip on click */
+    .menu-panel {
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+  </style>
+</head>
+<body class="bg-[#0b0c10] text-[#c4c7d4] min-h-screen flex flex-col justify-between select-none overflow-hidden relative">
+
+  <!-- Atmospheric Dark Linux Desktop Wallpaper (Pure CSS, moody, low contrast geometric grain) -->
+  <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+    <!-- Subtle architectural gradient / deep dark moody tones -->
+    <div class="absolute inset-0 bg-gradient-to-b from-[#111218] via-[#090a0e] to-[#050608]"></div>
+    
+    <!-- Minimal grid rice lines -->
+    <div class="absolute inset-0 opacity-[0.035]" style="background-image: linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px); background-size: 32px 32px;"></div>
+    
+    <!-- Distant faint geometric nebula aura -->
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[520px] h-[280px] bg-[#1d1e30] rounded-full blur-3xl opacity-40"></div>
+  </div>
+
+  <!-- Main Container / Desktop Header Viewport -->
+  <div class="relative z-10 w-full flex flex-col items-center pt-3 px-4">
+    
+    <!-- TOP NOTCH / STATUS BAR AREA -->
+    <div class="w-full flex justify-center items-center relative">
+      
+      <!-- Harmonica Dynamic Status Pill -->
+      <div id="harmonicaPill" class="pill-surface rounded-full flex items-center justify-between px-3 cursor-pointer border-0 shadow-none outline-none select-none w-auto min-w-[210px] max-w-[260px]">
+        
+        <!-- Left Wing: WiFi & Network Activity -->
+        <div class="flex items-center gap-1.5 text-[#d4af37] flex-1 justify-start">
+          <span class="mat-icon text-[#d4af37] text-[14px]">wifi</span>
+          <span class="text-[10px] text-[#787c91] font-mono tracking-tight font-medium hidden group-hover:inline">wlan0</span>
+        </div>
+
+        <!-- Center: Exactly Centered Live Clock "21:37" -->
+        <div class="flex items-center justify-center px-3">
+          <span id="clockDisplay" class="font-mono-num text-[13px] font-semibold text-[#e2e4ed] tracking-wider">21:37</span>
+        </div>
+
+        <!-- Right Wing: Battery Percentage + Dynamic Icon -->
+        <div class="flex items-center gap-1.5 flex-1 justify-end">
+          <span id="batteryPercent" class="font-mono-num text-[11px] font-medium text-[#9da1b6]">82%</span>
+          <!-- Dynamic Battery Icon: >75% Green (#4ade80), pulses when charging -->
+          <span id="batteryIcon" class="mat-icon battery-charging-pulse text-[14px]" title="82% Charging">battery_charging_80</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Quick interactive toggle info tag (subtle Linux bar switcher) -->
+    <div class="mt-4 flex items-center gap-2">
+      <span class="text-[9px] uppercase tracking-widest text-[#52566b] font-mono">Harmonica Shell v0.4.1 · Flat Solid</span>
+    </div>
+
+  </div>
+
+  <!-- Interactive State Playground (Demonstrating the exact prompt constraints & state changes) -->
+  <div class="relative z-10 w-full px-4 pb-6 flex flex-col items-center">
+    
+    <!-- Context Panel showing status states matching user spec -->
+    <div class="w-full max-w-xs bg-[#14141d] rounded-xl p-3 border border-[#232433]/60 flex flex-col gap-2 text-xs">
+      <div class="flex items-center justify-between border-b border-[#232433] pb-1.5">
+        <span class="font-mono text-[10px] text-[#868a9f] uppercase tracking-wider">Interactive Test Bench</span>
+        <span class="inline-flex items-center gap-1 text-[10px] text-[#4ade80]">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#4ade80]"></span> Active
+        </span>
+      </div>
+
+      <!-- State preview buttons -->
+      <div class="grid grid-cols-3 gap-1.5 text-[10px] font-mono">
+        <button onclick="setBatteryState(92, 'charging')" class="px-1.5 py-1 rounded bg-[#1c1d2b] hover:bg-[#25263a] text-[#4ade80] text-center border border-transparent hover:border-[#4ade80]/30 transition-colors">
+          >75% Chg
+        </button>
+        <button onclick="setBatteryState(64, 'discharging')" class="px-1.5 py-1 rounded bg-[#1c1d2b] hover:bg-[#25263a] text-[#fbbf24] text-center border border-transparent hover:border-[#fbbf24]/30 transition-colors">
+          50% Amber
+        </button>
+        <button onclick="setBatteryState(18, 'low')" class="px-1.5 py-1 rounded bg-[#1c1d2b] hover:bg-[#25263a] text-[#f87171] text-center border border-transparent hover:border-[#f87171]/30 transition-colors">
+          &lt;25% Red
+        </button>
+      </div>
+
+      <!-- Specs Checklist -->
+      <div class="text-[10px] text-[#6b6f84] space-y-0.5 pt-1">
+        <div class="flex items-center justify-between">
+          <span>Height / Pill</span>
+          <span class="font-mono text-[#9da1b6]">38px · #1a1a24</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Icon Style</span>
+          <span class="font-mono text-[#d4af37]">14px filled · gold accent</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Hover behavior</span>
+          <span class="font-mono text-[#9da1b6]">#232331 · scale(1.012)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop Rice Hint / Open window mockup silhouette -->
+    <div class="mt-4 w-full max-w-xs h-32 rounded-lg bg-[#12131b]/60 border border-[#1e202c]/50 p-3 flex flex-col justify-between">
+      <div class="flex items-center gap-1.5">
+        <div class="w-2 h-2 rounded-full bg-[#2a2c3d]"></div>
+        <div class="w-2 h-2 rounded-full bg-[#2a2c3d]"></div>
+        <div class="w-2 h-2 rounded-full bg-[#2a2c3d]"></div>
+        <span class="ml-2 font-mono text-[9px] text-[#555970]">neofetch --harmonica</span>
+      </div>
+      <div class="font-mono text-[9px] text-[#4d5167] leading-relaxed">
+        <span class="text-[#d4af37]">OS</span>: Arch Linux x86_64<br>
+        <span class="text-[#d4af37]">Shell</span>: Harmonica Statusbar v0.4<br>
+        <span class="text-[#d4af37]">Theme</span>: Flat Solid Dark (#1a1a24)
+      </div>
+      <div class="h-1 w-16 bg-[#252738] rounded-full"></div>
+    </div>
+
+  </div>
+
+  <!-- JavaScript for Interactive Controls & Live Time -->
+  <script>
+    function updateClock() {
+      // Keep strictly 21:37 as requested by default, or live if user leaves it running
+      const clock = document.getElementById('clockDisplay');
+      if (!window.customTimeLocked) {
+        clock.textContent = "21:37";
+      }
+    }
+    updateClock();
+
+    function setBatteryState(pct, mode) {
+      const pctEl = document.getElementById('batteryPercent');
+      const iconEl = document.getElementById('batteryIcon');
+      
+      pctEl.textContent = pct + '%';
+      
+      // Reset classes
+      iconEl.className = 'mat-icon text-[14px]';
+      
+      if (mode === 'charging') {
+        iconEl.textContent = 'battery_charging_80';
+        iconEl.classList.add('battery-charging-pulse');
+        pctEl.className = 'font-mono-num text-[11px] font-medium text-[#9da1b6]';
+      } else if (pct > 75) {
+        iconEl.textContent = 'battery_full';
+        iconEl.style.color = '#4ade80'; // green
+        pctEl.className = 'font-mono-num text-[11px] font-medium text-[#9da1b6]';
+      } else if (pct >= 25 && pct <= 75) {
+        iconEl.textContent = 'battery_5_bar';
+        iconEl.style.color = '#fbbf24'; // amber
+        pctEl.className = 'font-mono-num text-[11px] font-medium text-[#9da1b6]';
+      } else {
+        iconEl.textContent = 'battery_alert';
+        iconEl.style.color = '#f87171'; // red
+        pctEl.className = 'font-mono-num text-[11px] font-medium text-[#f87171]';
+      }
+    }
+  </script>
+</body>
+</html>

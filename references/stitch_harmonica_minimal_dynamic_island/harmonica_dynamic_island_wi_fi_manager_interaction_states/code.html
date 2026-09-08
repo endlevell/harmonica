@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmonica Dynamic Island: Wi-Fi Manager Interaction States</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0d0d12;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #e2e2ec;
+      overflow-x: hidden;
+    }
+
+    .font-mono-code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    /* Blueprint dot-matrix wallpaper consistent with Harmonica screens */
+    .bg-dot-matrix {
+      background-color: #0c0c11;
+      background-image: radial-gradient(#1f202c 1.25px, transparent 1.25px);
+      background-size: 28px 28px;
+    }
+
+    /* Custom keyframe animations */
+    @keyframes pulse-cyan {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.85); }
+    }
+    .animate-pulse-cyan {
+      animation: pulse-cyan 2.4s ease-in-out infinite;
+    }
+
+    @keyframes cursor-blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+    .animate-cursor-blink {
+      animation: cursor-blink 1.05s infinite;
+    }
+
+    @keyframes rotate-spinner {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin-fast {
+      animation: rotate-spinner 0.85s linear infinite;
+    }
+  </style>
+</head>
+<body class="bg-dot-matrix min-h-screen text-[#e2e2ec] antialiased selection:bg-[#b49043]/30 selection:text-[#f8d98d]">
+
+  <!-- Top System Header Bar (Harmonica Shell Spec) -->
+  <header class="w-full border-b border-[#181822] bg-[#0c0c11]/90 px-8 py-3.5 flex items-center justify-between font-mono-code text-[11px] text-[#717284] tracking-wider uppercase">
+    <div class="flex items-center gap-6">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center justify-center w-5 h-5 rounded bg-[#1e1e28] text-[#d4af37] font-bold text-[10px]">H</span>
+        <span class="text-[#9ea0b3] font-medium">HARMONICA SHELL V0.4.1</span>
+        <span class="text-[#3b3c4f]">/</span>
+        <span class="text-[#8ec3c9]">NETWORK SUBSYSTEM (IWD / NMCLI-CORE)</span>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-6">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[#b49043]"></span>
+        <span class="text-[#9ea0b3]">SURFACE #1a1a24 FLAT SOLID</span>
+      </div>
+      <span class="text-[#3b3c4f]">•</span>
+      <span class="text-[#717284]">DYNAMIC ISLAND EXPANSION STATES</span>
+      <span class="text-[#3b3c4f]">•</span>
+      <span class="text-[#d4af37] font-semibold">SUPER + W</span>
+    </div>
+  </header>
+
+  <!-- Main Canvas Workspace -->
+  <main class="max-w-7xl mx-auto px-6 py-10 flex flex-col items-center">
+
+    <!-- Morph Anchor Indicator -->
+    <div class="flex flex-col items-center mb-8">
+      <div class="w-12 h-1 rounded-full bg-[#232330] mb-2"></div>
+      <div class="flex items-center gap-2 font-mono-code text-[11px] text-[#55576a] tracking-widest uppercase">
+        <span>SUPER + C</span>
+        <span>•</span>
+        <span>DYNAMIC ISLAND .MORPH.ANCHOR</span>
+        <span>•</span>
+        <span class="text-[#8ec3c9]">WLAN0 ACTIVE</span>
+      </div>
+    </div>
+
+    <!-- Comparative Dual Panel Grid Layout -->
+    <div class="w-full flex flex-col xl:flex-row items-start justify-center gap-12 mb-14">
+
+      <!-- ========================================================================= -->
+      <!-- PANEL A: BROWSE STATE (Idle / Scan / Hover State & Context Menu Annotation) -->
+      <!-- ========================================================================= -->
+      <div class="flex flex-col items-center w-full max-w-[490px]">
+        <!-- Panel Marker Tag -->
+        <div class="w-[460px] flex items-center justify-between mb-3 px-1">
+          <div class="flex items-center gap-2.5">
+            <span class="px-2 py-0.5 rounded bg-[#1e1e28] text-[#d4af37] font-mono-code text-[10px] font-bold tracking-wider">PANEL A</span>
+            <span class="text-[12px] font-medium text-[#9ea0b3] tracking-tight">Browse & Hover State</span>
+          </div>
+          <span class="font-mono-code text-[10px] text-[#55576a] tracking-wider">460 × ~330px</span>
+        </div>
+
+        <!-- Relative Container to hold Card + Context Menu Floating Annotation -->
+        <div class="relative">
+          
+          <!-- Card Container: Flat Solid #1a1a24, 14px Radius, Zero Borders, Zero Shadows -->
+          <section class="w-[460px] bg-[#1a1a24] rounded-[14px] p-5 flex flex-col select-none">
+            
+            <!-- 1. Header Row -->
+            <div class="flex items-center justify-between pb-3.5 border-b border-[#22222d]">
+              <div class="flex items-center gap-3">
+                <!-- Back chevron button affordance -->
+                <button type="button" class="w-7 h-7 rounded-[8px] bg-[#22222d] hover:bg-[#2c2c3a] flex items-center justify-center text-[#9ea0b3] hover:text-[#e2e2ec] transition-colors" title="Back to Control Center (Esc)">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                </button>
+                <div>
+                  <div class="text-[14px] font-semibold text-[#f1f2f6] leading-none mb-1 tracking-tight">Wi-Fi</div>
+                  <div class="font-mono-code text-[11px] text-[#717284] leading-none tracking-tight">HomeNet-5G · 192.168.1.24</div>
+                </div>
+              </div>
+
+              <!-- Power Toggle: 34x18px, Solid Gold fill when ON (#b49043) with Dark Knob -->
+              <div class="flex items-center gap-2.5">
+                <span class="font-mono-code text-[10px] text-[#55576a] tracking-wider">RADIO</span>
+                <div class="w-[34px] h-[18px] rounded-full bg-[#b49043] p-[2px] flex items-center justify-end cursor-pointer" title="Hardware Radio: ON (rfkill unblock wifi)">
+                  <div class="w-[14px] h-[14px] rounded-full bg-[#1a1a24]"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Scan Status Row -->
+            <div class="flex items-center justify-between py-2.5 px-0.5">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#8ec3c9] animate-pulse-cyan"></span>
+                <span class="font-mono-code text-[11px] text-[#717284] tracking-tight">Scanning… <span class="text-[#55576a]">(last: 12s ago)</span></span>
+              </div>
+              <span class="font-mono-code text-[10px] text-[#55576a] tracking-wider">3 NETWORKS IN RANGE</span>
+            </div>
+
+            <!-- 3. Network List -->
+            <div class="flex flex-col gap-2 mt-1">
+
+              <!-- ROW 1: CONNECTED "HomeNet-5G" (Selected + Hover State Documented) -->
+              <div class="relative h-[52px] rounded-[10px] bg-[#282834] pl-3.5 pr-3 flex items-center justify-between overflow-hidden group cursor-pointer">
+                <!-- 3px Solid Gold Accent Bar Left Edge -->
+                <div class="absolute left-0 top-0 bottom-0 w-[3px] bg-[#b49043]"></div>
+
+                <!-- Left: Signal Icon + Names -->
+                <div class="flex items-center gap-3">
+                  <!-- 3-arc Wi-Fi Signal SVG (Cyan Tint #8ec3c9) -->
+                  <div class="w-5 h-5 flex items-center justify-center text-[#8ec3c9]" title="Signal: -48 dBm (Excellent)">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                      <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                      <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                      <line x1="12" y1="20" x2="12.01" y2="20" stroke-width="3"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-1.5 leading-none mb-1">
+                      <span class="text-[13px] font-semibold text-[#f1f2f6] tracking-tight">HomeNet-5G</span>
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#34d399]" title="Live default route"></span>
+                    </div>
+                    <div class="font-mono-code text-[10px] text-[#717284] leading-none">Connected · 5GHz · WPA3</div>
+                  </div>
+                </div>
+
+                <!-- Right: Hover state affordance (Info icon + Muted Disconnect text-button) -->
+                <div class="flex items-center gap-2">
+                  <!-- ⓘ Info Icon -->
+                  <button type="button" class="w-6 h-6 rounded flex items-center justify-center text-[#9ea0b3] hover:text-[#f1f2f6] hover:bg-[#343444] transition-colors" title="Interface Telemetry">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                  </button>
+                  <!-- Disconnect Text Button (revealed on hover) -->
+                  <button type="button" class="px-2 py-1 rounded bg-[#21212b] hover:bg-[#303040] text-[10px] font-mono-code font-medium text-[#9ea0b3] hover:text-[#e2e2ec] transition-colors" title="nmcli device disconnect wlan0">
+                    Disconnect
+                  </button>
+                  <!-- Lock glyph secured -->
+                  <svg class="w-3.5 h-3.5 text-[#717284]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" title="WPA3 Enterprise">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- ROW 2: "Cafe Koma" (Secured Available Network - Default State) -->
+              <div class="h-[52px] rounded-[10px] bg-[#22222d] hover:bg-[#272735] pl-3.5 pr-3 flex items-center justify-between cursor-pointer transition-colors">
+                <div class="flex items-center gap-3">
+                  <!-- 2-arc Wi-Fi Signal SVG (Medium cyan #8ec3c9) -->
+                  <div class="w-5 h-5 flex items-center justify-center text-[#8ec3c9]" title="Signal: -65 dBm">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                      <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                      <line x1="12" y1="20" x2="12.01" y2="20" stroke-width="3"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="text-[13px] font-normal text-[#d6d7e2] leading-none mb-1 tracking-tight">Cafe Koma</div>
+                    <div class="font-mono-code text-[10px] text-[#717284] leading-none">WPA2 Personal</div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <svg class="w-3.5 h-3.5 text-[#717284]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" title="Password Required">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- ROW 3: "TP-Link_8842" (Dimmed Row - Weaker Signal) -->
+              <div class="h-[52px] rounded-[10px] bg-[#1e1e28] hover:bg-[#232330] pl-3.5 pr-3 flex items-center justify-between opacity-65 hover:opacity-90 cursor-pointer transition-all">
+                <div class="flex items-center gap-3">
+                  <!-- 1-arc Wi-Fi Signal SVG (Faint signal) -->
+                  <div class="w-5 h-5 flex items-center justify-center text-[#8ec3c9]/70" title="Signal: -79 dBm (Weak)">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                      <line x1="12" y1="20" x2="12.01" y2="20" stroke-width="3"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="text-[13px] font-normal text-[#b4b5c4] leading-none mb-1 tracking-tight">TP-Link_8842</div>
+                    <div class="font-mono-code text-[10px] text-[#616274] leading-none">WPA2</div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <svg class="w-3.5 h-3.5 text-[#55576a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- 4. Footer -->
+            <div class="flex items-center justify-between mt-4 pt-2.5 border-t border-[#22222d]">
+              <button type="button" class="text-[11px] font-mono-code text-[#717284] hover:text-[#d4af37] transition-colors">
+                + Join hidden network…
+              </button>
+              <span class="font-mono-code text-[10px] text-[#55576a]">wlan0 · 802.11ax</span>
+            </div>
+
+          </section>
+
+          <!-- ANNOTATION: Inline Context Menu Popup for Right-Click / Long-Press -->
+          <div class="absolute -right-48 top-28 z-20 w-44 bg-[#22222c] rounded-[10px] p-1.5 flex flex-col shadow-2xl border-none">
+            <!-- Tiny badge header -->
+            <div class="px-2 py-1 flex items-center justify-between border-b border-[#2c2c38] mb-1">
+              <span class="font-mono-code text-[9px] text-[#b49043] font-semibold uppercase tracking-wider">RIGHT-CLICK MENU</span>
+              <span class="font-mono-code text-[9px] text-[#55576a]">R-MB</span>
+            </div>
+            
+            <!-- Context Menu Item 1: Copy password -->
+            <button type="button" class="w-full px-2.5 py-1.5 rounded-[6px] hover:bg-[#2b2b38] flex items-center justify-between text-left text-[11px] text-[#b8b9c9] transition-colors">
+              <span>Copy password</span>
+              <svg class="w-3 h-3 text-[#717284]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+            </button>
+            
+            <!-- Context Menu Item 2: Forget network (Muted Red) -->
+            <button type="button" class="w-full px-2.5 py-1.5 rounded-[6px] hover:bg-[#342327] flex items-center justify-between text-left text-[11px] text-[#e06c75] transition-colors">
+              <span>Forget network</span>
+              <svg class="w-3 h-3 text-[#e06c75]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+              </svg>
+            </button>
+
+            <!-- Pointer Line linking menu to HomeNet-5G row -->
+            <div class="absolute -left-7 top-6 w-7 border-t border-dashed border-[#b49043]/60"></div>
+          </div>
+
+        </div>
+
+        <!-- Annotation explanation text below Panel A -->
+        <div class="w-[460px] mt-4 px-2 flex items-start gap-2 font-mono-code text-[10px] text-[#717284] leading-relaxed">
+          <span class="text-[#b49043] font-bold">01 //</span>
+          <span>Hovering on connected row exposes <span class="text-[#f1f2f6]">"ⓘ"</span> and <span class="text-[#f1f2f6]">"Disconnect"</span>. Long-press / right-click triggers the compact solid context menu. After <span class="text-[#e06c75]">"Forget"</span>, the gold bar demounts and drops into available scan list (220ms spring).</span>
+        </div>
+      </div>
+
+
+      <!-- ========================================================================= -->
+      <!-- PANEL B: CONNECTION FLOW (Inline Row Expansion & Mid-Connection Spin State) -->
+      <!-- ========================================================================= -->
+      <div class="flex flex-col items-center w-full max-w-[490px]">
+        <!-- Panel Marker Tag -->
+        <div class="w-[460px] flex items-center justify-between mb-3 px-1">
+          <div class="flex items-center gap-2.5">
+            <span class="px-2 py-0.5 rounded bg-[#1e1e28] text-[#d4af37] font-mono-code text-[10px] font-bold tracking-wider">PANEL B</span>
+            <span class="text-[12px] font-medium text-[#f1f2f6] tracking-tight">Active Connection Flow</span>
+          </div>
+          <span class="font-mono-code text-[10px] text-[#b49043] tracking-wider">460 × ~420px (EXPANDED)</span>
+        </div>
+
+        <!-- Card Container: Same Flat Solid #1a1a24, Taller (~420px) due to In-place Expand -->
+        <section class="w-[460px] bg-[#1a1a24] rounded-[14px] p-5 flex flex-col select-none">
+          
+          <!-- 1. Header Row (Same as Panel A) -->
+          <div class="flex items-center justify-between pb-3.5 border-b border-[#22222d]">
+            <div class="flex items-center gap-3">
+              <button type="button" class="w-7 h-7 rounded-[8px] bg-[#22222d] flex items-center justify-center text-[#9ea0b3]">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+              <div>
+                <div class="text-[14px] font-semibold text-[#f1f2f6] leading-none mb-1 tracking-tight">Wi-Fi</div>
+                <div class="font-mono-code text-[11px] text-[#717284] leading-none tracking-tight">HomeNet-5G · 192.168.1.24</div>
+              </div>
+            </div>
+
+            <!-- Power Toggle -->
+            <div class="flex items-center gap-2.5">
+              <span class="font-mono-code text-[10px] text-[#55576a] tracking-wider">RADIO</span>
+              <div class="w-[34px] h-[18px] rounded-full bg-[#b49043] p-[2px] flex items-center justify-end">
+                <div class="w-[14px] h-[14px] rounded-full bg-[#1a1a24]"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Scan Status Row -->
+          <div class="flex items-center justify-between py-2.5 px-0.5">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-[#8ec3c9] animate-pulse-cyan"></span>
+              <span class="font-mono-code text-[11px] text-[#717284] tracking-tight">Scanning… <span class="text-[#55576a]">(last: 12s ago)</span></span>
+            </div>
+            <span class="font-mono-code text-[10px] text-[#55576a] tracking-wider">3 NETWORKS IN RANGE</span>
+          </div>
+
+          <!-- 3. Network List with INLINE EXPANSION & CONNECTING SPINNER -->
+          <div class="flex flex-col gap-2 mt-1">
+
+            <!-- ROW 1: Connected "HomeNet-5G" (Contracted idle view while another row connects) -->
+            <div class="h-[52px] rounded-[10px] bg-[#22222d] pl-3.5 pr-3 flex items-center justify-between relative overflow-hidden">
+              <!-- 3px Solid Gold Accent Bar Left Edge -->
+              <div class="absolute left-0 top-0 bottom-0 w-[3px] bg-[#b49043]"></div>
+
+              <div class="flex items-center gap-3">
+                <div class="w-5 h-5 flex items-center justify-center text-[#8ec3c9]">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                    <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                    <line x1="12" y1="20" x2="12.01" y2="20" stroke-width="3"></line>
+                  </svg>
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5 leading-none mb-1">
+                    <span class="text-[13px] font-semibold text-[#f1f2f6] tracking-tight">HomeNet-5G</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#34d399]"></span>
+                  </div>
+                  <div class="font-mono-code text-[10px] text-[#717284] leading-none">Connected · 5GHz · WPA3</div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="font-mono-code text-[10px] text-[#34d399] bg-[#1d2d27] px-2 py-0.5 rounded">Active</span>
+                <svg class="w-3.5 h-3.5 text-[#717284]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+            </div>
+
+            <!-- ROW 2: "Cafe Koma" EXPANDED IN PLACE (~130px tall, zero popups/modals) -->
+            <div class="rounded-[10px] bg-[#22222d] p-3 flex flex-col transition-all duration-300">
+              
+              <!-- Top of expanded row: Network Title + Lock -->
+              <div class="flex items-center justify-between mb-2.5">
+                <div class="flex items-center gap-3">
+                  <!-- Medium signal icon in cyan -->
+                  <div class="w-5 h-5 flex items-center justify-center text-[#8ec3c9]">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                      <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                      <line x1="12" y1="20" x2="12.01" y2="20" stroke-width="3"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="text-[13px] font-semibold text-[#f1f2f6] leading-none mb-1 tracking-tight">Cafe Koma</div>
+                    <div class="font-mono-code text-[10px] text-[#717284] leading-none">WPA2 Personal · Enter PSK</div>
+                  </div>
+                </div>
+
+                <svg class="w-3.5 h-3.5 text-[#b49043]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" title="Secured Auth Needed">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+
+              <!-- Inset Password Field: Darker inset #1d1d26, rounded 8px, Monospace Dots with Gold Cursor -->
+              <div class="w-full bg-[#1d1d26] rounded-[8px] px-3 py-2 flex items-center justify-between border-none">
+                <div class="flex items-center gap-0.5">
+                  <span class="font-mono-code text-[14px] text-[#f1f2f6] tracking-widest select-none">••••••••</span>
+                  <!-- Thin gold blinking cursor -->
+                  <span class="w-[2px] h-[15px] bg-[#b49043] animate-cursor-blink inline-block ml-0.5"></span>
+                </div>
+                <!-- Eye icon for password visibility toggle -->
+                <button type="button" class="text-[#717284] hover:text-[#e2e2ec] transition-colors" title="Show password">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Error State Line: Tiny Red Text (#e06c75) directly under the field -->
+              <div class="flex items-center gap-1.5 mt-1.5 pl-0.5">
+                <svg class="w-3 h-3 text-[#e06c75] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span class="font-mono-code text-[10px] text-[#e06c75] tracking-tight">Wrong password, try again</span>
+              </div>
+
+              <!-- Inline Action Text Buttons: "Cancel" (Muted) and "Connect" (Gold Semibold) -->
+              <div class="flex items-center justify-end gap-3 mt-2.5 pt-1">
+                <button type="button" class="text-[11px] font-mono-code text-[#717284] hover:text-[#9ea0b3] transition-colors">
+                  Cancel
+                </button>
+                <button type="button" class="text-[11px] font-mono-code font-semibold text-[#b49043] hover:text-[#d4af37] transition-colors">
+                  Connect
+                </button>
+              </div>
+
+            </div>
+
+            <!-- ROW 3: "TP-Link_8842" CONNECTING STATE (Contracted row, gold "Connecting…", 14px gold arc spinner) -->
+            <div class="h-[52px] rounded-[10px] bg-[#22222d] pl-3.5 pr-3 flex items-center justify-between cursor-pointer">
+              <div class="flex items-center gap-3">
+                <div class="w-5 h-5 flex items-center justify-center text-[#8ec3c9]">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                    <line x1="12" y1="20" x2="12.01" y2="20" stroke-width="3"></line>
+                  </svg>
+                </div>
+                <div>
+                  <div class="text-[13px] font-medium text-[#d6d7e2] leading-none mb-1 tracking-tight">TP-Link_8842</div>
+                  <div class="font-mono-code text-[10px] text-[#b49043] leading-none flex items-center gap-1">
+                    <span>Connecting…</span>
+                    <span class="text-[#717284] text-[9px]">(handshake)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 14px Inline Arc Spinner in Gold replacing the lock glyph -->
+              <div class="flex items-center gap-2">
+                <div class="w-[14px] h-[14px] rounded-full border-2 border-[#363646] border-t-[#b49043] animate-spin-fast" title="WPA 4-way handshake in-flight"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 4. Footer -->
+          <div class="flex items-center justify-between mt-4 pt-2.5 border-t border-[#22222d]">
+            <button type="button" class="text-[11px] font-mono-code text-[#717284] hover:text-[#d4af37] transition-colors">
+              + Join hidden network…
+            </button>
+            <span class="font-mono-code text-[10px] text-[#55576a]">wlan0 · 802.11ax</span>
+          </div>
+
+        </section>
+
+        <!-- Annotation explanation text below Panel B -->
+        <div class="w-[460px] mt-4 px-2 flex items-start gap-2 font-mono-code text-[10px] text-[#717284] leading-relaxed">
+          <span class="text-[#b49043] font-bold">02 //</span>
+          <span>Row 2 expands in-place with zero modal dialogs. Password dots rendered in monospace with gold active cursor. Error displayed inline in red (<span class="text-[#e06c75]">#e06c75</span>). Row 3 proves list remains responsive and non-blocking during background authentication.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Technical Specification Sub-Panel / Engineering Bench -->
+    <div class="w-full max-w-4xl bg-[#14141d] rounded-[14px] p-6 border-none text-[#9ea0b3] font-mono-code select-none mb-10">
+      
+      <div class="flex items-center justify-between border-b border-[#21212e] pb-3 mb-4 text-[11px] uppercase tracking-wider">
+        <div class="flex items-center gap-2 text-[#e2e2ec] font-semibold">
+          <span class="w-2 h-2 rounded-full bg-[#8ec3c9]"></span>
+          <span>HARMONICA WI-FI INTERACTION SPECS</span>
+        </div>
+        <span class="text-[#616274]">CARD: 460px · SOLID #1a1a24 · RADIUS: 14px</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-[11px] leading-relaxed">
+        <!-- Spec 01 -->
+        <div class="flex flex-col gap-1.5">
+          <div class="text-[#b49043] font-bold uppercase tracking-wider text-[10px]">01 // ZERO-MODAL INLINE EXPANSION</div>
+          <p class="text-[#848598]">
+            Secured Wi-Fi rows expand from <strong class="text-[#e2e2ec]">52px to ~130px</strong> via spring physics (<span class="text-[#b49043]">stiffness 380, damping 28</span>). Password input sits in inset <span class="text-[#e2e2ec]">#1d1d26</span>. Zero floating popups or modal blockers.
+          </p>
+        </div>
+
+        <!-- Spec 02 -->
+        <div class="flex flex-col gap-1.5">
+          <div class="text-[#b49043] font-bold uppercase tracking-wider text-[10px]">02 // ACCENT & ERROR RESERVATIONS</div>
+          <p class="text-[#848598]">
+            <strong class="text-[#b49043]">Gold (#b49043)</strong> is reserved for radio toggle, active 3px edge bar, cursor, and primary <span class="text-[#b49043]">"Connect"</span> CTA. <strong class="text-[#e06c75]">Red (#e06c75)</strong> solely flags auth errors and <span class="text-[#e06c75]">"Forget network"</span>.
+          </p>
+        </div>
+
+        <!-- Spec 03 -->
+        <div class="flex flex-col gap-1.5">
+          <div class="text-[#b49043] font-bold uppercase tracking-wider text-[10px]">03 // ASYNC HANDSHAKE ARCHITECTURE</div>
+          <p class="text-[#848598]">
+            Non-blocking D-Bus <span class="text-[#8ec3c9]">iwd / NetworkManager</span> pipeline allows browsing and hover interactions on existing connections while Row 3 runs in-flight WPA 4-way handshakes via the 14px gold arc spinner.
+          </p>
+        </div>
+      </div>
+
+      <!-- Compositor Keyboard Shortcut Map -->
+      <div class="mt-5 pt-3 border-t border-[#1f202b] flex items-center justify-between text-[10px] text-[#616274]">
+        <div>
+          <span>Esc // Back</span>
+          <span class="mx-2">•</span>
+          <span>Tab // Next Field</span>
+          <span class="mx-2">•</span>
+          <span>Enter // Submit Connect</span>
+          <span class="mx-2">•</span>
+          <span>Space // Disconnect</span>
+        </div>
+        <div>
+          <span>Wayland wlr-layer-shell: TOP (anchor center)</span>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Bottom Shell Info Footer -->
+  <footer class="w-full border-t border-[#181822] bg-[#0c0c11]/80 px-8 py-3 flex items-center justify-between font-mono-code text-[10px] text-[#55576a]">
+    <div class="flex items-center gap-4">
+      <span>Harmonica Shell Project</span>
+      <span>•</span>
+      <span>Flat Solid UI Subsystem</span>
+      <span>•</span>
+      <span>IWD 2.14 Backend</span>
+    </div>
+    <div>
+      <span>Dynamic Island Physics: Spring 380ms (stiffness 320, damping 28)</span>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmonica Ambient Lock Screen</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow: hidden;
+      user-select: none;
+      background-color: #0b0d13;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Misty dark forest atmospheric wallpaper canvas */
+    .forest-bg {
+      background-color: #0b1015;
+      background-image:
+        radial-gradient(ellipse at 50% 15%, rgba(45, 68, 82, 0.45) 0%, rgba(16, 27, 34, 0.6) 45%, transparent 80%),
+        radial-gradient(circle at 80% 30%, rgba(30, 48, 54, 0.35) 0%, transparent 50%),
+        radial-gradient(circle at 20% 40%, rgba(26, 42, 48, 0.3) 0%, transparent 45%),
+        linear-gradient(180deg, rgba(8, 14, 18, 0.35) 0%, rgba(6, 9, 12, 0.75) 100%);
+      background-size: cover;
+      background-position: center;
+    }
+  </style>
+</head>
+<body class="relative w-screen h-screen forest-bg text-[#e2e4ec] flex flex-col justify-between p-8 sm:p-12 box-border">
+
+  <!-- Misty Dark Forest Organic Layered Graphic (Vector SVG background overlay representing silhouettes of pine trees & gentle fog) -->
+  <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
+    <svg class="w-full h-full object-cover opacity-60" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <!-- Distant misty tree silhouettes and atmosphere -->
+      <defs>
+        <linearGradient id="fogGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1e2e38" stop-opacity="0.3" />
+          <stop offset="60%" stop-color="#0e171e" stop-opacity="0.75" />
+          <stop offset="100%" stop-color="#06090c" stop-opacity="0.95" />
+        </linearGradient>
+        <linearGradient id="mistBand" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#40596b" stop-opacity="0" />
+          <stop offset="40%" stop-color="#557588" stop-opacity="0.18" />
+          <stop offset="60%" stop-color="#3d5867" stop-opacity="0.14" />
+          <stop offset="100%" stop-color="#40596b" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+
+      <!-- Soft mountain / ridge backdrop -->
+      <path d="M0 640 Q420 520 960 580 T1920 530 L1920 1080 L0 1080 Z" fill="#0d1820" opacity="0.65"/>
+      
+      <!-- Mist layer 1 -->
+      <ellipse cx="980" cy="590" rx="900" ry="160" fill="url(#mistBand)" />
+      
+      <!-- Midground forest ridge with dense pine silhouettes -->
+      <path d="M0 720 
+               L60 690 L80 725 L140 680 L165 720 L210 670 L235 715 L280 685 L320 730 
+               L390 660 L425 725 L490 675 L530 735 L610 650 L645 720 L720 670 L760 725 
+               L840 640 L880 710 L940 665 L980 720 L1050 635 L1090 705 L1160 655 L1200 715
+               L1270 645 L1310 720 L1380 670 L1430 725 L1510 640 L1550 715 L1630 665 L1680 725
+               L1750 650 L1790 710 L1860 660 L1920 690 L1920 1080 L0 1080 Z" 
+            fill="#091117" opacity="0.82" />
+
+      <!-- Foreground dark tree silhouetted edge -->
+      <path d="M0 810 
+               L70 760 L110 820 L180 745 L220 815 L300 730 L340 820 L440 735 L480 810 
+               L560 725 L610 820 L700 740 L750 825 L860 710 L910 815 L1020 720 L1070 815
+               L1180 715 L1230 820 L1340 730 L1390 815 L1490 720 L1540 810 L1640 735 L1690 820
+               L1780 740 L1830 815 L1920 755 L1920 1080 L0 1080 Z" 
+            fill="#05080c" opacity="0.95" />
+    </svg>
+  </div>
+
+  <!-- Dimming vertical gradient: 35% top -> 70% bottom over the wallpaper -->
+  <div class="absolute inset-0 pointer-events-none z-[1] bg-gradient-to-b from-black/35 via-black/50 to-black/70"></div>
+
+  <!-- Ambient subtle telemetry watermarks (very quiet, Linux desktop shell context) -->
+  <div class="absolute top-6 left-8 z-[2] flex items-center space-x-2 text-[11px] font-mono-code text-[#555a6d] tracking-wider uppercase opacity-60">
+    <span class="inline-block w-1.5 h-1.5 rounded-full bg-[#555a6d]/60"></span>
+    <span>harmonica // ambient</span>
+  </div>
+
+  <!-- TOP-RIGHT STATUS CLUSTER -->
+  <header class="relative z-10 flex justify-end items-start w-full">
+    <div class="flex items-center space-x-1.5 text-xs text-[#7e8499] font-mono-code font-normal tracking-wide">
+      <span class="text-[#8e95ac]">87%</span>
+      <span class="text-[#b49043] text-[13px] leading-none select-none">⚡</span>
+    </div>
+  </header>
+
+  <!-- CENTER UPPER-THIRD: GIANT CLOCK & DATE -->
+  <main class="relative z-10 w-full flex flex-col items-center justify-center -mt-10 sm:-mt-16">
+    <!-- Giant Clock: 96px, bold, tight negative letter-spacing, light gray -->
+    <div class="text-[96px] sm:text-[104px] font-bold tracking-[-0.05em] leading-none text-[#d6d9e4] select-none font-sans drop-shadow-sm">
+      21:37
+    </div>
+    <!-- Date: small muted gray, generous letter-spacing -->
+    <div class="mt-4 text-xs sm:text-sm font-medium tracking-[0.22em] uppercase text-[#73798f] select-none">
+      Sunday, September 7
+    </div>
+  </main>
+
+  <!-- BOTTOM-CENTER: MEDIA CARD (floating bottom-center, compact 300x76px, solid #22222c, NO border, NO shadow, NO blur) -->
+  <footer class="relative z-10 w-full flex flex-col items-center justify-end pb-2 sm:pb-4">
+    <div class="w-[300px] h-[76px] bg-[#22222c] rounded-[14px] p-3 flex items-center justify-between box-border">
+      
+      <!-- Left: 52px rounded album art + metadata -->
+      <div class="flex items-center space-x-3 min-w-0 pr-2">
+        <!-- 52px Album Art disc / abstract square (solid dark surface with subtle abstract geometric sound groove) -->
+        <div class="w-[52px] h-[52px] rounded-[10px] bg-[#17171e] shrink-0 overflow-hidden relative flex items-center justify-center">
+          <!-- Abstract album visual: dark mood abstract texture with subtle gold tone accent -->
+          <svg class="w-full h-full" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="52" height="52" fill="#15151c"/>
+            <circle cx="26" cy="26" r="21" stroke="#2a2a38" stroke-width="1.5" stroke-dasharray="2 3"/>
+            <circle cx="26" cy="26" r="14" stroke="#373748" stroke-width="1.2"/>
+            <circle cx="26" cy="26" r="7" stroke="#b49043" stroke-width="1.2" opacity="0.65"/>
+            <path d="M12 38L24 16L32 30L40 22" stroke="#484b60" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="26" cy="26" r="2.5" fill="#d6d9e4"/>
+          </svg>
+        </div>
+
+        <!-- Track Text & Progress Bar -->
+        <div class="flex flex-col justify-center min-w-0">
+          <div class="text-[13px] font-semibold text-[#d6d9e4] truncate tracking-tight leading-tight">
+            Austerity Economy
+          </div>
+          <div class="text-[11px] text-[#787e94] truncate tracking-normal mt-0.5 leading-tight">
+            K Civil
+          </div>
+          
+          <!-- Slim 2.5px progress bar: gold hairline ONLY (#b49043) -->
+          <div class="w-[104px] h-[2.5px] bg-[#2d2d3b] rounded-full mt-2 overflow-hidden">
+            <div class="h-full bg-[#b49043] rounded-full" style="width: 58%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Playback controls in muted gray -->
+      <div class="flex items-center space-x-2 shrink-0 text-[#71778c] pl-1">
+        <!-- Prev Button -->
+        <button class="p-1 hover:text-[#a5abbf] transition-colors focus:outline-none" title="Previous">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M3 2.5a.75.75 0 0 1 .75.75v3.69L11.4 2.87A.75.75 0 0 1 12.5 3.5v9a.75.75 0 0 1-1.1.63L3.75 9.06V12.75a.75.75 0 0 1-1.5 0v-9.5A.75.75 0 0 1 3 2.5z"/>
+          </svg>
+        </button>
+
+        <!-- Pause Button -->
+        <button class="p-1 hover:text-[#d6d9e4] transition-colors focus:outline-none" title="Pause">
+          <svg class="w-4 h-4 text-[#8f96ad]" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M4.5 3a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-3 0v-7A1.5 1.5 0 0 1 4.5 3zm7 0a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-3 0v-7A1.5 1.5 0 0 1 11.5 3z"/>
+          </svg>
+        </button>
+
+        <!-- Next Button -->
+        <button class="p-1 hover:text-[#a5abbf] transition-colors focus:outline-none" title="Next">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M13 2.5a.75.75 0 0 1 .75.75v9.5a.75.75 0 0 1-1.5 0V9.06L4.6 13.13A.75.75 0 0 1 3.5 12.5v-9a.75.75 0 0 1 1.1-.63L12.25 6.94V3.25A.75.75 0 0 1 13 2.5z"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </footer>
+
+</body>
+</html>

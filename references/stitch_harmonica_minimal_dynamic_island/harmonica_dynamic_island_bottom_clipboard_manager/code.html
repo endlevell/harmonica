@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmonica Dynamic Island: Clipboard Manager (Bottom Anchor)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          colors: {
+            harmonica: {
+              canvas: '#0d0e15',
+              surface: '#1a1a24',
+              surfaceElevated: '#22222c',
+              surfaceLighter: '#2b2b38',
+              accent: '#b49043',
+              accentLight: '#d4af37',
+              muted: '#767991',
+              mutedDark: '#4a4d63',
+              textPrimary: '#f0f1f5',
+              textSecondary: '#a5a8bc',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Strict Harmonica design rule: zero borders, zero box-shadows, zero alpha transparency gradients */
+    * {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+    }
+    
+    .cursor-blink {
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Subtle dot grid wallpaper texture using svg pattern fill without transparency */
+    .bg-dot-matrix {
+      background-color: #0d0e15;
+      background-image: radial-gradient(#252636 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+  </style>
+</head>
+<body class="h-full w-full bg-dot-matrix font-sans text-harmonica-textPrimary select-none overflow-hidden relative flex flex-col justify-between p-8">
+
+  <!-- TOP COMPOSITOR STATUS & ANCHOR HEADER BENCH -->
+  <header class="w-full flex items-center justify-between text-[11px] font-mono tracking-wider text-harmonica-muted">
+    <div class="flex items-center space-x-3">
+      <span class="inline-flex items-center justify-center w-5 h-5 rounded-[4px] bg-harmonica-surface text-harmonica-accent font-bold text-[10px]">H</span>
+      <span class="tracking-widest">HARMONICA SHELL V0.4.1</span>
+      <span class="text-harmonica-mutedDark">/</span>
+      <span class="text-harmonica-textSecondary">CLIPBOARD SUBSYSTEM (WAYLAND CLIPMAN)</span>
+    </div>
+    <div class="flex items-center space-x-6 text-[11px]">
+      <div class="flex items-center space-x-2">
+        <span class="w-2 h-2 rounded-full bg-harmonica-accent"></span>
+        <span class="text-harmonica-textSecondary">SURFACE #1a1a24 FLAT SOLID</span>
+      </div>
+      <span class="text-harmonica-mutedDark">•</span>
+      <span>INVERTED ISLAND DECK</span>
+      <span class="text-harmonica-mutedDark">•</span>
+      <span>SUPER + V</span>
+    </div>
+  </header>
+
+  <!-- CENTER DESKTOP WORKSPACE WATERMARK / SYSTEM TELEMETRY -->
+  <main class="flex-1 flex flex-col items-center justify-center pointer-events-none opacity-40 -mt-10">
+    <div class="text-center space-y-2">
+      <div class="text-[12px] font-mono tracking-[0.25em] text-harmonica-muted uppercase">Harmonica Dynamic Shell • Inverted Island Mode</div>
+      <div class="text-[13px] font-mono text-harmonica-mutedDark">Screen 01 • DP-1 Primary 3840×2160 @ 144Hz</div>
+    </div>
+  </main>
+
+  <!-- BOTTOM CENTER DYNAMIC ISLAND ANCHOR & CLIPBOARD CARD -->
+  <div class="w-full flex flex-col items-center justify-end pb-2">
+    
+    <!-- SUBTLE DOCK MORPH ANCHOR BAR -->
+    <div class="mb-3 flex items-center space-x-2 text-[10px] font-mono uppercase tracking-[0.2em] text-harmonica-mutedDark">
+      <span>SUPER + V</span>
+      <span>•</span>
+      <span>BOTTOM MORPH ANCHOR</span>
+      <div class="w-8 h-1 bg-harmonica-surfaceElevated rounded-full"></div>
+    </div>
+
+    <!-- MAIN INVERTED ISLAND CARD (520px wide, ~420px tall, solid #1a1a24, rounded 16px, zero borders/shadows) -->
+    <div class="w-[520px] h-[438px] bg-harmonica-surface rounded-[16px] flex flex-col p-4 space-y-3 relative overflow-hidden">
+      
+      <!-- 1. SEARCH ROW (TOP) -->
+      <div class="w-full flex items-center justify-between h-[34px] px-2 bg-harmonica-surfaceElevated rounded-[10px]">
+        <div class="flex items-center space-x-2 flex-1">
+          <span class="material-symbols-outlined text-harmonica-muted text-[17px]">search</span>
+          <div class="flex items-center text-[13px] font-mono">
+            <span class="text-harmonica-textPrimary font-medium">ssh</span>
+            <!-- Blinking gold cursor -->
+            <span class="w-[2px] h-[15px] bg-harmonica-accent ml-[1px] cursor-blink inline-block"></span>
+          </div>
+        </div>
+        <!-- Right side: small pin icon hinting pins exist -->
+        <div class="flex items-center space-x-2">
+          <span class="text-[10px] font-mono text-harmonica-muted uppercase tracking-wider">3 pins</span>
+          <button class="w-6 h-6 rounded-[6px] bg-harmonica-surface flex items-center justify-center text-harmonica-muted hover:text-harmonica-textPrimary transition-colors" title="Pin history filter">
+            <span class="material-symbols-outlined text-[14px]">push_pin</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. FILTER CHIP ROW (4 small pill-shaped chips: 24px tall, rounded full) -->
+      <div class="w-full flex items-center space-x-2">
+        <!-- Chip 1: ALL (inactive) -->
+        <button class="h-[24px] px-3 rounded-full bg-harmonica-surfaceElevated text-harmonica-muted hover:text-harmonica-textPrimary text-[11px] font-medium transition-colors flex items-center">
+          All
+        </button>
+
+        <!-- Chip 2: Text (inactive) -->
+        <button class="h-[24px] px-3 rounded-full bg-harmonica-surfaceElevated text-harmonica-muted hover:text-harmonica-textPrimary text-[11px] font-medium transition-colors flex items-center">
+          Text
+        </button>
+
+        <!-- Chip 3: Images (inactive) -->
+        <button class="h-[24px] px-3 rounded-full bg-harmonica-surfaceElevated text-harmonica-muted hover:text-harmonica-textPrimary text-[11px] font-medium transition-colors flex items-center">
+          Images
+        </button>
+
+        <!-- Chip 4: Code (ACTIVE - filled muted gold with dark text) -->
+        <button class="h-[24px] px-3 rounded-full bg-harmonica-accent text-[#14141d] text-[11px] font-semibold flex items-center space-x-1">
+          <span>Code</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-[#14141d] ml-0.5"></span>
+        </button>
+      </div>
+
+      <!-- 3. PINNED STRIP (Visually separated by hairline of 2px #22222c strip) -->
+      <div class="w-full pt-1">
+        <div class="flex items-center space-x-2 mb-2">
+          <span class="text-[9px] font-mono font-bold tracking-[0.2em] text-harmonica-muted uppercase">PINNED</span>
+          <div class="flex-1 h-[2px] bg-harmonica-surfaceElevated rounded-full"></div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <!-- Pinned 1: Color token -->
+          <div class="h-[36px] bg-harmonica-surfaceElevated rounded-[8px] px-2.5 flex items-center justify-between relative group hover:bg-harmonica-surfaceLighter transition-colors cursor-pointer">
+            <div class="flex items-center space-x-2 overflow-hidden">
+              <span class="w-3.5 h-3.5 rounded-[4px] bg-harmonica-accent flex-shrink-0"></span>
+              <span class="font-mono text-[11px] text-harmonica-textPrimary truncate">#b49043</span>
+            </div>
+            <span class="material-symbols-outlined text-harmonica-accent text-[12px] flex-shrink-0">push_pin</span>
+          </div>
+
+          <!-- Pinned 2: GPG Key snippet -->
+          <div class="h-[36px] bg-harmonica-surfaceElevated rounded-[8px] px-2.5 flex items-center justify-between relative group hover:bg-harmonica-surfaceLighter transition-colors cursor-pointer">
+            <div class="flex items-center space-x-2 overflow-hidden">
+              <span class="material-symbols-outlined text-harmonica-muted text-[13px] flex-shrink-0">key</span>
+              <span class="font-mono text-[11px] text-harmonica-textPrimary truncate">gpg --armor</span>
+            </div>
+            <span class="material-symbols-outlined text-harmonica-accent text-[12px] flex-shrink-0">push_pin</span>
+          </div>
+
+          <!-- Pinned 3: Localhost link -->
+          <div class="h-[36px] bg-harmonica-surfaceElevated rounded-[8px] px-2.5 flex items-center justify-between relative group hover:bg-harmonica-surfaceLighter transition-colors cursor-pointer">
+            <div class="flex items-center space-x-2 overflow-hidden">
+              <span class="material-symbols-outlined text-harmonica-muted text-[13px] flex-shrink-0">link</span>
+              <span class="font-mono text-[11px] text-harmonica-textPrimary truncate">:3000/api</span>
+            </div>
+            <span class="material-symbols-outlined text-harmonica-accent text-[12px] flex-shrink-0">push_pin</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hairline divider strip (2px #22222c) -->
+      <div class="w-full h-[2px] bg-harmonica-surfaceElevated rounded-full my-0.5"></div>
+
+      <!-- 4. CLIPBOARD LIST (48px rows, 12px rounded, hover lighter surface) -->
+      <div class="flex-1 flex flex-col space-y-1.5 custom-scrollbar overflow-hidden">
+        
+        <!-- ENTRY 1 (SELECTED): lighter surface row #22222c, 3px gold accent bar on left edge, ssh bold gold match, CODE tag, 2m ago -->
+        <div class="h-[48px] bg-harmonica-surfaceElevated rounded-[12px] flex items-center justify-between px-3 relative overflow-hidden cursor-pointer group">
+          <!-- 3px gold accent bar on left edge -->
+          <div class="absolute left-0 top-0 bottom-0 w-[3px] bg-harmonica-accent"></div>
+
+          <div class="flex items-center space-x-3 overflow-hidden ml-1">
+            <span class="material-symbols-outlined text-harmonica-accent text-[16px] flex-shrink-0">terminal</span>
+            <div class="flex items-center space-x-1.5 font-mono text-[12px] text-harmonica-textPrimary truncate">
+              <!-- Matched substring "ssh" highlighted in gold bold -->
+              <span class="text-harmonica-accent font-bold">ssh</span>
+              <span class="text-harmonica-textPrimary">root@203.0.113.7 -p 2222</span>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-2.5 flex-shrink-0">
+            <!-- CODE tag chip -->
+            <span class="px-1.5 py-0.5 rounded-[4px] bg-harmonica-surface font-mono text-[9px] font-bold tracking-wider text-harmonica-muted uppercase">CODE</span>
+            <span class="font-mono text-[10px] text-harmonica-muted">2m ago</span>
+          </div>
+        </div>
+
+        <!-- ENTRY 2: Plain text preview, sans font, truncated with ellipsis, TEXT tag, 5m ago -->
+        <div class="h-[48px] bg-harmonica-surface hover:bg-harmonica-surfaceElevated rounded-[12px] flex items-center justify-between px-3 relative overflow-hidden cursor-pointer transition-colors group">
+          <div class="flex items-center space-x-3 overflow-hidden">
+            <span class="material-symbols-outlined text-harmonica-muted group-hover:text-harmonica-textSecondary text-[16px] flex-shrink-0">notes</span>
+            <span class="font-sans text-[12px] text-harmonica-textSecondary truncate max-w-[310px]">
+              Meeting notes — sync on Monday 10am, bring the deployment checklist
+            </span>
+          </div>
+
+          <div class="flex items-center space-x-2.5 flex-shrink-0">
+            <span class="px-1.5 py-0.5 rounded-[4px] bg-harmonica-surfaceElevated font-mono text-[9px] font-bold tracking-wider text-harmonica-muted uppercase">TEXT</span>
+            <span class="font-mono text-[10px] text-harmonica-muted">5m ago</span>
+          </div>
+        </div>
+
+        <!-- ENTRY 3: IMAGE entry — a small 36px thumbnail of a screenshot instead of text, IMAGE tag, 1h ago -->
+        <div class="h-[48px] bg-harmonica-surface hover:bg-harmonica-surfaceElevated rounded-[12px] flex items-center justify-between px-3 relative overflow-hidden cursor-pointer transition-colors group">
+          <div class="flex items-center space-x-3 overflow-hidden">
+            <!-- 36px screenshot thumbnail -->
+            <div class="w-[36px] h-[32px] rounded-[6px] bg-harmonica-surfaceElevated flex items-center justify-center overflow-hidden flex-shrink-0 relative">
+              <svg width="36" height="32" viewBox="0 0 36 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="36" height="32" fill="#13131b"/>
+                <rect x="3" y="4" width="30" height="4" rx="1.5" fill="#2c2d3d"/>
+                <rect x="3" y="11" width="12" height="16" rx="2" fill="#20212e"/>
+                <rect x="18" y="11" width="15" height="7" rx="1.5" fill="#b49043" fill-opacity="0.8"/>
+                <rect x="18" y="20" width="15" height="7" rx="1.5" fill="#292a3a"/>
+              </svg>
+            </div>
+            <div class="flex flex-col overflow-hidden">
+              <span class="font-mono text-[12px] text-harmonica-textPrimary truncate">screenshot_2025-09-07_14.42.png</span>
+              <span class="text-[10px] text-harmonica-muted">1440×900 PNG • 342 KB</span>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-2.5 flex-shrink-0">
+            <span class="px-1.5 py-0.5 rounded-[4px] bg-harmonica-surfaceElevated font-mono text-[9px] font-bold tracking-wider text-harmonica-muted uppercase">IMAGE</span>
+            <span class="font-mono text-[10px] text-harmonica-muted">1h ago</span>
+          </div>
+        </div>
+
+        <!-- ENTRY 4: Text entry, dimmer (older), "Yesterday" -->
+        <div class="h-[48px] bg-harmonica-surface hover:bg-harmonica-surfaceElevated rounded-[12px] flex items-center justify-between px-3 relative overflow-hidden cursor-pointer transition-colors group opacity-65">
+          <div class="flex items-center space-x-3 overflow-hidden">
+            <span class="material-symbols-outlined text-harmonica-muted text-[16px] flex-shrink-0">data_object</span>
+            <span class="font-mono text-[12px] text-harmonica-textSecondary truncate max-w-[310px]">
+              {"status": "ready", "pid": 4819, "backend": "pipewire"}
+            </span>
+          </div>
+
+          <div class="flex items-center space-x-2.5 flex-shrink-0">
+            <span class="px-1.5 py-0.5 rounded-[4px] bg-harmonica-surfaceElevated font-mono text-[9px] font-bold tracking-wider text-harmonica-muted uppercase">JSON</span>
+            <span class="font-mono text-[10px] text-harmonica-muted">Yesterday</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 5. FOOTER HINTS (BOTTOM, tiny muted keyboard hints in 10px monospace) -->
+      <div class="w-full pt-1 pb-0.5 flex items-center justify-between text-[10px] font-mono text-harmonica-muted tracking-tight">
+        <div class="flex items-center space-x-2.5">
+          <span class="flex items-center space-x-1">
+            <span class="px-1 py-0.5 rounded-[3px] bg-harmonica-surfaceElevated text-harmonica-textSecondary font-semibold">↵</span>
+            <span>paste</span>
+          </span>
+          <span class="text-harmonica-mutedDark">·</span>
+          <span class="flex items-center space-x-1">
+            <span class="px-1 py-0.5 rounded-[3px] bg-harmonica-surfaceElevated text-harmonica-textSecondary font-semibold">↑↓</span>
+            <span>navigate</span>
+          </span>
+          <span class="text-harmonica-mutedDark">·</span>
+          <span class="flex items-center space-x-1">
+            <span class="px-1 py-0.5 rounded-[3px] bg-harmonica-surfaceElevated text-harmonica-textSecondary font-semibold">P</span>
+            <span>pin</span>
+          </span>
+          <span class="text-harmonica-mutedDark">·</span>
+          <span class="flex items-center space-x-1">
+            <span class="px-1 py-0.5 rounded-[3px] bg-harmonica-surfaceElevated text-harmonica-textSecondary font-semibold">Del</span>
+            <span>delete</span>
+          </span>
+        </div>
+        <span class="text-harmonica-mutedDark text-[9px] uppercase tracking-wider">wl-copy daemon</span>
+      </div>
+
+    </div>
+
+    <!-- WAYLAND ERGONOMICS FOOTER BENCH SPECIFICATION -->
+    <div class="w-[520px] mt-3 flex items-center justify-between text-[10px] font-mono text-harmonica-muted">
+      <div class="flex items-center space-x-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-harmonica-accent"></span>
+        <span>ANCHOR: BOTTOM-CENTER (Y: -24px)</span>
+      </div>
+      <span class="text-harmonica-mutedDark">CLIPBOARD BUFFER: 50 ENTRIES FIFO</span>
+      <span>INVERTED MORPH PHYSICS</span>
+    </div>
+
+  </div>
+
+</body>
+</html>

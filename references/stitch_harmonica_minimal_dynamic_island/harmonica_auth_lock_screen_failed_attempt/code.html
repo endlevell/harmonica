@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmonica Auth Lock Screen: Failed Attempt</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              gold: '#b49043',
+              red: '#f38ba8',
+              cyan: '#8ec3c9',
+              green: '#34d399',
+            },
+            surface: {
+              card: '#1a1a24',
+              elevated: '#22222c',
+              inset: '#1d1d26',
+              deep: '#14141c',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Damped shake animation and indicators */
+    @keyframes auth-shake {
+      0%, 100% { transform: translateX(0); }
+      15% { transform: translateX(-9px); }
+      30% { transform: translateX(8px); }
+      45% { transform: translateX(-6px); }
+      60% { transform: translateX(5px); }
+      75% { transform: translateX(-3px); }
+      90% { transform: translateX(2px); }
+    }
+    .shake-active {
+      animation: auth-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 0.85; }
+      50% { opacity: 0.35; }
+    }
+    .pulse-error {
+      animation: pulse-subtle 2s ease-in-out infinite;
+    }
+
+    @keyframes blink-cursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .cursor-blink {
+      animation: blink-cursor 1s steps(1) infinite;
+    }
+  </style>
+</head>
+<body class="h-full w-full m-0 p-0 overflow-hidden font-sans select-none bg-[#090b0e] text-[#cdd1dc] antialiased relative">
+
+  <!-- Fullscreen Dimmed Misty Dark Forest Wallpaper (matching SCREEN_1 geometry and aesthetic) -->
+  <div class="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+    <!-- SVG Forest Backdrop: dark mountain ridges & misty silhouettes -->
+    <svg class="w-full h-full object-cover" preserveAspectRatio="none" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1440" height="900" fill="#0c0f14"/>
+      <!-- Distant soft gradient sky -->
+      <path d="M0 0H1440V900H0V0Z" fill="url(#sky_grad)"/>
+      <!-- Ridge 1 (Deepest) -->
+      <path d="M0 580 L120 540 L240 570 L380 520 L520 560 L680 500 L840 550 L980 510 L1120 560 L1280 520 L1440 570 V900 H0 Z" fill="#0f141b" opacity="0.75"/>
+      <!-- Ridge 2 (Mid-distance pine peaks) -->
+      <path d="M0 640 L80 610 L160 635 L260 590 L360 625 L480 575 L590 620 L720 580 L840 625 L960 575 L1080 615 L1200 585 L1320 620 L1440 590 V900 H0 Z" fill="#0b1016" opacity="0.9"/>
+      <!-- Ridge 3 (Foreground silhouetted dense pine forest teeth) -->
+      <path d="M0 720 L40 680 L80 710 L120 670 L160 705 L210 660 L260 700 L310 650 L360 695 L420 640 L470 685 L530 635 L590 690 L650 645 L710 690 L770 635 L830 680 L890 640 L950 690 L1010 645 L1070 690 L1130 650 L1190 695 L1250 645 L1310 690 L1370 650 L1440 700 V900 H0 Z" fill="#070a0e"/>
+
+      <!-- Ambient mist bands -->
+      <ellipse cx="720" cy="620" rx="900" ry="110" fill="url(#mist_grad)" opacity="0.25"/>
+
+      <defs>
+        <linearGradient id="sky_grad" x1="720" y1="0" x2="720" y2="900" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#121720"/>
+          <stop offset="50%" stop-color="#0c1017"/>
+          <stop offset="100%" stop-color="#06080b"/>
+        </linearGradient>
+        <radialGradient id="mist_grad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#8ec3c9" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#0c1017" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+    </svg>
+
+    <!-- Continuous dimming vertical gradient: 35% top -> 70% bottom -->
+    <div class="absolute inset-0 bg-gradient-to-b from-black/35 via-black/55 to-black/70"></div>
+  </div>
+
+  <!-- Top Telemetry Header -->
+  <header class="relative z-10 w-full px-8 pt-7 flex items-center justify-between text-[11px] font-mono tracking-wider text-[#636879]">
+    <div class="flex items-center gap-2">
+      <span class="inline-block w-1.5 h-1.5 rounded-full bg-[#464a5c]"></span>
+      <span class="uppercase tracking-[0.18em]">Harmonica // Auth</span>
+    </div>
+    <div class="flex items-center gap-2 text-[#7e859b]">
+      <span>87%</span>
+      <span class="text-brand-gold text-[12px] leading-none">⚡</span>
+    </div>
+  </header>
+
+  <!-- Main Auth Composition: Centered Viewport -->
+  <main class="relative z-10 w-full flex flex-col items-center justify-center min-h-[calc(100vh-120px)] -mt-4">
+
+    <!-- 1. SHRUNK CLOCK (Transitioned from Ambient: shrunk to ~56px, risen upward) -->
+    <section class="flex flex-col items-center text-center mb-8">
+      <div class="text-[56px] leading-none font-bold text-[#b8bcc8] tracking-[-0.04em] select-none font-sans drop-shadow-sm">
+        21:37
+      </div>
+      <div class="text-[11px] uppercase tracking-[0.24em] text-[#555a6d] font-mono mt-2 font-medium">
+        Sunday, September 7
+      </div>
+    </section>
+
+    <!-- 2. USER IDENTITY (Centered 84px circular ring-less solid avatar in #22222c + 'j0' semibold 16px) -->
+    <section class="flex flex-col items-center mb-7">
+      <div class="w-[84px] h-[84px] rounded-full bg-[#22222c] flex items-center justify-center relative overflow-hidden">
+        <!-- Subtle dark placeholder portrait silhouette -->
+        <svg class="w-full h-full text-[#14141c]" viewBox="0 0 84 84" fill="currentColor">
+          <circle cx="42" cy="35" r="15" fill="#2b2b38"/>
+          <path d="M19 75 C19 55, 65 55, 65 75 Z" fill="#2b2b38"/>
+        </svg>
+      </div>
+      <div class="text-[16px] font-semibold text-[#d6d9e4] mt-3 tracking-tight font-sans">
+        j0
+      </div>
+    </section>
+
+    <!-- 3. PASSWORD FIELD (360x46px INSET dark pool, drawn mid-shake ±10px with red motion arrows) -->
+    <section class="relative flex flex-col items-center w-full max-w-[540px]">
+
+      <!-- Shake Indicator Wrapper (Simulating the active ±10px damped horizontal shake offset) -->
+      <div class="relative flex items-center justify-center w-full">
+
+        <!-- Left Red Motion Arrow Indicator (Annotating the damped shake displacement) -->
+        <div class="absolute -left-1 md:left-2 flex items-center gap-1 text-brand-red select-none pointer-events-none opacity-85">
+          <!-- Left Arrowheads -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span class="text-[9px] font-mono font-medium tracking-tight text-brand-red/90 hidden sm:inline">-10px</span>
+        </div>
+
+        <!-- The Inset Password Pool: 360x46px, #1d1d26 (~90% opacity feel), rounded 12px, NO border, NO outline, displaced -6px left for the mid-shake snapshot -->
+        <div class="w-[360px] h-[46px] rounded-[12px] bg-[#1d1d26]/95 backdrop-blur-none flex items-center justify-between px-4 transform -translate-x-[6px] transition-transform duration-75 relative">
+
+          <!-- Left content: monospace password dots + thin blinking gold cursor -->
+          <div class="flex items-center gap-2">
+            <!-- Monospace dots -->
+            <span class="font-mono text-[18px] tracking-[0.28em] text-[#d6d9e4] leading-none pt-0.5 select-none">
+              ••••••
+            </span>
+            <!-- Thin blinking gold cursor after 6th dot -->
+            <span class="w-[1.75px] h-[18px] bg-brand-gold cursor-blink -ml-1"></span>
+          </div>
+
+          <!-- Right content: small muted eye icon (visibility toggle) -->
+          <button type="button" aria-label="Toggle password visibility" class="text-[#5b6072] hover:text-[#8e95ac] transition-colors p-1 -mr-1">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Right Red Motion Arrow Indicator -->
+        <div class="absolute -right-1 md:right-2 flex items-center gap-1 text-brand-red select-none pointer-events-none opacity-85">
+          <span class="text-[9px] font-mono font-medium tracking-tight text-brand-red/90 hidden sm:inline">+10px</span>
+          <!-- Right Arrowheads -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 4. ERROR STATE TELEMETRY: Under field, 'Wrong password — 3 attempts left' in small red (#f38ba8) -->
+      <div class="mt-3.5 flex items-center gap-1.5 text-brand-red text-[12px] font-medium font-sans tracking-normal">
+        <span class="w-1.5 h-1.5 rounded-full bg-brand-red inline-block"></span>
+        <span>Wrong password &mdash; 3 attempts left</span>
+      </div>
+
+      <!-- 5. MUTED HINT LINE: 'or place finger on sensor' with tiny fingerprint icon -->
+      <div class="mt-4 flex items-center gap-1.5 text-[#5a5f73] text-[12px] font-sans font-normal">
+        <!-- Tiny Fingerprint Icon -->
+        <svg class="w-3.5 h-3.5 text-[#505567]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"></path>
+          <path d="M14 13.12c0 2.38 0 6.38-1 8.88"></path>
+          <path d="M2 16h.01"></path>
+          <path d="M21.8 16c.2-2 .131-5.354 0-6"></path>
+          <path d="M9 6.8a6 6 0 0 1 9 5.2v2"></path>
+          <path d="M6.1 11.18a6 6 0 0 1 3.9-8.18"></path>
+          <path d="M12 2a10 10 0 0 0-9.95 9"></path>
+          <path d="M20.48 10a10 10 0 0 0-16.92-4.5"></path>
+        </svg>
+        <span>or place finger on sensor</span>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Spec Annotation & State Indicator Pill (Technical Wayland Compositor Breadcrumb) -->
+  <aside class="absolute top-7 left-1/2 -translate-x-1/2 hidden md:flex items-center gap-3 px-3.5 py-1.5 rounded-full bg-[#16161f]/90 text-[10px] font-mono text-[#6c7287] border-0 select-none pointer-events-none">
+    <span class="inline-block w-1.5 h-1.5 rounded-full bg-brand-red"></span>
+    <span class="text-[#888e9f]">PAM_AUTH_ERR (0x07)</span>
+    <span class="text-[#3b3f4f]">&bull;</span>
+    <span>DAMPED_SPRING (k:420, d:26)</span>
+    <span class="text-[#3b3f4f]">&bull;</span>
+    <span class="text-brand-gold">CURSOR #b49043</span>
+  </aside>
+
+  <!-- 6. SESSION STRIP AT THE VERY BOTTOM EDGE (Tiny, muted, text-only, no boxed buttons) -->
+  <footer class="absolute bottom-0 inset-x-0 w-full px-8 pb-7 flex items-center justify-between text-[11px] font-mono text-[#5b6073] z-20">
+    <!-- Bottom-Left: 'j0 · logged in' -->
+    <div class="flex items-center gap-2">
+      <span class="text-[#888e9f] font-medium">j0</span>
+      <span class="text-[#3d4152]">&bull;</span>
+      <span class="text-[#555a6c]">logged in</span>
+    </div>
+
+    <!-- Bottom-Right: 'Restart ⏻    Cancel ✕' text actions -->
+    <div class="flex items-center gap-6">
+      <button type="button" class="hover:text-[#888e9f] transition-colors flex items-center gap-1.5 cursor-pointer">
+        <span>Restart</span>
+        <span class="text-[12px] leading-none">⏻</span>
+      </button>
+      <button type="button" class="hover:text-[#888e9f] transition-colors flex items-center gap-1.5 cursor-pointer">
+        <span>Cancel</span>
+        <span class="text-[12px] leading-none">✕</span>
+      </button>
+    </div>
+  </footer>
+
+</body>
+</html>

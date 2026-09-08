@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Harmonica Dynamic Island: Music Player (Page 3/3)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          harmonica: {
+            bg: '#0c0d12',
+            surface: '#1a1a24',
+            surfaceLighter: '#22222c',
+            surfaceCard: '#1f1f2a',
+            gold: '#b49043',
+            goldBright: '#d4af37',
+            muted: '#7a7e93',
+            slateDark: '#46485a',
+            textWhite: '#f1f2f6'
+          }
+        },
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body {
+    background-color: #0c0d12;
+    background-image: radial-gradient(#20222f 1px, transparent 1px);
+    background-size: 24px 24px;
+    font-family: 'Inter', sans-serif;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+  }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .play-btn:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+  }
+  .ctrl-btn:hover {
+    color: #f1f2f6;
+    background-color: #262735;
+  }
+</style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col justify-between p-6 sm:p-10 overflow-x-hidden">
+
+  <!-- TOP STATUS/WAYLAND COMPOSITOR HEADER BAR -->
+  <header class="w-full flex justify-between items-center text-[11px] font-mono tracking-widest text-[#7a7e93] border-b border-transparent pb-4">
+    <div class="flex items-center space-x-3">
+      <span class="inline-flex items-center justify-center w-4 h-4 rounded bg-[#b49043] text-[#0c0d12] font-bold text-[10px]">H</span>
+      <span>HARMONICA SHELL V0.4.1</span>
+      <span class="opacity-40">/</span>
+      <span>WAYLAND WLROOTS COMPOSITOR</span>
+    </div>
+    <div class="flex items-center space-x-6">
+      <div class="flex items-center space-x-2">
+        <span class="w-2 h-2 rounded-full bg-[#b49043]"></span>
+        <span>SURFACE #1a1a24 FLAT SOLID</span>
+      </div>
+      <span class="opacity-40">•</span>
+      <span>DP-1 (PRIMARY)</span>
+      <span class="opacity-40">•</span>
+      <span>3840×2160 @ 144Hz</span>
+    </div>
+  </header>
+
+  <!-- MAIN STAGE: DYNAMIC ISLAND EXPANDED CARD -->
+  <main class="w-full flex-1 flex flex-col items-center justify-center my-6 relative">
+    
+    <!-- Top Morph Anchor Indicator -->
+    <div class="flex flex-col items-center mb-5 opacity-70">
+      <div class="w-12 h-1 rounded-full bg-[#2a2b3b] mb-2"></div>
+      <span class="text-[10px] font-mono text-[#6d7083] tracking-widest">SUPER + C • DYNAMIC ISLAND .MORPH.ANCHOR</span>
+    </div>
+
+    <!-- Paged Container Stack (suggesting horizontal paging with receding deck behind) -->
+    <div class="relative w-[460px]">
+
+      <!-- Receding Background Layer (Page 2 receding to the left) -->
+      <div class="absolute -inset-x-3 top-2 bottom-2 rounded-[14px] bg-[#14141c] -z-10 transform scale-[0.96] opacity-60 pointer-events-none"></div>
+
+      <!-- PRIMARY CARD: 460px wide × ~320px tall, solid #1a1a24, rounded 14px, flat solid -->
+      <div class="w-[460px] bg-[#1a1a24] rounded-[14px] p-6 flex flex-col justify-between relative shadow-none border-0 text-slate-100 min-h-[320px]">
+
+        <!-- TOP BAR / SUBTLE INDICATOR -->
+        <div class="flex items-center justify-between text-[11px] font-mono text-[#6d7083] mb-1">
+          <div class="flex items-center space-x-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#b49043]"></span>
+            <span class="tracking-wider uppercase text-[10px] font-medium text-[#8e92a8]">MPRIS / PIPEWIRE AUDIO</span>
+          </div>
+          <span class="text-[10px] tracking-wider text-[#6d7083]">PAGE 03/03</span>
+        </div>
+
+        <!-- CENTERED MUSIC HERO CONTENT (Album art with progress ring, track info, time, controls) -->
+        <div class="flex flex-col items-center justify-center my-auto py-1">
+          
+          <!-- 1. CIRCULAR ALBUM ART DISC (116px) WITH GOLD PROGRESS RING (43%) -->
+          <div class="relative w-[124px] h-[124px] flex items-center justify-center">
+            
+            <!-- SVG Progress Ring Tracing Around the 116px Disc -->
+            <!-- Diameter 124px, center at 62, radius 58. Perimeter = 2 * PI * 58 ≈ 364.42 -->
+            <!-- 43% progress = 364.42 * 0.43 ≈ 156.7 stroke-dasharray="156.7 364.42" -->
+            <svg class="absolute inset-0 w-full h-full -rotate-90 transform pointer-events-none" viewBox="0 0 124 124">
+              <!-- Background Track Ring -->
+              <circle
+                cx="62"
+                cy="62"
+                r="59"
+                fill="none"
+                stroke="#252636"
+                stroke-width="2.5"
+              />
+              <!-- Active Gold Progress Arc (43%) -->
+              <circle
+                cx="62"
+                cy="62"
+                r="59"
+                fill="none"
+                stroke="#b49043"
+                stroke-width="2.5"
+                stroke-dasharray="159.5 370.7"
+                stroke-linecap="round"
+              />
+            </svg>
+
+            <!-- 116px Circular Album Art Disc -->
+            <div class="w-[116px] h-[116px] rounded-full overflow-hidden bg-[#13131b] flex items-center justify-center relative shadow-inner">
+              <img
+                src="https://lh3.googleusercontent.com/aida/AEtjO1V0Zo5ymlrwgUaNQkZbkfw3Ws9ufM3gFdTWerHb7WEYdqXsup7cRkzBHE-vkbLQ3jr4fk_13H-ajYgosOq-Gu28PtmT1AVa3haYKpzE0scQ6K89GipcMlsB7s3EItt8o84XBudRrPGn2zZ7eV24B68bEAMejXO5qQ7C16sA-Ncf3Em0zWrT2r7rnNIDR5kg1wpAEp_N2t72egEzl21HGtVLZ4DnMsp6CxgRfQ2_ESLoi32EDcPCZ6xEZA"
+                alt="Austerity Economy Album Artwork"
+                class="w-full h-full object-cover select-none"
+              />
+              <!-- Subtle vinyl spindle hole center detail -->
+              <div class="absolute w-3 h-3 rounded-full bg-[#1a1a24] border-2 border-[#b49043] pointer-events-none"></div>
+            </div>
+          </div>
+
+          <!-- 2. TRACK INFO CENTERED -->
+          <div class="text-center mt-3 mb-1">
+            <div class="text-[15px] font-semibold text-[#f1f2f6] tracking-tight leading-tight">
+              Austerity Economy
+            </div>
+            <div class="text-[12px] font-medium text-[#b49043] tracking-wide mt-0.5">
+              K Civil
+            </div>
+          </div>
+
+          <!-- 3. TIME ROW SPANNING WIDTH -->
+          <div class="w-full max-w-[280px] flex items-center justify-between text-[11px] font-mono text-[#7a7e93] px-1 mt-1 mb-2">
+            <span>1:47</span>
+            <span class="text-[10px] text-[#4f5266] uppercase tracking-widest font-mono">43%</span>
+            <span>4:06</span>
+          </div>
+
+          <!-- 4. CONTROLS CENTERED (Previous, Play/Pause 46px Filled Gold, Next) -->
+          <div class="flex items-center justify-center space-x-6 mt-1">
+            <!-- Previous Button -->
+            <button class="ctrl-btn w-9 h-9 rounded-full flex items-center justify-center text-[#8e92a8] transition-all" title="Previous (H)">
+              <span class="material-symbols-outlined text-[20px]">skip_previous</span>
+            </button>
+
+            <!-- Play/Pause 46px Filled Gold Circle (Clear Primary CTA) -->
+            <button class="play-btn w-[46px] h-[46px] rounded-full bg-[#b49043] flex items-center justify-center text-[#14141d] transition-all cursor-pointer" title="Pause / Play (Space)">
+              <span class="material-symbols-outlined text-[24px] font-bold">pause</span>
+            </button>
+
+            <!-- Next Button -->
+            <button class="ctrl-btn w-9 h-9 rounded-full flex items-center justify-center text-[#8e92a8] transition-all" title="Next (L)">
+              <span class="material-symbols-outlined text-[20px]">skip_next</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- 5. BOTTOM CENTER: THREE PAGE DOTS (THIRD ACTIVE AS GOLD PILL) -->
+        <div class="flex items-center justify-center space-x-1.5 pt-2">
+          <!-- Page 1 (Inactive dot) -->
+          <span class="w-[6px] h-[6px] rounded-full bg-[#46485a]"></span>
+          <!-- Page 2 (Inactive dot) -->
+          <span class="w-[6px] h-[6px] rounded-full bg-[#46485a]"></span>
+          <!-- Page 3 (ACTIVE 16px Gold Pill) -->
+          <span class="w-[16px] h-[6px] rounded-full bg-[#b49043]"></span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- SPEC & ARCHITECTURE INFO SUB-PANEL (Consistent with Pages 1 & 2) -->
+    <div class="w-[460px] bg-[#1a1a24] rounded-[14px] p-5 mt-6 border-0 text-slate-100">
+      <div class="flex items-center justify-between border-b border-[#252636] pb-3 mb-3 text-[11px] font-mono">
+        <div class="flex items-center space-x-2">
+          <span class="w-2 h-2 rounded-full bg-[#b49043]"></span>
+          <span class="font-bold text-[#f1f2f6]">HARMONICA MEDIA SUB-PANEL</span>
+        </div>
+        <span class="text-[#7a7e93]">CARD: 460×320px • RADIUS: 14px • PAGE 03/03</span>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4 text-[10px] font-mono leading-relaxed">
+        <div>
+          <span class="text-[#b49043] font-semibold block mb-1">01 // PROGRESS RING</span>
+          <span class="text-[#7a7e93]">124px radial SVG arc calibrated to 43% (1:47 / 4:06). Zero clutter, replaces horizontal track slider.</span>
+        </div>
+        <div>
+          <span class="text-[#b49043] font-semibold block mb-1">02 // MPRIS BACKEND</span>
+          <span class="text-[#7a7e93]">D-Bus player interface. PipeWire zero-latency stream. Keybinds: H (Prev), L (Next), Space (Play/Pause).</span>
+        </div>
+        <div>
+          <span class="text-[#b49043] font-semibold block mb-1">03 // GOLD THREAD</span>
+          <span class="text-[#b49043]">#b49043</span> <span class="text-[#7a7e93]">reserved for ring arc, artist moniker, 46px primary CTA button, &amp; 3rd page pill.</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- BOTTOM FOOTER -->
+  <footer class="w-full flex justify-between items-center text-[11px] font-mono text-[#585c72] pt-4">
+    <div>Harmonica Shell Project • Flat Solid UI Subsystem</div>
+    <div>Dynamic Island Physics: Spring 380ms (stiffness 320, damping 28)</div>
+  </footer>
+
+</body>
+</html>

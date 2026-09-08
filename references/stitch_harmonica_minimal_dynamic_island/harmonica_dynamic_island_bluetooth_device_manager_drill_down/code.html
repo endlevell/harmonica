@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harmonica Dynamic Island: Bluetooth Manager Drill-down</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0d0d12;
+    color: #e4e4eb;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+  }
+  .font-mono-code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  /* Blueprint dot-matrix background identical to Harmonica shell screens */
+  .wallpaper-dots {
+    background-color: #0c0c11;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-position: center center;
+  }
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .animate-spin-custom {
+    animation: spin-slow 1s linear infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.85); }
+  }
+  .pulse-scan {
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+</style>
+</head>
+<body class="wallpaper-dots min-h-screen flex flex-col justify-between items-center py-6 px-4">
+
+  <!-- TOP DECK: Compositor Telemetry Header -->
+  <header class="w-full max-w-5xl flex items-center justify-between text-[11px] font-mono-code tracking-wider text-[#636577] border-b border-transparent">
+    <div class="flex items-center gap-3">
+      <span class="inline-flex items-center justify-center w-4 h-4 rounded bg-[#b49043]/20 text-[#b49043] font-bold text-[10px]">H</span>
+      <span class="tracking-widest">HARMONICA SHELL V0.4.1</span>
+      <span class="text-[#3a3b47]">/</span>
+      <span class="text-[#848698]">BLUETOOTH SUBSYSTEM (BLUEZ / DBUS-BLUEZ5)</span>
+    </div>
+    <div class="flex items-center gap-6">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[#b49043]"></span>
+        <span class="text-[#a5a7b8]">SURFACE #1a1a24 FLAT SOLID</span>
+      </div>
+      <span class="text-[#3a3b47]">·</span>
+      <span class="text-[#636577]">DYNAMIC ISLAND DRILL-DOWN</span>
+      <span class="text-[#3a3b47]">·</span>
+      <span class="text-[#d8d9e2] font-semibold">SUPER + B</span>
+    </div>
+  </header>
+
+  <!-- CENTER STAGE: Morph Anchor & Dynamic Island Card -->
+  <main class="w-full flex flex-col items-center justify-center my-auto">
+    <!-- Top dynamic island morph anchor pill hint -->
+    <div class="flex flex-col items-center mb-3">
+      <div class="w-10 h-1 rounded-full bg-[#272733] mb-2"></div>
+      <div class="text-[10px] font-mono-code text-[#4a4b5b] tracking-widest uppercase flex items-center gap-2">
+        <span>SUPER + C</span>
+        <span class="text-[#2e2f3d]">•</span>
+        <span>DYNAMIC ISLAND .MORPH.ANCHOR</span>
+        <span class="text-[#2e2f3d]">•</span>
+        <span class="text-[#8ec3c9]">HCI0 ACTIVE</span>
+      </div>
+    </div>
+
+    <!-- PRIMARY FLAT SOLID CARD (460px wide, ~330px tall, solid #1a1a24, rounded 14px, NO borders/shadows/transparency) -->
+    <div class="w-[460px] bg-[#1a1a24] rounded-[14px] p-4 flex flex-col justify-between relative select-none">
+      
+      <!-- 1. HEADER ROW: Back button, Title, Subtitle, and Power Toggle -->
+      <div class="flex items-center justify-between mb-3.5">
+        <div class="flex items-center gap-2.5">
+          <button class="w-6 h-6 rounded-md bg-[#22222c] hover:bg-[#2c2c38] text-[#8e90a2] hover:text-[#e4e4eb] flex items-center justify-center transition-colors" title="Back to Control Center (Esc)">
+            <span class="material-symbols-outlined text-[16px]">arrow_back_ios_new</span>
+          </button>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-[14px] font-semibold text-[#f0f1f5] leading-none tracking-tight">Bluetooth</h1>
+            </div>
+            <p class="text-[11px] font-mono-code text-[#76788b] mt-0.5 leading-none">2 devices connected · discoverable</p>
+          </div>
+        </div>
+
+        <!-- Rounded Toggle Switch: 34x18px, gold ON fill with dark knob -->
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-mono-code text-[#5e6072] uppercase tracking-wider">Radio</span>
+          <div class="w-[34px] h-[18px] rounded-full bg-[#b49043] p-[2px] flex items-center justify-end cursor-pointer" title="Bluetooth Radio: Powered ON (rfkill unblock bluetooth)">
+            <div class="w-[14px] h-[14px] rounded-full bg-[#1a1a24]"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. PAIRED DEVICES LIST: 3 rows, 54px tall, rounded 10px -->
+      <div class="flex flex-col gap-2 mb-3">
+        
+        <!-- ROW 1: CONNECTED DEVICE (selected state) -->
+        <!-- Lighter surface (#2a2a36), 3px gold accent bar on left edge, 30px circular disc in #22222c with cyan headphones icon -->
+        <div class="h-[54px] bg-[#2a2a36] rounded-[10px] relative overflow-hidden flex items-center justify-between px-3 pl-3.5 transition-colors cursor-pointer">
+          <!-- 3px gold accent bar on the left edge -->
+          <div class="absolute left-0 top-0 bottom-0 w-[3px] bg-[#b49043]"></div>
+
+          <div class="flex items-center gap-2.5">
+            <!-- 30px circular disc with device-specific cyan icon -->
+            <div class="w-[30px] h-[30px] rounded-full bg-[#20202b] flex items-center justify-center text-[#8ec3c9]">
+              <!-- Headphones SVG icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"></path>
+              </svg>
+            </div>
+
+            <!-- Device text info -->
+            <div class="flex flex-col">
+              <div class="flex items-center gap-2">
+                <span class="text-[13px] font-semibold text-[#f4f4f8] leading-tight">WH-1000XM5</span>
+                <!-- Tiny green live dot -->
+                <span class="w-1.5 h-1.5 rounded-full bg-[#34d399]" title="LDAC 96kHz / 24-bit active"></span>
+              </div>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span class="text-[10.5px] font-mono-code text-[#34d399] font-medium leading-none">Connected · battery 80%</span>
+                <span class="text-[9px] font-mono-code text-[#6b6e82]">· LDAC</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Far Right: Action icons (Info & Settings) -->
+          <div class="flex items-center gap-1">
+            <button class="w-6 h-6 rounded flex items-center justify-center text-[#7e8094] hover:text-[#e4e4eb] hover:bg-[#343444] transition-colors" title="Device Telemetry">
+              <span class="material-symbols-outlined text-[15px]">info</span>
+            </button>
+            <button class="w-6 h-6 rounded flex items-center justify-center text-[#7e8094] hover:text-[#e4e4eb] hover:bg-[#343444] transition-colors" title="Device Options (Rename / Disconnect / Unpair)">
+              <span class="material-symbols-outlined text-[15px]">settings</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ROW 2: PAIRED DEVICE -->
+        <!-- Regular surface (#22222c), mouse icon in muted gray, MX Master 3S, battery 55% muted -->
+        <div class="h-[54px] bg-[#22222c] rounded-[10px] relative flex items-center justify-between px-3 pl-3.5 transition-colors cursor-pointer hover:bg-[#262632]">
+          <div class="flex items-center gap-2.5">
+            <!-- 30px circular disc with muted mouse icon -->
+            <div class="w-[30px] h-[30px] rounded-full bg-[#1b1b24] flex items-center justify-center text-[#8e90a2]">
+              <!-- Mouse SVG icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="6" y="3" width="12" height="18" rx="6"></rect>
+                <line x1="12" y1="7" x2="12" y2="10"></line>
+              </svg>
+            </div>
+
+            <!-- Device text info -->
+            <div class="flex flex-col">
+              <span class="text-[13px] font-medium text-[#d3d4df] leading-tight">MX Master 3S</span>
+              <span class="text-[10.5px] font-mono-code text-[#737588] mt-0.5 leading-none">Paired · battery 55%</span>
+            </div>
+          </div>
+
+          <!-- Far Right: Action icons -->
+          <div class="flex items-center gap-1">
+            <button class="w-6 h-6 rounded flex items-center justify-center text-[#5e6074] hover:text-[#c4c6d6] hover:bg-[#2c2c38] transition-colors" title="Device Telemetry">
+              <span class="material-symbols-outlined text-[15px]">info</span>
+            </button>
+            <button class="w-6 h-6 rounded flex items-center justify-center text-[#5e6074] hover:text-[#c4c6d6] hover:bg-[#2c2c38] transition-colors" title="Device Settings">
+              <span class="material-symbols-outlined text-[15px]">settings</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ROW 3: PAIRING DEVICE (in-flight state) -->
+        <!-- Dimmer surface (#1d1d27), watch icon, Galaxy Watch7, secondary in gold "Pairing…" + inline 14px rotating gold arc spinner -->
+        <div class="h-[54px] bg-[#1d1d27] rounded-[10px] relative flex items-center justify-between px-3 pl-3.5 transition-colors cursor-pointer">
+          <div class="flex items-center gap-2.5">
+            <!-- 30px circular disc with watch icon -->
+            <div class="w-[30px] h-[30px] rounded-full bg-[#171720] flex items-center justify-center text-[#7d7f92]">
+              <!-- Watch SVG icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="7"></circle>
+                <polyline points="12 9 12 12 13.5 13.5"></polyline>
+                <path d="M16.51 17.35l-.85 4.65h-7.32l-.85-4.65"></path>
+                <path d="M7.49 6.65l.85-4.65h7.32l.85 4.65"></path>
+              </svg>
+            </div>
+
+            <!-- Device text info with in-flight gold indicator -->
+            <div class="flex flex-col">
+              <span class="text-[13px] font-medium text-[#b5b7c6] leading-tight">Galaxy Watch7</span>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span class="text-[10.5px] font-mono-code text-[#b49043] font-medium leading-none">Pairing…</span>
+                <span class="text-[9px] font-mono-code text-[#626477]">negotiating PIN</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Far Right: 14px circular rotating arc spinner in gold -->
+          <div class="flex items-center pr-2">
+            <svg class="animate-spin-custom w-[14px] h-[14px] text-[#b49043]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="#333342" stroke-width="3"></circle>
+              <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 3. SCAN FOOTER: Full-width slim strip (34px, #1d1d26, rounded 9px) -->
+      <div class="h-[34px] bg-[#1d1d26] rounded-[9px] px-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <!-- Tiny cyan pulsing dot -->
+          <span class="w-2 h-2 rounded-full bg-[#8ec3c9] pulse-scan"></span>
+          <span class="text-[11px] font-mono-code text-[#7c7e90]">Scanning for new devices…</span>
+        </div>
+
+        <!-- Far Right: Small gold text action -->
+        <button class="text-[11px] font-mono-code font-semibold text-[#b49043] hover:text-[#d4af37] transition-colors flex items-center gap-1">
+          <span>+ Add device</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- TECHNICAL COMPOSITOR SPEC SHEET / BENCH -->
+    <!-- Matches Wi-Fi Manager spec bench style exactly -->
+    <div class="w-[460px] mt-4 bg-[#1a1a24]/90 rounded-[14px] p-3.5 text-[10px] font-mono-code text-[#6f7183] select-none">
+      <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-[#242432]">
+        <div class="flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#8ec3c9]"></span>
+          <span class="text-[#cfd0de] font-semibold tracking-wider">HARMONICA BT DRILL-DOWN SUB-PANEL</span>
+        </div>
+        <span class="text-[#595a6c]">CARD: 460×330px • RADIUS: 14px</span>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 leading-relaxed">
+        <div>
+          <div class="text-[#8ec3c9] font-medium mb-0.5">01 // DEVICE-TYPE GLYPHS</div>
+          <div>Headphones, mouse, watch SVGs provide instant affordance over generic BT runes. Cyan (#8ec3c9) indicates live audio pipe.</div>
+        </div>
+        <div>
+          <div class="text-[#848698] font-medium mb-0.5">02 // STATUS HIERARCHY</div>
+          <div>Strict rank: Connected (gold bar + green text) &gt; Paired (neutral gray) &gt; Pairing (gold text + 14px arc spinner).</div>
+        </div>
+        <div>
+          <div class="text-[#b49043] font-medium mb-0.5">03 // ACCENT RESERVATION</div>
+          <div>Gold (#b49043) strictly reserved for radio toggle, active 3px edge bar, in-flight pairing state, and "+ Add device" trigger.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- BOTTOM STATUS FOOTER -->
+  <footer class="w-full max-w-5xl flex items-center justify-between text-[11px] font-mono-code text-[#555668] tracking-wider pt-2">
+    <div>Harmonica Shell Project • Flat Solid UI Subsystem</div>
+    <div class="flex items-center gap-4">
+      <span>Esc // Back</span>
+      <span>•</span>
+      <span>Space // Connect</span>
+      <span>•</span>
+      <span>D // Toggle Discoverable</span>
+    </div>
+    <div>Dynamic Island Physics: Spring 380ms (stiffness 320, damping 28)</div>
+  </footer>
+
+</body>
+</html>
