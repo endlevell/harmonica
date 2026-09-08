@@ -10,7 +10,7 @@ import qs.Widgets
 Item {
     id: strip
 
-    readonly property int btnCell: 13 + 4 * 2
+    readonly property int btnCell: 14 + 4 * 2
     readonly property int contentWidth: Theme.spaceMd * 2 + btnCell * 6 + Theme.spaceXs * 5
 
     readonly property string hoveredLabel: bArea.hovered ? "Area to clipboard"
@@ -26,32 +26,32 @@ Item {
 
         IconButton {
             id: bArea
-            category: "record"; iconName: "crop-free"; iconSize: 13; pad: 4
+            category: "record"; iconName: "crop-free"; iconSize: 14; pad: 4
             onClicked: Screenshot.request("area")
         }
         IconButton {
             id: bScreen
-            category: "record"; iconName: "screenshot"; iconSize: 13; pad: 4
+            category: "record"; iconName: "screenshot"; iconSize: 14; pad: 4
             onClicked: Screenshot.request("screen")
         }
         IconButton {
             id: bOutput
-            category: "record"; iconName: "output"; iconSize: 13; pad: 4
+            category: "record"; iconName: "output"; iconSize: 14; pad: 4
             onClicked: Screenshot.request("output")
         }
         IconButton {
             id: bSaveArea
-            category: "record"; iconName: "save"; iconSize: 13; pad: 4
+            category: "record"; iconName: "save"; iconSize: 14; pad: 4
             onClicked: Screenshot.request("save-area")
         }
         IconButton {
             id: bSaveScreen
-            category: "record"; iconName: "photo"; iconSize: 13; pad: 4
+            category: "record"; iconName: "photo"; iconSize: 14; pad: 4
             onClicked: Screenshot.request("save-screen")
         }
         IconButton {
             id: bColor
-            category: "record"; iconName: "colorize"; iconSize: 13; pad: 4
+            category: "record"; iconName: "colorize"; iconSize: 14; pad: 4
             onClicked: Screenshot.request("color")
         }
     }
