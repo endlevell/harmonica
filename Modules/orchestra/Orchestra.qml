@@ -356,14 +356,20 @@ PanelWindow {
         onTriggered: if (!hoverTrack.containsMouse) win.hoverOpen = false
     }
 
+    // uniform Esc: topmost open state closes; never while recording
     Shortcut {
         sequence: "Escape"
-        enabled: hoverOpen || launcherOpen || recordSettingsOpen || screenshotOpen || wifiOpen || bluetoothOpen || Notifications.showing
+        context: Qt.ApplicationShortcut
+        enabled: screenshotOpen || recordSettingsOpen || wifiOpen || bluetoothOpen || launcherOpen || hoverOpen || Notifications.showing
         onActivated: {
-            if (bluetoothOpen) bluetoothOpen = false;
-            else if (wifiOpen) { if (!wifiView.tryEscape()) wifiOpen = false; }
-            else if (screenshotOpen) screenshotOpen = false;
-            else if (recordSettingsOpen) recordSettingsOpen = false;
+            if (Recorder.active) return;
+            if (screenshotOpen) { screenshotOpen = false; hoverOpen = false; }
+            else if (recordSettingsOpen) { recordSettingsOpen = false; hoverOpen = false; }
+            else if (wifiOpen) { if (!wifiView.tryEscape()) { wifiOpen = false; hoverOpen = false; } }
+            else if (bluetoothOpen) { bluetoothOpen = false; hoverOpen = false; }
+            else if (launcherOpen) { closeLauncher(); hoverOpen = false; }
+            else if (hoverOpen) hoverOpen = false;
+            else if (Notifications.showing) { Notifications.dismissCurrent(); hoverOpen = false; }
         }
     }
 
