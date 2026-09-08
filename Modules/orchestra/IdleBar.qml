@@ -51,8 +51,7 @@ Item {
     Icon {
         id: netIcon
         category: "status"
-        name: Network.state === "ethernet" ? "ethernet" : Network.state === "wifi" ? "wifi" : "wifi-off"
-        size: 15
+        size: 14
         color: Network.state === "disconnected" ? Theme.dimText : Theme.colorNet
         anchors.left: parent.left
         anchors.leftMargin: bar.sidePad
@@ -90,7 +89,7 @@ Item {
             }
         }
         SequentialAnimation {
-            id: confirmAnim
+            size: 14
             NumberAnimation { target: confirm; property: "opacity"; to: 1; duration: Theme.durFast; easing.type: Easing.OutCubic }
             NumberAnimation { target: confirm; property: "scale"; to: 1; duration: Theme.durNormal; easing.bezierCurve: Theme.easeDecel; easing.type: Easing.BezierSpline }
             PauseAnimation { duration: Theme.durConfirmPulse }
@@ -123,7 +122,7 @@ Item {
         Icon {
             category: "status"
             name: Battery.iconName
-            size: 15
+            size: 14
             color: bar.battTint
             anchors.verticalCenter: parent.verticalCenter
 
